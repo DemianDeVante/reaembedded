@@ -5,8 +5,8 @@ def generate_github_links(username, repository, branch, file_paths):
     links = [base_url + path.replace("\\", "/") for path in file_paths]
     return links
 
-username = 'your_github_username'
-repository = 'your_repository'
+username = 'DemianDeVante'
+repository = 'reaembedded'
 branch = 'main'  # or whatever branch you're using
 file_paths = [line.strip() for line in open('file_paths.txt')]
 
