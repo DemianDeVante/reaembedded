@@ -1,0 +1,1170 @@
+/*
+The MIT License (MIT)
+
+Copyright (c) 2022 mawi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of 
+this software and associated documentation files (the "Software"), to deal in 
+the Software without restriction, including without limitation the rights to use, 
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the 
+Software, and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all 
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS 
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN 
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+*/
+
+
+desc:Analog Summing (DD)
+//version: 1.1
+//tags: Saturation, Tone
+//author: mawi
+
+//UI
+import DGFX/GeraintUI/ui-lib_d.jsfx-inc
+filename:0,DGFX/GeraintUI/theme-stock.png
+
+slider1:slider_input_gain=0<-24,24,0.01>-Input Gain (dB)
+slider2:slider_color=0<0,100,1{Clean I,Clean II,Clean III,Classic I,Classic II,Classic III,Fat I,Fat II,Fat III,Dark I,Dark II,Dark III,Big I,Big II,Big III,Bright I,Bright II,Bright III}>-Color
+slider3:slider_shape=0<0,100,1{0,1,2,3,4,5}>-Shape
+slider4:slider_mix=100<0,100,0.01>-Mix (%)
+slider5:slider_output_gain=0<-24,24,0.01>-Output Gain (dB)
+slider6:slider_bypass=0<0,1,1{Off,On}>-Bypass
+slider7:slider_group_link=0<0,100,1{Off,Group A,Group B,Group C,Group D,Group E,Group F,Group G,Group H}>-Group Link
+
+in_pin:Input 1
+in_pin:Input 2
+out_pin:Output 1
+out_pin:Output 2
+
+options:no_meter
+
+
+@init
+
+//UI
+freemem = 0; // some empty section of the memory buffer
+freemem = ui_setup(freemem); // returns the first index it's not using
+//Color
+rnd1 = rand()/20 + 0.975; rnd2 = rand()/20 + 0.975;
+rnd3 = rand()/20 + 0.975; rnd4 = rand()/20 + 0.975;
+rnd5 = rand()/20 + 0.975; rnd6 = rand()/20 + 0.975;
+rnd7 = rand()/20 + 0.975; rnd8 = rand()/20 + 0.975;
+_global.mawi_Analog_Summing_v1.1_api_theme = "bitmap-simple";
+
+
+function bqd(xn)
+  instance(a0,a1,a2,b1,b2,c0,d0,z1,z2,xn,xn_1,xn_2,yn,yn_1,yn_2)
+(
+    yn = xn * a0 + z1;
+    z1 = xn * a1 + z2 - b1 * yn;
+    z2 = xn * a2 - b2 * yn;
+    yn;
+);
+
+function hp1Set(F)
+  instance(a0,a1,a2,b1,b2,c0,d0,xn,xn_1,xn_2,yn,yn_1,yn_2,V,K,norm,F,Q,peakGain)
+(
+  F ?
+  (
+    Oc=2*$pi*F/srate;
+    Y=cos(Oc)/(1+sin(Oc));
+    a0 = (1+Y)/2;
+    a1 = -(1+Y)/2;
+    a2 = 0;
+    b1 = -Y;
+    b2 = 0;
+    c0 = 1;
+    d0 = 0;
+  ):(a0 = c0 =  1; a1 = a2 = b1 = b2 = d0 = 0;)
+);
+
+function lp1Set(F)
+  instance(a0,a1,a2,b1,b2,c0,d0,xn,xn_1,xn_2,yn,yn_1,yn_2,V,K,norm,F,Q,peakGain)
+(
+  F ?
+  (
+    Oc=2*$pi*F/srate;
+    Y=cos(Oc)/(1+sin(Oc));
+    a0 = (1-Y)/2;
+    a1 = (1-Y)/2;
+    a2 = 0;
+    b1 = -Y;
+    b2 = 0;
+    c0 = 1;
+    d0 = 0;
+  ):(a0 = c0 =  1; a1 = a2 = b1 = b2 = d0 = 0;)
+);
+
+function hp2Set(F,Q)
+  instance(a0,a1,a2,b1,b2,c0,d0,xn,xn_1,xn_2,yn,yn_1,yn_2,V,K,norm,F,Q,peakGain)
+(
+  F ?
+  (
+    V = 10^(abs(peakGain)/ 20.0);
+    K = tan($pi * F/srate);
+    norm = 1 / (1 + K / Q + K * K);
+    a0 = 1 * norm;
+    a1 = -2 * a0;
+    a2 = a0;
+    b1 = 2 * (K * K - 1) * norm;
+    b2 = (1 - K / Q + K * K) * norm;
+    c0 = 1;
+    d0 = 0;
+  ):(a0 = c0 =  1; a1 = a2 = b1 = b2 = d0 = 0;)
+);
+
+
+function lp2Set(F,Q)
+  instance(a0,a1,a2,b1,b2,c0,d0,xn,xn_1,xn_2,yn,yn_1,yn_2,V,K,norm,F,Q,peakGain)
+(
+  F ?
+  (
+    V = 10^(abs(peakGain)/ 20.0);
+    K = tan($pi * F/srate);
+    norm = 1 / (1 + K / Q + K * K);
+    a0 = K * K * norm;
+    a1 = 2 * a0;
+    a2 = a0;
+    b1 = 2 * (K * K - 1) * norm;
+    b2 = (1 - K / Q + K * K) * norm;
+    c0 = 1;
+    d0 = 0;
+  ):(a0 = c0 =  1; a1 = a2 = b1 = b2 = d0 = 0;)
+);
+
+function lsSet(F,Q,peakGain)
+  instance(a0,a1,a2,b1,b2,c0,d0,xn,xn_1,xn_2,yn,yn_1,yn_2,V,K,norm,F,Q,peakGain)
+(
+  V = 10^(abs(peakGain)/ 20.0);
+  K = tan($pi * F/srate);
+  peakGain >= 0  ?  // boost
+  (
+      norm = 1 / (1 + sqrt(2) * K + K * K);
+      a0 = (1 + sqrt(2*V) * K + V * K * K) * norm;
+      a1 = 2 * (V * K * K - 1) * norm;
+      a2 = (1 - sqrt(2*V) * K + V * K * K) * norm;
+      b1 = 2 * (K * K - 1) * norm;
+      b2 = (1 - sqrt(2) * K + K * K) * norm;
+  ):(
+      norm = 1 / (1 + sqrt(2*V) * K + V * K * K);
+      a0 = (1 + sqrt(2) * K + K * K) * norm;
+      a1 = 2 * (K * K - 1) * norm;
+      a2 = (1 - sqrt(2) * K + K * K) * norm;
+      b1 = 2 * (V * K * K - 1) * norm;
+      b2 = (1 - sqrt(2*V) * K + V * K * K) * norm;
+  );
+  c0 = 1;
+  d0 = 0;
+);
+
+function hsSet(F,Q,peakGain)
+  instance(a0,a1,a2,b1,b2,c0,d0,xn,xn_1,xn_2,yn,yn_1,yn_2,V,K,norm,F,Q,peakGain)
+(
+  V = 10^(abs(peakGain)/ 20.0);
+  K = tan($pi * F/srate);
+  peakGain >= 0  ?  // boost
+  (
+      norm = 1 / (1 + sqrt(2) * K + K * K);
+      a0 = (V + sqrt(2*V) * K + K * K) * norm;
+      a1 = 2 * (K * K - V) * norm;
+      a2 = (V - sqrt(2*V) * K + K * K) * norm;
+      b1 = 2 * (K * K - 1) * norm;
+      b2 = (1 - sqrt(2) * K + K * K) * norm;
+  ):(
+      norm = 1 / (V + sqrt(2*V) * K + K * K);
+      a0 = (1 + sqrt(2) * K + K * K) * norm;
+      a1 = 2 * (K * K - 1) * norm;
+      a2 = (1 - sqrt(2) * K + K * K) * norm;
+      b1 = 2 * (K * K - V) * norm;
+      b2 = (V - sqrt(2*V) * K + K * K) * norm;
+  );
+  c0 = 1;
+  d0 = 0;
+);
+
+function p1Set(F,Q,peakGain)
+  instance(a0,a1,a2,b1,b2,c0,d0,xn,xn_1,xn_2,yn,yn_1,yn_2,V,K,norm,F,Q,peakGain)
+(
+  V = 10^(abs(peakGain)/ 20.0);
+  K = tan($pi * F/srate);
+  peakGain >= 0  ?  // boost
+  (
+      norm = 1 / (1 + 1/Q * K + K * K);
+      a0 = (1 + V/Q * K + K * K) * norm;
+      a1 = 2 * (K * K - 1) * norm;
+      a2 = (1 - V/Q * K + K * K) * norm;
+      b1 = a1;
+      b2 = (1 - 1/Q * K + K * K) * norm;
+  ):(
+      norm = 1 / (1 + V/Q * K + K * K);
+      a0 = (1 + 1/Q * K + K * K) * norm;
+      a1 = 2 * (K * K - 1) * norm;
+      a2 = (1 - 1/Q * K + K * K) * norm;
+      b1 = a1;
+      b2 = (1 - V/Q * K + K * K) * norm;
+  );
+  c0 = 1;
+  d0 = 0;
+);
+
+function p2Set(F,Q,peakGain)
+  instance(a0,a1,a2,b1,b2,c0,d0,xn,xn_1,xn_2,yn,yn_1,yn_2,V,K,norm,F,Q,peakGain)
+(
+  V = 10^(abs(peakGain)/ 20.0);
+  K = tan($pi * F/srate);
+  peakGain >= 0  ?  // boost
+  (
+      norm = 1 / (1 + 1/Q * K + K * K);
+      a0 = (1 + V/Q * K + K * K) * norm;
+      a1 = 2 * (K * K - 1) * norm;
+      a2 = (1 - V/Q * K + K * K) * norm;
+      b1 = a1;
+      b2 = (1 - 1/Q * K + K * K) * norm;
+  ):(
+      norm = 1 / (1 + V/Q * K + K * K);
+      a0 = (1 + 1/Q * K + K * K) * norm;
+      a1 = 2 * (K * K - 1) * norm;
+      a2 = (1 - 1/Q * K + K * K) * norm;
+      b1 = a1;
+      b2 = (1 - V/Q * K + K * K) * norm;
+  );
+  c0 = 1;
+  d0 = 0;
+);
+
+function UpdateColor()
+(
+  slider_color == 0 ?
+  (
+    color.hp1F=10;   color.lp1F=22000;
+    color.hp2F=0;    color.hp2Q=0.7071; 
+    color.lp2F=0;    color.lp2Q=1;
+    color.lsF=100;   color.lsG=0.5;
+    color.hsF=15000; color.hsG=-0.5;
+    color.p1F=400;   color.p1Q=0.3;    color.p1G=-0.5;
+    color.p2F=2000;  color.p2Q=0.4;    color.p2G=-0.5; 
+  );
+  
+  slider_color == 1 ?
+  (
+    color.hp1F=12;   color.lp1F=21000;
+    color.hp2F=0;    color.hp2Q=0.7071; 
+    color.lp2F=0;    color.lp2Q=1;
+    color.lsF=100;   color.lsG=1.5;
+    color.hsF=10000; color.hsG=-1.5;
+    color.p1F=400;   color.p1Q=0.4;    color.p1G=-1.5;
+    color.p2F=2000;  color.p2Q=0.3;    color.p2G=-2; 
+  );
+  
+  slider_color == 2 ?
+  (
+    color.hp1F=12;   color.lp1F=21000;
+    color.hp2F=0;    color.hp2Q=0.7071; 
+    color.lp2F=0;    color.lp2Q=1;
+    color.lsF=120;   color.lsG=1.5;
+    color.hsF=9000; color.hsG=1.5;
+    color.p1F=600;   color.p1Q=0.2;    color.p1G=-1.5;
+    color.p2F=5000;  color.p2Q=0.3;    color.p2G=-2; 
+  );
+  
+  slider_color == 3 ?
+  (
+    color.hp1F=0;   color.lp1F=0;
+    color.hp2F=10;    color.hp2Q=0.8; 
+    color.lp2F=21000;    color.lp2Q=0.9;
+    color.lsF=60;   color.lsG=0.5;
+    color.hsF=10000; color.hsG=-0.5;
+    color.p1F=300;   color.p1Q=0.6;    color.p1G=-0.5;
+    color.p2F=2000;  color.p2Q=0.2;    color.p2G=0.5;
+  );
+  
+  slider_color == 4 ?
+  (
+    color.hp1F=10;   color.lp1F=0;
+    color.hp2F=13;    color.hp2Q=0.9; 
+    color.lp2F=20000;    color.lp2Q=1;
+    color.lsF=80;   color.lsG=1;
+    color.hsF=6000; color.hsG=-1;
+    color.p1F=280;   color.p1Q=0.6;    color.p1G=-1;
+    color.p2F=2500;  color.p2Q=0.3;    color.p2G=1;
+  );
+  
+  slider_color == 5 ?
+  (
+    color.hp1F=10;   color.lp1F=0;
+    color.hp2F=15;    color.hp2Q=1; 
+    color.lp2F=18000;    color.lp2Q=1.1;
+    color.lsF=100;   color.lsG=1.5;
+    color.hsF=6000; color.hsG=-1.5;
+    color.p1F=300;   color.p1Q=0.4;    color.p1G=-1.5;
+    color.p2F=3000;  color.p2Q=0.3;    color.p2G=1.5;
+  );
+  
+  slider_color == 6 ?
+  (
+    color.hp1F=5;   color.lp1F=21000;
+    color.hp2F=15;    color.hp2Q=0.8; 
+    color.lp2F=20000;    color.lp2Q=0.7071;
+    color.lsF=200;   color.lsG=0.5;
+    color.hsF=6000; color.hsG=0;
+    color.p1F=800;   color.p1Q=0.5;    color.p1G=-0.5;
+    color.p2F=4200;  color.p2Q=0.5;    color.p2G=-0.5;
+  );
+  
+  slider_color == 7 ?
+  (
+    color.hp1F=5;   color.lp1F=20000;
+    color.hp2F=18;    color.hp2Q=0.9; 
+    color.lp2F=20000;    color.lp2Q=0.8;
+    color.lsF=250;   color.lsG=1;
+    color.hsF=6000; color.hsG=0;
+    color.p1F=700;   color.p1Q=0.4;    color.p1G=-1;
+    color.p2F=4500;  color.p2Q=0.4;    color.p2G=-1;
+  );
+  
+  slider_color == 8 ?
+  (
+    color.hp1F=0;   color.lp1F=20000;
+    color.hp2F=18;    color.hp2Q=0.8; 
+    color.lp2F=20000;    color.lp2Q=0.8;
+    color.lsF=300;   color.lsG=1.5;
+    color.hsF=6000; color.hsG=1.5;
+    color.p1F=500;   color.p1Q=0.2;    color.p1G=-1.5;
+    color.p2F=4500;  color.p2Q=0.2;    color.p2G=-1.5;
+  );
+  
+  slider_color == 9 ?
+  (
+    color.hp1F=20;    color.lp1F=15000;
+    color.hp2F=0;     color.hp2Q=1; 
+    color.lp2F=0;     color.lp2Q=0.5;
+    color.lsF=150;    color.lsG=0.5;
+    color.hsF=4000;   color.hsG=-1;
+    color.p1F=400;    color.p1Q=0.2;    color.p1G=-0.5;
+    color.p2F=1000;   color.p2Q=0.2;    color.p2G=-0.5;
+  );
+  
+  slider_color == 10 ?
+  (
+    color.hp1F=20;    color.lp1F=13000;
+    color.hp2F=0;     color.hp2Q=1; 
+    color.lp2F=0;     color.lp2Q=0.5;
+    color.lsF=150;    color.lsG=1;
+    color.hsF=4000;   color.hsG=-1.2;
+    color.p1F=300;    color.p1Q=0.4;    color.p1G=-0.4;
+    color.p2F=2000;   color.p2Q=0.3;    color.p2G=-0.3;
+  );
+  
+  slider_color == 11 ?
+  (
+    color.hp1F=18;    color.lp1F=12000;
+    color.hp2F=0;     color.hp2Q=1; 
+    color.lp2F=0;     color.lp2Q=0.5;
+    color.lsF=150;    color.lsG=1.5;
+    color.hsF=4000;   color.hsG=-1.5;
+    color.p1F=300;    color.p1Q=0.5;    color.p1G=-0.6;
+    color.p2F=2000;   color.p2Q=0.4;    color.p2G=-0.3;
+  );
+  
+  slider_color == 12 ?
+  (
+    color.hp1F=0;    color.lp1F=0;
+    color.hp2F=5;     color.hp2Q=0.8; 
+    color.lp2F=20000;     color.lp2Q=0.8;
+    color.lsF=80;    color.lsG=0.54;
+    color.hsF=10000;   color.hsG=0.5;
+    color.p1F=700;    color.p1Q=0.5;    color.p1G=-0.5;
+    color.p2F=4500;   color.p2Q=0.4;    color.p2G=-0.5;
+  );
+  
+  slider_color == 13 ?
+  (
+    color.hp1F=0;    color.lp1F=0;
+    color.hp2F=10;     color.hp2Q=0.9; 
+    color.lp2F=20000;     color.lp2Q=0.9;
+    color.lsF=90;    color.lsG=1;
+    color.hsF=6000;   color.hsG=1;
+    color.p1F=400;    color.p1Q=0.3;    color.p1G=-1;
+    color.p2F=4500;   color.p2Q=0.4;    color.p2G=-1;
+  );
+  slider_color == 14 ?
+  (
+    color.hp1F=0;    color.lp1F=0;
+    color.hp2F=18;     color.hp2Q=1.1; 
+    color.lp2F=20000;     color.lp2Q=0.9;
+    color.lsF=80;    color.lsG=2;
+    color.hsF=6000;   color.hsG=2;
+    color.p1F=400;    color.p1Q=0.2;    color.p1G=-1.5;
+    color.p2F=4500;   color.p2Q=0.3;    color.p2G=-1.5;
+  );
+  slider_color == 15 ?
+   (
+     color.hp1F=10;    color.lp1F=0;
+     color.hp2F=0;     color.hp2Q=1; 
+     color.lp2F=22000;     color.lp2Q=0.9;
+     color.lsF=80;    color.lsG=0.5;
+     color.hsF=6000;   color.hsG=0.5;
+     color.p1F=280;    color.p1Q=0.2;    color.p1G=-0.5;
+     color.p2F=4500;   color.p2Q=0.3;    color.p2G=-0.5;
+   );
+  slider_color == 16 ?
+   (
+     color.hp1F=11;    color.lp1F=0;
+     color.hp2F=0;     color.hp2Q=1; 
+     color.lp2F=22000;     color.lp2Q=0.9;
+     color.lsF=80;    color.lsG=1;
+     color.hsF=5000;   color.hsG=1;
+     color.p1F=850;    color.p1Q=0.2;    color.p1G=-0.5;
+     color.p2F=4500;   color.p2Q=0.3;    color.p2G=-0.5;
+   );
+  slider_color == 17 ?
+   (
+     color.hp1F=12;    color.lp1F=0;
+     color.hp2F=0;     color.hp2Q=1; 
+     color.lp2F=22000;     color.lp2Q=0.9;
+     color.lsF=80;    color.lsG=1.5;
+     color.hsF=4000;   color.hsG=1.5;
+     color.p1F=850;    color.p1Q=0.2;    color.p1G=-0.5;
+     color.p2F=4500;   color.p2Q=0.3;    color.p2G=-0.7;
+   );
+    hp1L.hp1Set(max(color.hp1F*rnd8,0));
+    lp1L.lp1Set(min(color.lp1F*rnd7,22000));
+    hp2L.hp2Set(max(color.hp2F*rnd6,0),max(color.hp2Q*rnd6,0));
+    lp2L.lp2Set(min(color.lp2F*rnd5,22000),max(color.lp2Q*rnd5,0));
+    lsL.lsSet(color.lsF*rnd4,color.lsQ*rnd4,color.lsG*rnd4);
+    hsL.hsSet(color.hsF*rnd3,color.hsQ*rnd3,color.hsG*rnd3);
+    p1L.p1Set(color.p1F*rnd2,color.p1Q*rnd2,color.p1G*rnd2);
+    p2L.p2Set(color.p2F*rnd1,color.p2Q*rnd1,color.p2G*rnd1);
+    
+    hp1R.hp1Set(max(color.hp1F*rnd1,0));
+    lp1R.lp1Set(min(color.lp1F*rnd2,22000));
+    hp2R.hp2Set(max(color.hp2F*rnd3,0),max(color.hp2Q*rnd3,0));
+    lp2R.lp2Set(min(color.lp2F*rnd4,22000),max(color.lp2Q*rnd4,0));
+    lsR.lsSet(color.lsF*rnd5,color.lsQ*rnd5,color.lsG*rnd5);
+    hsR.hsSet(color.hsF*rnd6,color.hsQ*rnd6,color.hsG*rnd6);
+    p1R.p1Set(color.p1F*rnd7,color.p1Q*rnd7,color.p1G*rnd7);
+    p2R.p2Set(color.p2F*rnd8,color.p2Q*rnd8,color.p2G*rnd8);
+    
+    
+    empL.p1Set(2000,0.1,-24);
+    dempL.p1Set(2000,0.1,24);
+    empR.p1Set(2000,0.1,-24);
+    dempR.p1Set(2000,0.1,24);
+);
+
+//UI Slider Update
+function slider_update_function() (
+  needs_slider_update = 0;
+
+  slider_group_link == 1 ?
+  (
+    _global.mawi_Analog_Summing_v1.1_input_gain_1 = slider_input_gain;
+    _global.mawi_Analog_Summing_v1.1_color_1 = slider_color;
+    _global.mawi_Analog_Summing_v1.1_shape_1 = slider_shape;
+    _global.mawi_Analog_Summing_v1.1_mix_1 = slider_mix;
+    _global.mawi_Analog_Summing_v1.1_output_gain_1 = slider_output_gain;
+    _global.mawi_Analog_Summing_v1.1_bypass_1 = slider_bypass;
+  );
+
+  slider_group_link == 2 ?
+  (
+    _global.mawi_Analog_Summing_v1.1_input_gain_2 = slider_input_gain;
+    _global.mawi_Analog_Summing_v1.1_color_2 = slider_color;
+    _global.mawi_Analog_Summing_v1.1_shape_2 = slider_shape;
+    _global.mawi_Analog_Summing_v1.1_mix_2 = slider_mix;
+    _global.mawi_Analog_Summing_v1.1_output_gain_2 = slider_output_gain;
+    _global.mawi_Analog_Summing_v1.1_bypass_2 = slider_bypass;
+  );
+  
+  slider_group_link == 3 ?
+  (
+    _global.mawi_Analog_Summing_v1.1_input_gain_3 = slider_input_gain;
+    _global.mawi_Analog_Summing_v1.1_color_3 = slider_color;
+    _global.mawi_Analog_Summing_v1.1_shape_3 = slider_shape;
+    _global.mawi_Analog_Summing_v1.1_mix_3 = slider_mix;
+    _global.mawi_Analog_Summing_v1.1_output_gain_3 = slider_output_gain;
+    _global.mawi_Analog_Summing_v1.1_bypass_3 = slider_bypass;
+  );
+  
+  slider_group_link == 4 ?
+  (
+    _global.mawi_Analog_Summing_v1.1_input_gain_4 = slider_input_gain;
+    _global.mawi_Analog_Summing_v1.1_color_4 = slider_color;
+    _global.mawi_Analog_Summing_v1.1_shape_4 = slider_shape;
+    _global.mawi_Analog_Summing_v1.1_mix_4 = slider_mix;
+    _global.mawi_Analog_Summing_v1.1_output_gain_4 = slider_output_gain;
+    _global.mawi_Analog_Summing_v1.1_bypass_4 = slider_bypass;
+  );
+  
+  slider_group_link == 5 ?
+  (
+    _global.mawi_Analog_Summing_v1.1_input_gain_5 = slider_input_gain;
+    _global.mawi_Analog_Summing_v1.1_color_5 = slider_color;
+    _global.mawi_Analog_Summing_v1.1_shape_5 = slider_shape;
+    _global.mawi_Analog_Summing_v1.1_mix_5 = slider_mix;
+    _global.mawi_Analog_Summing_v1.1_output_gain_5 = slider_output_gain;
+    _global.mawi_Analog_Summing_v1.1_bypass_5 = slider_bypass;
+  );
+  
+  slider_group_link == 6 ?
+  (
+    _global.mawi_Analog_Summing_v1.1_input_gain_6 = slider_input_gain;
+    _global.mawi_Analog_Summing_v1.1_color_6 = slider_color;
+    _global.mawi_Analog_Summing_v1.1_shape_6 = slider_shape;
+    _global.mawi_Analog_Summing_v1.1_mix_6 = slider_mix;
+    _global.mawi_Analog_Summing_v1.1_output_gain_6 = slider_output_gain;
+    _global.mawi_Analog_Summing_v1.1_bypass_6 = slider_bypass;
+  );
+  
+  slider_group_link == 7 ?
+  (
+    _global.mawi_Analog_Summing_v1.1_input_gain_7 = slider_input_gain;
+    _global.mawi_Analog_Summing_v1.1_color_7 = slider_color;
+    _global.mawi_Analog_Summing_v1.1_shape_7 = slider_shape;
+    _global.mawi_Analog_Summing_v1.1_mix_7 = slider_mix;
+    _global.mawi_Analog_Summing_v1.1_output_gain_7 = slider_output_gain;
+    _global.mawi_Analog_Summing_v1.1_bypass_7 = slider_bypass;
+  );
+  
+  slider_group_link == 8 ?
+  (
+    _global.mawi_Analog_Summing_v1.1_input_gain_8 = slider_input_gain;
+    _global.mawi_Analog_Summing_v1.1_color_8 = slider_color;
+    _global.mawi_Analog_Summing_v1.1_shape_8 = slider_shape;
+    _global.mawi_Analog_Summing_v1.1_mix_8 = slider_mix;
+    _global.mawi_Analog_Summing_v1.1_output_gain_8 = slider_output_gain;
+    _global.mawi_Analog_Summing_v1.1_bypass_8 = slider_bypass;
+  );
+
+  inGain = 10^(slider_input_gain/20);
+  UpdateColor();
+  wet = slider_mix/100;
+  dry = 1 - wet;
+  outGain = 10^(slider_output_gain/20);
+  
+  slider_shape == 3 ? (inGain = 10^(2*slider_input_gain/20););
+  slider_shape == 4 ? (inGain = 10^(2*slider_input_gain/20););
+  slider_shape == 5 ? (inGain = 10^(2*slider_input_gain/20););
+);
+
+@slider
+//Color
+slider_group_link == 1 ?
+(
+  _global.mawi_Analog_Summing_v1.1_input_gain_1 = slider_input_gain;
+  _global.mawi_Analog_Summing_v1.1_color_1 = slider_color;
+  _global.mawi_Analog_Summing_v1.1_shape_1 = slider_shape;
+  _global.mawi_Analog_Summing_v1.1_mix_1 = slider_mix;
+  _global.mawi_Analog_Summing_v1.1_output_gain_1 = slider_output_gain;
+  _global.mawi_Analog_Summing_v1.1_bypass_1 = slider_bypass;
+);
+
+slider_group_link == 2 ?
+(
+  _global.mawi_Analog_Summing_v1.1_input_gain_2 = slider_input_gain;
+  _global.mawi_Analog_Summing_v1.1_color_2 = slider_color;
+  _global.mawi_Analog_Summing_v1.1_shape_2 = slider_shape;
+  _global.mawi_Analog_Summing_v1.1_mix_2 = slider_mix;
+  _global.mawi_Analog_Summing_v1.1_output_gain_2 = slider_output_gain;
+  _global.mawi_Analog_Summing_v1.1_bypass_2 = slider_bypass;
+);
+
+slider_group_link == 3 ?
+(
+  _global.mawi_Analog_Summing_v1.1_input_gain_3 = slider_input_gain;
+  _global.mawi_Analog_Summing_v1.1_color_3 = slider_color;
+  _global.mawi_Analog_Summing_v1.1_shape_3 = slider_shape;
+  _global.mawi_Analog_Summing_v1.1_mix_3 = slider_mix;
+  _global.mawi_Analog_Summing_v1.1_output_gain_3 = slider_output_gain;
+  _global.mawi_Analog_Summing_v1.1_bypass_3 = slider_bypass;
+);
+
+slider_group_link == 4 ?
+(
+  _global.mawi_Analog_Summing_v1.1_input_gain_4 = slider_input_gain;
+  _global.mawi_Analog_Summing_v1.1_color_4 = slider_color;
+  _global.mawi_Analog_Summing_v1.1_shape_4 = slider_shape;
+  _global.mawi_Analog_Summing_v1.1_mix_4 = slider_mix;
+  _global.mawi_Analog_Summing_v1.1_output_gain_4 = slider_output_gain;
+  _global.mawi_Analog_Summing_v1.1_bypass_4 = slider_bypass;
+);
+
+slider_group_link == 5 ?
+(
+  _global.mawi_Analog_Summing_v1.1_input_gain_5 = slider_input_gain;
+  _global.mawi_Analog_Summing_v1.1_color_5 = slider_color;
+  _global.mawi_Analog_Summing_v1.1_shape_5 = slider_shape;
+  _global.mawi_Analog_Summing_v1.1_mix_5 = slider_mix;
+  _global.mawi_Analog_Summing_v1.1_output_gain_5 = slider_output_gain;
+  _global.mawi_Analog_Summing_v1.1_bypass_5 = slider_bypass;
+);
+
+slider_group_link == 6 ?
+(
+  _global.mawi_Analog_Summing_v1.1_input_gain_6 = slider_input_gain;
+  _global.mawi_Analog_Summing_v1.1_color_6 = slider_color;
+  _global.mawi_Analog_Summing_v1.1_shape_6 = slider_shape;
+  _global.mawi_Analog_Summing_v1.1_mix_6 = slider_mix;
+  _global.mawi_Analog_Summing_v1.1_output_gain_6 = slider_output_gain;
+  _global.mawi_Analog_Summing_v1.1_bypass_6 = slider_bypass;
+);
+
+slider_group_link == 7 ?
+(
+  _global.mawi_Analog_Summing_v1.1_input_gain_7 = slider_input_gain;
+  _global.mawi_Analog_Summing_v1.1_color_7 = slider_color;
+  _global.mawi_Analog_Summing_v1.1_shape_7 = slider_shape;
+  _global.mawi_Analog_Summing_v1.1_mix_7 = slider_mix;
+  _global.mawi_Analog_Summing_v1.1_output_gain_7 = slider_output_gain;
+  _global.mawi_Analog_Summing_v1.1_bypass_7 = slider_bypass;
+);
+
+slider_group_link == 8 ?
+(
+  _global.mawi_Analog_Summing_v1.1_input_gain_8 = slider_input_gain;
+  _global.mawi_Analog_Summing_v1.1_color_8 = slider_color;
+  _global.mawi_Analog_Summing_v1.1_shape_8 = slider_shape;
+  _global.mawi_Analog_Summing_v1.1_mix_8 = slider_mix;
+  _global.mawi_Analog_Summing_v1.1_output_gain_8 = slider_output_gain;
+  _global.mawi_Analog_Summing_v1.1_bypass_8 = slider_bypass;
+);
+
+inGain = 10^(slider_input_gain/20);
+UpdateColor();
+wet = slider_mix/100;
+dry = 1 - wet;
+outGain = 10^(slider_output_gain/20);
+
+slider_shape == 3 ? (inGain = 10^(2*slider_input_gain/20););
+slider_shape == 4 ? (inGain = 10^(2*slider_input_gain/20););
+slider_shape == 5 ? (inGain = 10^(2*slider_input_gain/20););
+
+@block
+//UI
+needs_slider_update ? slider_update_function();
+
+//Color
+slider_group_link == 1 ?
+(
+  slider_input_gain = _global.mawi_Analog_Summing_v1.1_input_gain_1;
+  inGain=10^(slider_input_gain/20);
+  slider_color = _global.mawi_Analog_Summing_v1.1_color_1;
+  slider_shape = _global.mawi_Analog_Summing_v1.1_shape_1;
+  UpdateColor();
+  slider_mix = _global.mawi_Analog_Summing_v1.1_mix_1;
+  wet = slider_mix/100;
+  dry = 1 - wet;
+  slider_output_gain = _global.mawi_Analog_Summing_v1.1_output_gain_1;
+  outGain = 10^(slider_output_gain/20);
+  slider_bypass = _global.mawi_Analog_Summing_v1.1_bypass_1;
+);
+
+slider_group_link == 2 ?
+(
+  slider_input_gain = _global.mawi_Analog_Summing_v1.1_input_gain_2;
+  inGain=10^(slider_input_gain/20);
+  slider_color = _global.mawi_Analog_Summing_v1.1_color_2;
+  slider_shape = _global.mawi_Analog_Summing_v1.1_shape_2;
+  UpdateColor();
+  slider_mix = _global.mawi_Analog_Summing_v1.1_mix_2;
+  wet = slider_mix/100;
+  dry = 1 - wet;
+  slider_output_gain = _global.mawi_Analog_Summing_v1.1_output_gain_2;
+  outGain = 10^(slider_output_gain/20);
+  slider_bypass = _global.mawi_Analog_Summing_v1.1_bypass_2;
+);
+
+slider_group_link == 3 ?
+(
+  slider_input_gain = _global.mawi_Analog_Summing_v1.1_input_gain_3;
+  inGain=10^(slider_input_gain/20);
+  slider_color = _global.mawi_Analog_Summing_v1.1_color_3;
+  slider_shape = _global.mawi_Analog_Summing_v1.1_shape_3;
+  UpdateColor();
+  slider_mix = _global.mawi_Analog_Summing_v1.1_mix_3;
+  wet = slider_mix/100;
+  dry = 1 - wet;
+  slider_output_gain = _global.mawi_Analog_Summing_v1.1_output_gain_3;
+  outGain = 10^(slider_output_gain/20);
+  slider_bypass = _global.mawi_Analog_Summing_v1.1_bypass_3;
+);
+
+slider_group_link == 4 ?
+(
+  slider_input_gain = _global.mawi_Analog_Summing_v1.1_input_gain_4;
+  inGain=10^(slider_input_gain/20);
+  slider_color = _global.mawi_Analog_Summing_v1.1_color_4;
+  slider_shape = _global.mawi_Analog_Summing_v1.1_shape_4;
+  UpdateColor();
+  slider_mix = _global.mawi_Analog_Summing_v1.1_mix_4;
+  wet = slider_mix/100;
+  dry = 1 - wet;
+  slider_output_gain = _global.mawi_Analog_Summing_v1.1_output_gain_4;
+  outGain = 10^(slider_output_gain/20);
+  slider_bypass = _global.mawi_Analog_Summing_v1.1_bypass_4;
+);
+
+slider_group_link == 5 ?
+(
+  slider_input_gain = _global.mawi_Analog_Summing_v1.1_input_gain_5;
+  inGain=10^(slider_input_gain/20);
+  slider_color = _global.mawi_Analog_Summing_v1.1_color_5;
+  slider_shape = _global.mawi_Analog_Summing_v1.1_shape_5;
+  UpdateColor();
+  slider_mix = _global.mawi_Analog_Summing_v1.1_mix_5;
+  wet = slider_mix/100;
+  dry = 1 - wet;
+  slider_output_gain = _global.mawi_Analog_Summing_v1.1_output_gain_5;
+  outGain = 10^(slider_output_gain/20);
+  slider_bypass = _global.mawi_Analog_Summing_v1.1_bypass_5;
+);
+
+slider_group_link == 6 ?
+(
+  slider_input_gain = _global.mawi_Analog_Summing_v1.1_input_gain_6;
+  inGain=10^(slider_input_gain/20);
+  slider_color = _global.mawi_Analog_Summing_v1.1_color_6;
+  slider_shape = _global.mawi_Analog_Summing_v1.1_shape_6;
+  UpdateColor();
+  slider_mix = _global.mawi_Analog_Summing_v1.1_mix_6;
+  wet = slider_mix/100;
+  dry = 1 - wet;
+  slider_output_gain = _global.mawi_Analog_Summing_v1.1_output_gain_6;
+  outGain = 10^(slider_output_gain/20);
+  slider_bypass = _global.mawi_Analog_Summing_v1.1_bypass_6;
+);
+
+slider_group_link == 7 ?
+(
+  slider_input_gain = _global.mawi_Analog_Summing_v1.1_input_gain_7;
+  inGain=10^(slider_input_gain/20);
+  slider_color = _global.mawi_Analog_Summing_v1.1_color_7;
+  slider_shape = _global.mawi_Analog_Summing_v1.1_shape_7;
+  UpdateColor();
+  slider_mix = _global.mawi_Analog_Summing_v1.1_mix_7;
+  wet = slider_mix/100;
+  dry = 1 - wet;
+  slider_output_gain = _global.mawi_Analog_Summing_v1.1_output_gain_7;
+  outGain = 10^(slider_output_gain/20);
+  slider_bypass = _global.mawi_Analog_Summing_v1.1_bypass_7;
+);
+
+slider_group_link == 8 ?
+(
+  slider_input_gain = _global.mawi_Analog_Summing_v1.1_input_gain_8;
+  inGain=10^(slider_input_gain/20);
+  slider_color = _global.mawi_Analog_Summing_v1.1_color_8;
+  slider_shape = _global.mawi_Analog_Summing_v1.1_shape_8;
+  UpdateColor();
+  slider_mix = _global.mawi_Analog_Summing_v1.1_mix_8;
+  wet = slider_mix/100;
+  dry = 1 - wet;
+  slider_output_gain = _global.mawi_Analog_Summing_v1.1_output_gain_8;
+  outGain = 10^(slider_output_gain/20);
+  slider_bypass = _global.mawi_Analog_Summing_v1.1_bypass_8;
+);
+
+slider_shape == 3 ? (inGain = 10^(2*slider_input_gain/20););
+slider_shape == 4 ? (inGain = 10^(2*slider_input_gain/20););
+slider_shape == 5 ? (inGain = 10^(2*slider_input_gain/20););
+
+@sample
+//Color
+!slider_bypass  ?
+(
+  spl0*=inGain;
+  spl1*=inGain;
+    
+  spl0=hp1L.bqd(spl0);
+  spl0=lp1L.bqd(spl0);
+  spl0=hp2L.bqd(spl0);
+  spl0=lp2L.bqd(spl0);
+  spl0=lsL.bqd(spl0);
+  spl0=hsL.bqd(spl0);
+  spl0=p1L.bqd(spl0);
+  spl0=p2L.bqd(spl0);
+  
+  spl1=hp1R.bqd(spl1);
+  spl1=lp1R.bqd(spl1);
+  spl1=hp2R.bqd(spl1);
+  spl1=lp2R.bqd(spl1);
+  spl1=lsR.bqd(spl1);
+  spl1=hsR.bqd(spl1);
+  spl1=p1R.bqd(spl1);
+  spl1=p2R.bqd(spl1);
+  
+  spl0=empL.bqd(spl0);
+  spl1=empR.bqd(spl1);
+  
+  //Saturation///////////////////////////////
+  slider_shape == 0 ?
+  (
+    spl0=(spl0*dry)+wet*0.067*atan(15*spl0);
+    spl1=(spl1*dry)+wet*0.067*atan(15*spl1);
+  );
+
+  slider_shape == 1 ?
+  (
+    spl0=(spl0*dry)+wet*0.167*sin(6*spl0);
+    spl1=(spl1*dry)+wet*0.167*sin(6*spl1);
+  );
+  
+  slider_shape == 2 ?
+  (
+    spl0=(spl0*dry)+wet*(1.0*spl0/(1+5*abs(spl0)));
+    spl1=(spl1*dry)+wet*(1.0*spl1/(1+5*abs(spl1)));
+  );
+
+  slider_shape == 3 ?
+  (
+    spl0=(spl0*dry)+wet*spl0/(1+abs(spl0));
+    spl1=(spl1*dry)+wet*spl1/(1+abs(spl1));
+  );
+
+  slider_shape == 4 ?
+  (
+    spl0=(spl0*dry)+wet*(spl0*abs(spl0)+spl0)/(spl0*spl0+abs(spl0)+1);
+    spl1=(spl1*dry)+wet*(spl1*abs(spl1)+spl1)/(spl1*spl1+abs(spl1)+1);
+  );
+
+  slider_shape == 5 ?
+  (
+    spl0=(spl0*dry)+wet*spl0/(0.25*spl0*spl0+1);
+    spl1=(spl1*dry)+wet*spl1/(0.25*spl1*spl1+1);
+  );
+  
+  /////////////////////////////////////////////
+  
+  spl0=dempL.bqd(spl0);
+  spl1=dempR.bqd(spl1);
+
+  spl0=spl0/inGain*outGain;
+  spl1=spl1/inGain*outGain;
+
+);
+
+@gfx 175 132 // only one for both windows and linux
+
+function dem_min_ui_size(dem_min_ui_width, dem_min_ui_height) (
+  (gfx_h <= dem_min_ui_height) ? (
+    ui_push_rect(0,0,gfx_w,dem_min_ui_height);
+    gfx_h = dem_min_ui_height
+  );
+);
+
+// AUTOGENERATED UI //
+// generated from slider section: https://github.com/geraintluff/jsfx-ui-lib
+function gfx_ui_automate_slider(slidervar*, new_value) (
+  slidervar !== new_value ? (
+    slidervar = new_value;
+    slider_automate(slidervar);
+  );
+  new_value;
+);
+
+function gfx_ui_layout_textnumber(title, value, format) local(h) (
+  h = max((ui_height() - 60)/2, ui_height()*0.2);
+  ui_split_top(h);
+    ui_text(title);
+  ui_pop();
+  ui_split_bottom(h);
+    value = control_hidden_textnumber(value, value*1.00000001, format);
+  ui_pop();
+  value;
+);
+
+function gfx_ui_layout_textnumber_up_title(title, value, format) local(h) (
+  h = max((ui_height() - 60)/2, ui_height()*0.2);
+  ui_split_top(h);
+    ui_text(title);
+  ui_pop();
+  value;
+);
+
+function gfx_ui_layout_textnumber_up_value(title, value, format) local(h) (
+  h = max((ui_height() - 60)/2, ui_height()*0.2);
+  ui_split_top(h);
+    value = control_hidden_textnumber(value, value*1.00000001, format);
+  ui_pop();
+  value;
+);
+
+function gfx_ui_layout_textnumber_down_title(title, value, format) local(h) (
+  h = max((ui_height() - 60)/2, ui_height()*0.2);
+  ui_split_bottom(10);
+    ui_text(title);
+  ui_pop();
+  value;
+);
+
+function gfx_ui_layout_textnumber_down_value(title, value, format) local(h) (
+  h = max((ui_height() - 60)/2, ui_height()*0.2);
+  ui_split_bottom(h);
+    value = control_hidden_textnumber(value, value*1.00000001, format);
+  ui_pop();
+  value;
+);
+
+  function gfx_ui_layout_textnumber_clear(title, value, format) local(h) (
+    value;
+  );
+
+function gfx_ui_dial_rounded(dem_theme, slidervar*, low, high, bias, default, step) (
+  slidervar != floor(slidervar._ui_gen_float/step + 0.5)*step ? slidervar._ui_gen_float = slidervar;
+  slidervar._ui_gen_float = control_dial(dem_theme, slidervar._ui_gen_float, low, high, bias, default);
+  gfx_ui_automate_slider(slidervar, floor(slidervar._ui_gen_float/step + 0.5)*step);
+);
+
+function gfx_ui_layout_text(title, text) local(h) (
+  h = max((ui_height() - 60)/2, ui_height()*0.2);
+  ui_split_top(h);
+    ui_text(title);
+  ui_pop();
+  ui_split_bottom(h);
+    ui_text(text);
+  ui_pop();
+);
+
+function gfx_ui_layout_title(title) (
+  gfx_ui_layout_text(title, "");
+);
+
+function gfx_ui_slider_color_to_text(value) (
+  (value < 9 ? 
+    (value < 5 ? 
+      (value < 3 ? (value < 2 ? (value === 0 ? "Clean I" : "Clean II") : "Clean III") : (value === 3 ? "Classic I" : "Classic II"))
+     :   (value < 7 ? (value === 5 ? "Classic III" : "Fat I") : (value === 7 ? "Fat II" : "Fat III"))
+    )
+   :   (value < 14 ? 
+      (value < 12 ? (value < 11 ? (value === 9 ? "Dark I" : "Dark II") : "Dark III") : (value === 12 ? "Big I" : "Big II"))
+     :   (value < 16 ? (value === 14 ? "Big III" : "Bright I") : (value === 16 ? "Bright II" : "Bright III"))
+    )
+  );
+);
+
+function gfx_ui_slider_shape_to_text(value) (
+  (value < 3 ? (value < 2 ? (value === 0 ? "Shape 0" : "Shape 1") : "Shape 2") : (value < 5 ? (value === 3 ? "Shape 3" : "Shape 4") : "Shape 5"));
+);
+
+function gfx_ui_slider_group_link_to_text(value) (
+  (value < 5 ? 
+    (value < 3 ? (value < 2 ? (value === 0 ? "Unlinked" : "Group A") : "Group B") : (value === 3 ? "Group C" : "Group D"))
+   :   (value < 7 ? (value === 5 ? "Group E" : "Group F") : (value === 7 ? "Group G" : "Group H"))
+  );
+);
+
+function gfx_ui_radio_option(value, optionValue, optionText) (
+  ui_align(0.1, 0.5);
+  ui_split_left(30);
+    value = control_radio(value, optionValue);
+  ui_pop();
+  ui_click() ? value = optionValue;
+  ui_text(optionText);
+  value;
+);
+
+function orig_gfx() (
+  control_start("main", _global.mawi_Analog_Summing_v1.1_api_theme, api_theme_buffer);
+
+  ui_screen() === "main" ? (
+  //control_navbar("mawi Analog Summing", "Options", 1);
+    ui_split_topratio(1/1); // single row
+      ui_split_leftratio(7/7);
+        // row 1, group 1
+        control_group("Analog Channel");
+        ui_split_leftratio(1/5);
+          gfx_ui_automate_slider(slider_input_gain, gfx_ui_layout_textnumber("In", slider_input_gain, "%.2f dB"));
+          gfx_ui_dial_rounded(6,slider_input_gain, -24, 24, 0, 0, 0.01);
+        ui_split_next();
+          gfx_ui_automate_slider(slider_mix, gfx_ui_layout_textnumber("Mix", slider_mix, "%.2f %%"));
+          gfx_ui_dial_rounded(8,slider_mix, 0, 100, 0, 100, 0.01);
+        ui_split_next();
+          ui_split_topratio(1/10);
+          ui_pop();
+          ui_split_topratio(1/2);
+            //gfx_ui_layout_text("Color", "");
+            ui_push_widthtext("Choose");
+              ui_push_heighttext("Choose");
+                control_button(gfx_ui_slider_color_to_text(slider_color)) ? ui_screen_open("edit-slider_color");
+              ui_pop();
+            ui_pop();
+          ui_split_next();
+            //gfx_ui_layout_text("Shape", "");
+            ui_push_widthtext("Choose");
+              ui_push_heighttext("Choose");
+                control_button(gfx_ui_slider_shape_to_text(slider_shape)) ? ui_screen_open("edit-slider_shape");
+              ui_pop();
+            ui_pop();
+          ui_pop();
+        ui_split_next();
+          ui_split_topratio(1/10);
+          ui_pop();
+          ui_split_topratio(1/2);
+            //gfx_ui_layout_text(slider_bypass ? "Bypass" : "In", "");
+            ui_pad(-1, 0);
+            gfx_ui_automate_slider(slider_bypass, control_switch_text(slider_bypass, "In", "Out"));
+          ui_split_next();
+            //gfx_ui_layout_text("Group Link", "");
+            ui_push_widthtext("Choose");
+              ui_push_heighttext("Choose");
+                control_button(gfx_ui_slider_group_link_to_text(slider_group_link)) ? ui_screen_open("edit-slider_group_link");
+              ui_pop();
+            ui_pop();
+          ui_pop();
+
+        ui_split_next();   
+
+          gfx_ui_automate_slider(slider_output_gain, gfx_ui_layout_textnumber("Out", slider_output_gain, "%.2f dB"));
+          gfx_ui_dial_rounded(7,slider_output_gain, -24, 24, 0, 0, 0.01);
+        ui_pop();
+      ui_pop();
+    ui_pop();
+
+  ) : ui_screen() === "edit-slider_color" ? (
+    control_dialog(-1, 660, 180, "Done", -1);
+    ui_split_leftratio(1/3); // 3 columns
+    ui_split_topratio(1/6); // open first column
+    _ui_gen_index = 0;
+    while (_ui_gen_index < 18) (
+      gfx_ui_automate_slider(slider_color, gfx_ui_radio_option(slider_color, _ui_gen_index, gfx_ui_slider_color_to_text(_ui_gen_index)));
+      _ui_gen_index += 1;
+      _ui_gen_index < 18 && !(_ui_gen_index%6) ? (
+        // close this column and open the next
+        ui_pop();
+        ui_split_next();
+        ui_split_topratio(1/6);
+      ) : (
+        ui_split_next();
+      );
+    );
+    ui_pop();
+    ui_pop();
+
+  ) : ui_screen() === "edit-slider_shape" ? (
+    control_dialog(-1, 440, 120, "Done", -1);
+    ui_split_leftratio(1/2); // 2 columns
+    ui_split_topratio(1/3); // open first column
+    _ui_gen_index = 0;
+    while (_ui_gen_index < 6) (
+      gfx_ui_automate_slider(slider_shape, gfx_ui_radio_option(slider_shape, _ui_gen_index, gfx_ui_slider_shape_to_text(_ui_gen_index)));
+      _ui_gen_index += 1;
+      _ui_gen_index < 6 && !(_ui_gen_index%3) ? (
+        // close this column and open the next
+        ui_pop();
+        ui_split_next();
+        ui_split_topratio(1/3);
+      ) : (
+        ui_split_next();
+      );
+    );
+    ui_pop();
+    ui_pop();
+
+  ) : ui_screen() === "edit-slider_group_link" ? (
+    control_dialog(-1, 660, 120, "Done", -1);
+    ui_split_leftratio(1/3); // 3 columns
+    ui_split_topratio(1/3); // open first column
+    _ui_gen_index = 0;
+    while (_ui_gen_index < 9) (
+      gfx_ui_automate_slider(slider_group_link, gfx_ui_radio_option(slider_group_link, _ui_gen_index, gfx_ui_slider_group_link_to_text(_ui_gen_index)));
+      _ui_gen_index += 1;
+      _ui_gen_index < 9 && !(_ui_gen_index%3) ? (
+        // close this column and open the next
+        ui_pop();
+        ui_split_next();
+        ui_split_topratio(1/3);
+      ) : (
+        ui_split_next();
+      );
+    );
+    ui_pop();
+    ui_pop();
+    
+  ) : (control_dialog("Options", "OK");
+    control_group("Theme");
+    ui_push_heighttext(-1);
+      ui_split_leftratio(1/2);
+        control_button("Black", _global.mawi_Analog_Summing_v1.1_api_theme != "black") ? _global.mawi_Analog_Summing_v1.1_api_theme = "black";
+      ui_split_next();
+        control_button("Cyan (bitmap)", _global.mawi_Analog_Summing_v1.1_api_theme != "bitmap-simple" || api_theme_buffer != 0) ? (
+          _global.mawi_Analog_Summing_v1.1_api_theme = "bitmap-simple";
+          api_theme_buffer = 0;
+        );
+      ui_pop();
+    ui_pop();
+  ); 
+  //) : control_system();
+  // END OF AUTOGENERATED UI //
+);
+
+
+function dem_mcp_ui() (
+    control_start("main", "bitmap-simple", 0);
+    ui_screen() === "main" ? (
+
+    ui_split_leftratio(1/20);
+    ui_pop();
+    ui_split_leftratio(18/19);
+      ui_split_leftratio(8.7/19);
+          ui_split_topratio(1.7/10);
+          ui_pop();
+          ui_split_topratio(7/8.5);
+            ui_split_topratio(1);
+                      gfx_ui_automate_slider(slider_input_gain, gfx_ui_layout_textnumber_down_title("Input", slider_input_gain, "%.2f dB"));
+                      gfx_ui_dial_rounded(6,slider_input_gain, -24, 24, 0, 0, 0.01);
+            ui_pop();
+          ui_pop();
+      ui_pop();
+      ui_split_leftratio(2/11);
+      ui_pop();
+      ui_split_leftratio(1);
+          ui_split_topratio(1.7/10);
+          ui_pop();
+          ui_split_topratio(7/8.5);
+            ui_split_topratio(1);
+                      gfx_ui_automate_slider(slider_output_gain, gfx_ui_layout_textnumber_down_title("Output", slider_output_gain, "%.2f dB"));
+                      gfx_ui_dial_rounded(7,slider_output_gain, -24, 24, 0, 0, 0.01);
+            ui_pop();
+          ui_pop();
+      ui_pop();
+    ui_pop();
+    gfx_r=gfx_g=gfx_b=0.4;
+    dx_lineheight=gfx_h/10;
+    gfx_rect(0,0,gfx_w,dx_lineheight);
+    gfx_rect(0,gfx_h-dx_lineheight,gfx_w,dx_lineheight);
+    ) : control_system();
+);
+
+function dem_full_ui() (
+  orig_gfx();
+);
+
+dem_initial_gfx_width = 175;  // inital width in @gfx width height
+dem_initial_gfx_height = 132;  // inital height in @gfx width height
+dem_max_mcp_width = 175;   // maximum embedded width
+dem_max_mcp_height = (gfx_w *(dem_initial_gfx_height/dem_initial_gfx_width)); // keep ratio
+
+gfx_ext_flags==1 ? (
+  uix_default_fontsize = 7;
+  dem_min_ui_size(dem_max_mcp_width, dem_max_mcp_height);
+  dem_mcp_ui();
+
+) : (
+  uix_default_fontsize = 12;
+  //dem_min_ui_size(121, 121);
+  dem_full_ui();
+);
+
+ui_interacted() ? needs_slider_update = 1;
+
+@serialize
+//UI
+file_var(0, _global.mawi_Analog_Summing_v1.1_api_theme);

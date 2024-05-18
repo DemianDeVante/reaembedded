@@ -1,0 +1,504 @@
+desc:Smooth Limiter (DD)
+//(by Geraint Luff)
+
+in_pin:Left
+in_pin:Right
+out_pin:Left
+out_pin:Right
+
+slider1:-0.1<-20,-0.1,0.1>-limit (dB)
+slider2:10<0.1,100,0.1>-anticipation (ms)
+slider3:50<1,100,0.1>-release (ms)
+slider4:0<0,1,0.01>-distortion
+slider5:0<-12,12,0.1>-pre-gain (dB)
+
+import DGFX/ui-lib_d.jsfx-inc
+filename:0,DGFX/GeraintUI/theme-stock.png
+
+options: no_meter
+@init
+  gfx_ext_retina = 1;
+
+  bufferlength = ceil(srate*1);
+  buffer0 = 0;
+  buffer1 = buffer0 + bufferlength;
+  bufferpeak = buffer1 + bufferlength;
+  freemem = bufferpeak + bufferlength;
+
+  overcorrect_factor = 1.002; // about 0.02dB
+
+  freemem = ui_setup(freemem);
+
+  function tanh(x) (
+    x >= 20 ? (
+      1;
+    ) : x <= -20 ? (
+      -1;
+    ) : (
+      (exp(2*x) - 1)/(exp(2*x) + 1);
+    );
+  );
+  function atanh(x) (
+    x >= 1 ? (
+      20;
+    ) ? (x <= -1) ? (
+      -20;
+    ) : (
+      log((1 + x)/(1 - x))*0.5;
+    );
+  );
+
+  writepos = 10;
+  delaysamples = 10;
+  attacksamples = 10;
+  releasesamples = 100;
+  limit = 1;
+
+  releasestartvalue = 1;
+  releaseindex = srate;
+
+  function update() (
+    attacksamples = ceil(slider2*srate/1000);
+    releasesamples = ceil(slider3*srate/1000);
+    delaysamples = ceil(attacksamples);
+    limit = pow(10, slider1/20);
+    pregain_factor = pow(10, slider5/20);
+  );
+  // Starts at 0, goes to 1
+  function attackwindow(ratio) (
+    0.5 - 0.5*cos(ratio*$pi);
+  );
+  function releasewindow(ratio) (
+    0.5 + 0.5*cos(ratio*$pi);
+  );
+
+  A = 0;
+  B = 1;
+  function dist(x) (
+    B*x/(A*abs(x) + 1);
+  );
+  function distortion_for_peak(peak, limit) (
+    A = (1 - pow(limit/oldpeak, slider4))/limit;
+  );
+  function scaling_for_peak(peak, limit) (
+    pow(limit/peak, 1 - slider4);
+  );
+
+@slider
+
+  update();
+
+@block
+
+  pdc_bot_ch = 0;
+  pdc_top_ch = 2;
+  pdc_delay = delaysamples - 1;
+
+@sample
+  spl0 *= pregain_factor;
+  spl1 *= pregain_factor;
+  truepeak = max(abs(spl0), abs(spl1));
+  releasepeak = limit;
+  releaseindex < releasesamples ? (
+    releasepeak = limit + (releasestartvalue - limit)*releasewindow(releaseindex/releasesamples);
+    releaseindex += 1;
+  );
+  peak = max(releasepeak, truepeak);
+  //peak = max(peak - releasegradient, truepeak);
+
+  peak < limit ? (
+    peak = limit;
+    releasestartvalue = limit;
+    releaseindex = srate;
+  ) : (truepeak == peak) ? (
+    // It's a new peak
+    peak *= overcorrect_factor; // Add just a little bit extra, in the hopes that we don't have to do this again soon
+
+    // For future decay
+    //releasegradient = (peak - limit)/releasesamples;
+    releasestartvalue = peak;
+    releaseindex = 0;
+    // Attempt to extend an existing attack
+    i = 1;
+    startpeak = limit;
+    foundabove = 0;
+    foundintersection = 0;
+
+    intersectionindex = -1;
+    bestcorrection = -1;
+    bestindex = delaysamples - 1;
+    beststartpeak = limit;
+    while (i < attacksamples && !foundintersection) (
+      window = attackwindow(1 - i/attacksamples);
+
+      readpos = writepos - i;
+      readpos < 0 ? readpos += bufferlength;
+      oldpeak = bufferpeak[readpos];
+
+      newstartpeak = peak + (oldpeak - peak)/(1 - window);
+      newstartpeak > startpeak ? (
+        // Keep track of the smallest alteration,
+        //     but with a bias towards f
+        diff = (newstartpeak - startpeak)*(1 - window);
+        (bestcorrection < 0 || diff < bestcorrection) ? (
+          bestcorrection = diff;
+          bestindex = i;
+          beststartpeak = newstartpeak;
+        );
+
+        startpeak = newstartpeak;
+        intersectionindex = i;
+        foundabove = 1;
+      ) : (foundabove) ? (
+        foundintersection = 1;
+      );
+      i += 1;
+    );
+
+    foundintersection ? (
+      i = 0;
+      while (i < intersectionindex) (
+        window = attackwindow(1 - i/attacksamples);
+
+        readpos = writepos - i;
+        readpos < 0 ? readpos += bufferlength;
+        newpeak = startpeak + (peak - startpeak)*window;
+        bufferpeak[readpos] = newpeak;
+        i += 1;
+      );
+    ) : (
+      i = 0;
+      while (i < bestindex) (
+        window = attackwindow(1 - i/attacksamples);
+
+        readpos = writepos - i;
+        readpos < 0 ? readpos += bufferlength;
+        newpeak = beststartpeak + (peak - beststartpeak)*window;
+
+        faderatio = (1 - i/bestindex);
+        fadewindow = 1 - (1 - faderatio)*(1 - faderatio);
+        bufferpeak[readpos] += (newpeak - bufferpeak[readpos])*fadewindow;
+        i += 1;
+      );
+    );
+  );
+
+  buffer0[writepos] = spl0;
+  buffer1[writepos] = spl1;
+  bufferpeak[writepos] = peak;
+
+  writepos += 1;
+  writepos >= bufferlength ? (
+    writepos = 0;
+  );
+
+  readpos = writepos - delaysamples;
+  readpos < 0 ? readpos += bufferlength;
+  reduction = limit/bufferpeak[readpos];
+
+  oldpeak = bufferpeak[readpos];
+  B = scaling_for_peak(oldpeak, limit);
+  A = distortion_for_peak(oldpeak, limit);
+
+  spl0 = dist(buffer0[readpos]);
+  spl1 = dist(buffer1[readpos]);
+
+@gfx 305 230 // only one for both windows and linux
+
+  function value_to_y(v) (
+    ui_top() + max(0, min(1, 0.5*(1 - v)))*ui_height();
+  );
+
+  function draw_response() local(i, x, y, ref) (
+    ui_retina(1);
+    control_background_passive();
+    ui_push(0.2);
+      ref = limit*2;
+      ui_color(192, 0, 0);
+      y = value_to_y(limit/ref);
+      gfx_line(ui_left(), y, ui_right() - 1, y);
+      y = value_to_y(-limit/ref);
+      gfx_line(ui_left(), y, ui_right() - 1, y);
+    ui_pop();
+
+    i = 0;
+    while (i < ui_width()) (
+      x = 2*i/(ui_width() - 1) - 1;
+      y = value_to_y(dist(x*ref)/ref);
+
+      i == 0 ? (
+        gfx_x = ui_left() + i;
+        gfx_y = y;
+      ) : (
+        gfx_lineto(ui_left() + i, y);
+      );
+      i += 1;
+    );
+    control_finish_passive();
+  );
+
+  function draw_buffer(buffer, startpos, multiplier) local(width, i, i2, N, lowindex, highindex, low, high, readpos, v, x, y1, y2) (
+    i = 0;
+    N = ceil(bufferlength*0.75);
+    width = ui_width();
+    while (i < ui_width()) (
+      lowindex = floor(i/width*N);
+      highindex = ceil((i + 1)/width*N);
+
+      i2 = lowindex;
+      step = ceil((highindex - lowindex)/10);
+      readpos = (startpos + lowindex - N);
+      readpos < 0 ? readpos += bufferlength;
+      low = high = buffer[readpos];
+      while (i2 < highindex) (
+        readpos = (startpos + i2 - N);
+        readpos < 0 ? readpos += bufferlength;
+        low = min(low, buffer[readpos]);
+        high = max(high, buffer[readpos]);
+        i2 += step;
+      );
+
+      x = ui_left() + i;
+      y1 = value_to_y(low*multiplier);
+      y2 = value_to_y(high*multiplier);
+
+      gfx_line(x, y1, x, y2);
+      i += 1;
+    );
+  );
+
+  function draw_peaks(scale) local(startpos, y) (
+    ui_retina(1);
+
+    ui_color(0, 0, 0);
+    ui_fill();
+
+    ui_color(255, 0, 0);
+    y = ui_top() + 0.5*(1 - limit*scale)*ui_height();
+    gfx_line(ui_left(), y, ui_right() - 1, y);
+    y = ui_top() + 0.5*(1 + limit*scale)*ui_height();
+    gfx_line(ui_left(), y, ui_right() - 1, y);
+
+    startpos = writepos;
+    ui_color(64, 128, 192);
+    draw_buffer(buffer0, startpos, scale);
+    ui_color(192, 128, 64);
+    draw_buffer(buffer1, startpos, scale);
+    ui_color(255, 255, 255);
+    draw_buffer(bufferpeak, startpos, scale);
+    draw_buffer(bufferpeak, startpos, -scale);
+
+    control_finish_passive();
+  );
+
+
+
+  function labelled_dial(skin, value, low, high, bias, label, formatvalue, format, default) (
+    ui_push();
+      ui_align(0.75, 0.5);
+      ui_push_width(55);
+        value = control_dial_left(skin,value, low, high, bias, default);
+      ui_pop();
+      ui_push_leftof(60);
+      ui_split_leftratio(1/2);
+      ui_pop();
+      ui_split_leftratio(1);
+      ui_split_topratio(1/4) ;
+      ui_split_next();
+        ui_align(1, 0.5);
+        ui_text(label);
+      ui_split_next();
+        ui_align(1, 0.5);
+        value = control_hidden_textnumber(value, formatvalue, format);
+      ui_pop();
+      ui_pop();
+      ui_pop();
+      ui_click() && ui_clickcount() == 2 ? (
+        value = default;
+      );
+    ui_pop();
+    value;
+  );
+
+  function orig_gfx() (
+    control_start("main", "bitmap-simple",0);
+    ui_screen() == "main" ? (
+      control_navbar("Smooth Limiter by Geraint Luff", -1, -1);
+      ui_split_left(max(ui_width()*0.4, 230));
+        ui_height() > 200 ? (
+          ui_split_bottom(min(ui_width()*0.5, ui_height()*0.4));
+            draw_response();
+          ui_pop();
+        );
+        ui_split_topratio(1/3);
+          ui_split_leftratio(1/2);
+            slider1 = labelled_dial(8,slider1, -20, -0.1, -3.5, "LIMIT", slider1, "%0.1fdB", -0.1);
+          ui_split_next();
+            slider5 = labelled_dial(7,slider5, -12, 12, 0, "PRE:", slider5 + (slider5 > 0 ? 0.002 : -0.002), abs(slider5) < 10 ? "%0.2fdB" : "%0.1fdB", 0);
+          ui_pop();
+        ui_split_next();
+          ui_split_leftratio(1/2);
+            slider2 = labelled_dial(7,slider2, 0.1, 100, 3, "ATK", slider2, "%0.1fms", 10);
+          ui_split_next();
+            slider3 = labelled_dial(7,slider3, 1, 500, 3, "REL", floor(slider3 + 0.5), "%ims", 100);
+          ui_pop();
+        ui_split_next();
+          ui_split_leftratio(5/6);
+            slider4 = labelled_dial(6,slider4, 0, 1, 0, "DRIVE", floor(slider4*100 + 0.5), "%i%%", 0);
+          ui_pop();
+        ui_pop();
+      ui_pop();
+      draw_peaks(0.5);
+    ) : control_system();
+  );
+
+  function dem_min_ui_size(dem_min_ui_width, dem_min_ui_height) (
+    (gfx_h <= dem_min_ui_height) ? (
+      ui_push_rect(0,0,gfx_w,dem_min_ui_height);
+      gfx_h = dem_min_ui_height
+    );
+  );
+
+  function gfx_ui_automate_slider(slidervar*, new_value) (
+    slidervar !== new_value ? (
+      slidervar = new_value;
+      slider_automate(slidervar);
+      //readout (slidervar);
+    );
+    new_value;
+  );
+
+  function gfx_ui_layout_textnumber(title, value, format) local(h) (
+    h = max((ui_height() - 60)/2, ui_height()*0.2);
+    ui_split_top(h);
+      ui_text(title);
+    ui_pop();
+    ui_split_bottom(h);
+      value = control_hidden_textnumber(value, value*1.00000001, format);
+    ui_pop();
+    value;
+  );
+
+  function gfx_ui_layout_textnumber_up_title(title, value, format) local(h) (
+    h = max((ui_height() - 60)/2, ui_height()*0.2);
+    ui_split_top(h);
+      ui_text(title);
+    ui_pop();
+    value;
+  );
+
+  function gfx_ui_layout_textnumber_up_value(title, value, format) local(h) (
+    h = max((ui_height() - 60)/2, ui_height()*0.2);
+    ui_split_top(h);
+      value = control_hidden_textnumber(value, value*1.00000001, format);
+    ui_pop();
+    value;
+  );
+
+  function gfx_ui_layout_textnumber_down_title(title, value, format) local(h) (
+    h = max((ui_height() - 60)/2, ui_height()*0.2);
+    ui_split_bottom(h);
+      ui_text(title);
+    ui_pop();
+    value;
+  );
+
+  function gfx_ui_layout_textnumber_down_value(title, value, format) local(h) (
+    h = max((ui_height() - 60)/2, ui_height()*0.2);
+    ui_split_bottom(h);
+      value = control_hidden_textnumber(value, value*1.00000001, format);
+    ui_pop();
+    value;
+  );
+
+  function gfx_ui_layout_textnumber_clear(title, value, format) local(h) (
+    value;
+  );
+
+  function gfx_ui_dial_rounded(dem_theme, slidervar*, low, high, bias, default, step) (
+    slidervar != floor(slidervar._ui_gen_float/step + 0.5)*step ? slidervar._ui_gen_float = slidervar;
+    slidervar._ui_gen_float = control_dial_left(dem_theme, slidervar._ui_gen_float, low, high, bias, default);
+    gfx_ui_automate_slider(slidervar, floor(slidervar._ui_gen_float/step + 0.5)*step);
+  );
+
+  function gfx_ui_layout_text(title, text) local(h) (
+    h = max((ui_height() - 60)/2, ui_height()*0.2);
+    ui_split_top(h);
+      ui_text(title);
+    ui_pop();
+    ui_split_bottom(h);
+      ui_text(text);
+    ui_pop();
+  );
+
+  function gfx_ui_layout_title(title) (
+    gfx_ui_layout_text(title, "");
+  );
+
+  function gfx_ui_radio_option(value, optionValue, optionText) (
+    ui_align(0.1, 0.5);
+    ui_split_left(30);
+      value = control_radio(value, optionValue);
+    ui_pop();
+    ui_click() ? value = optionValue;
+    ui_text(optionText);
+    value;
+  );
+
+  function dem_mcp_ui() (
+    control_start("main", "bitmap-simple",0);
+    ui_screen() === "main" ? (
+    ui_split_topratio(1/3);
+    ui_pop();
+    ui_split_topratio(8/10);
+    ui_split_leftratio(1/20);
+    ui_pop();
+    ui_split_leftratio(28/29);
+        ui_split_leftratio(3/8);
+          gfx_ui_automate_slider(slider1, gfx_ui_layout_textnumber_down_title("Limit", slider1, "%.1f dB"));
+          gfx_ui_dial_rounded(8,slider1, -20, -0.1, -3.5, -0.1, 0.1);
+        ui_pop();
+        ui_split_leftratio(3/5);
+          gfx_ui_automate_slider(slider5, gfx_ui_layout_textnumber_down_title("Pre", slider5, "%.1f dB"));
+          gfx_ui_dial_rounded(7,slider5, -12, 12, 0, 0, 0.1);
+        ui_pop();
+
+        ui_split_leftratio(1);
+            ui_split_topratio(1/2);
+              gfx_ui_automate_slider(slider2, gfx_ui_layout_textnumber_clear("anticipation", slider2, "%.1f ms"));
+              gfx_ui_dial_rounded(7,slider2, 0.1, 100, 3, 10, 0.1);
+            ui_split_next();
+              gfx_ui_automate_slider(slider3, gfx_ui_layout_textnumber_clear("A/R", slider3, "%.1f ms"));
+              gfx_ui_dial_rounded(7,slider3, 1, 500, 3, 100, 0.1);
+            ui_pop();
+        ui_pop();
+
+    ui_pop();
+    ui_pop();
+    gfx_r=gfx_g=gfx_b=0.4;
+    dx_lineheight=gfx_h/15;
+    gfx_rect(0,0,gfx_w,dx_lineheight);
+    gfx_rect(0,gfx_h-dx_lineheight,gfx_w,dx_lineheight);
+    ) : control_system();
+  );
+
+  function dem_full_ui() (
+    orig_gfx();
+  );
+
+  dem_initial_gfx_width = 300;  // inital width in @gfx width height
+  dem_initial_gfx_height = 230;  // inital height in @gfx width height
+  dem_max_mcp_height = (gfx_w *(dem_initial_gfx_height/dem_initial_gfx_width)); // keep ratio
+  zoom=get_zoom(dem_initial_gfx_width,dem_initial_gfx_height);
+  gfx_ext_flags==1 ? (
+    uix_default_fontsize = 7;
+    dem_min_ui_size(dem_initial_gfx_width, dem_max_mcp_height);
+    dem_mcp_ui();
+        barmeter_hor(reduction, 35, 25, 270, 240);
+  ) : (
+    uix_default_fontsize = 12;
+    //dem_min_ui_size(121, 121);
+    dem_full_ui();
+  );
+
+  ui_interacted() ? update();

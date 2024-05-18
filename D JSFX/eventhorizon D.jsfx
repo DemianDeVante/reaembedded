@@ -1,0 +1,248 @@
+// Copyright 2006, Thomas Scott Stillwell
+// All rights reserved.
+//
+//Redistribution and use in source and binary forms, with or without modification, are permitted 
+//provided that the following conditions are met:
+//
+//Redistributions of source code must retain the above copyright notice, this list of conditions 
+//and the following disclaimer. 
+//
+//Redistributions in binary form must reproduce the above copyright notice, this list of conditions 
+//and the following disclaimer in the documentation and/or other materials provided with the distribution. 
+//
+//The name of Thomas Scott Stillwell may not be used to endorse or 
+//promote products derived from this software without specific prior written permission. 
+//
+//THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR 
+//IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND 
+//FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS 
+//BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+//(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+//PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+//STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF 
+//THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+desc:Event Horizon Clipper (DD)
+//tags: dynamics limiter saturation
+//author: Stillwell
+
+slider1:0.0<-30.0,0.0,0.1>-Threshold (dB)
+slider2:-0.1<-20.0,0.0,0.1>-Ceiling (dB)
+slider3:2.0<0,6.0,0.01>-Soft Clip (dB)
+//slider4:10<3,20,0.1>Soft Clip Ratio
+
+in_pin:left input
+in_pin:right input
+out_pin:left output
+out_pin:right output
+
+filename:0,DGFX/eventhorizonclipper/bg.png
+filename:1,DGFX/eventhorizonclipper/bgmcp.png
+filename:2,DGFX/eventhorizonclipper/knob.png
+filename:3,DGFX/eventhorizonclipper/meter.png
+
+import DGFX/tk_lib_d.jsfx-inc 
+// vu meter library, skip this line if not using a meter
+import DGFX/tk-vu_lib_d.jsfx-inc
+
+options:no_meter
+options:gfx_hz=60
+// write a cool name to store jsfx memory below
+options:gmem=EventHorizonClipperD  
+
+@init
+  ext_tail_size = -1;
+  pi = 3.1415926535;
+  log2db = 8.6858896380650365530225783783321; // 20 / ln(10)
+  db2log = 0.11512925464970228420089957273422; // ln(10) / 20 
+  THISJSFX_VERSION = 1;
+  gfx_ext_retina = 1;
+  gfx_clear=0;
+  lastCap=1;
+  mouse_wheel=1;
+  Number_input = 0;
+  number_input_invalid = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  ext_noinit=1;
+
+  // tk extra features
+  lastCap=1;
+  mouse_wheel=1;
+  is_recording = 0; is_playing = 0; is_stopped = 1;
+  while_playing = 1; while_recording = 1; while_stopped = 1;
+  Number_input = 0;
+  number_input_raw = 0;
+  number_input_use = 0;
+  komma = 0;
+  in_key = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  number_input_slider = 0;
+  number_input_min=0;
+  number_input_max=0;
+  number_input_invalid = 0;
+  number_input_sign=1;
+  s2_numbers_of_sliders = 3;
+  s2_numbers_of_generics = 0;
+  group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
+  sliders_old = group_generics + 16*200;
+  generics_old = sliders_old + 16*64;
+  mouse_sensivity();
+
+  function parameters_update() (
+    parameters_update_on = 1;
+    group_parameters(); // tk extra features
+    // Paste all contents of @slider here
+    thresh=exp(slider1 * db2log);
+    threshdb=slider1;
+    ceiling=exp(slider2 * db2log);
+    ceildb=slider2;
+    makeup=exp((ceildb-threshdb) * db2log);
+    makeupdb=ceildb-threshdb;
+    sc = -slider3;
+    scv = exp(sc * db2log);
+    sccomp = exp(-sc * db2log);
+    peakdb = ceildb+25;
+    peaklvl = exp(peakdb * db2log);
+    scratio = slider4;
+    scmult = abs((ceildb - sc) / (peakdb - sc));
+    parameters_update_on = 0;
+    caller = 0;
+  );
+  
+  // skip this 3 lines if not using a gain reduction meter
+  //  --------------- VU METER  --------------- //
+  meterspeed76 = 40;
+  meter_maxdbtunning=1; //--------------------------------------------------------------------------------------------------------------
+  GRmeter.mn_meter_reinit2(meterspeed76, meter_maxdbtunning);
+  GRmeter.mn_meter_init();
+
+  function amp2db(sample)(
+    20*log(sample)/log(10);
+    conv_db_amp=sample;
+    conv_db_amp;
+  )
+@slider
+  caller = 1;
+
+@serialize // add this block for tk extra features
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped);
+  file_var(0, LA2Kan_VERSION);
+  file_var(0, link_group);
+  seriloop = 0;
+  loop(64*16 + 27 + 16,
+  file_var(0, gmem[seriloop]);
+  seriloop += 1;
+  );
+  seriloop = 0;
+  loop(200*16,
+  file_var(0, group_generics[seriloop]);
+  seriloop += 1;
+  );
+
+@block
+  // meter functionality
+  srate != srate_old ? (GRmeter.mn_meter_init();   GRmeter.mn_meter_reinit2(meterspeed76, meter_maxdbtunning); caller = 1);
+  srate_old = srate;
+  
+@sample
+  S2_sample_on = 1;
+
+  // extra tk features
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0;
+  group_check_smpl();
+
+  caller == 1 ? (
+    parameters_update_on == 0 ? (
+      parameters_update();
+    );
+  );
+
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
+
+  process == 1 ? ( 
+    originalPeak = max(amp2db(spl0), amp2db(spl1));
+    //originalPeak = spl0+spl1/2;
+
+    peak=max(abs(spl0),abs(spl1));
+    spl0=spl0*makeup;
+    spl1=spl1*makeup;
+    sign0 = sign(spl0);
+    sign1 = sign(spl1);
+    abs0=abs(spl0);
+    abs1=abs(spl1);
+    overdb0 = 2.08136898 * log(abs0) * log2db - ceildb;
+    overdb1 = 2.08136898 * log(abs1) * log2db - ceildb;
+    abs0 > scv ? (
+      spl0=sign0*(scv + exp(overdb0*scmult)*db2log);
+    );
+    abs1 > scv ? (
+      spl1=sign1*(scv + exp(overdb1*scmult)*db2log);
+    );
+
+    spl0=min(ceiling,abs(spl0))*sign(spl0);
+    spl1=min(ceiling,abs(spl1))*sign(spl1);
+    
+    processedPeak = max(amp2db(spl0), amp2db(spl1));
+    //processedPeak = spl0+spl1/2;
+    // locate the lines where the gain reduction value is declared, often it looks like this:
+    // gr = -overdb * allratio *  (cratio-1)/cratio;
+    // grv = exp(gr * db2log);                //         ------------- grv for use in vu meter
+    grv = -abs(processedPeak-originalPeak)/amp2db(makeup)* log2db;
+    grv = exp(grv*db2log);    
+    GRmeter.gr_mnmetersample(grv); //3.7 
+  ):(GRmeter.gr_mnmetersample(0));
+//@gfx 278 215 // linux
+@gfx 220 170 // win
+  tk_gfx_setup();
+  gfx_ext_flags == 0 ? (  // full ui
+    set_background(0);
+    //GRmeter.draw_meter(378, 35, 1.25, 3); //draw meter x, y, zoom, png       --remove this line if not using a meter
+    GRmeter.draw_meter2(3, 378, 35, 1.25, 1, 1, 0.2, 1.1, 37, 110, 0, 1.6);
+
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                   (slider    default     min      max  step        x        y   frames  scaling  file  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    kThres.parameter_config   ( 1,             0,    -30,       0,  0.1,     96/2,   170/2,     0,       1,     2,    1,       0);    
+    kSoft.parameter_config    ( 3,             2,      0,       6, 0.01,    289/2,   170/2,     0,       1,     2,    1,       0);    
+    kCeil.parameter_config    ( 2,          -0.1,    -20,       0,  0.1,    483/2,   170/2,     0,       1,     2,    1,       0);    
+    //Buttons              (slider     orient  off_val   on_val     x        y           scaling  file  mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
+    //.button_config         (  ,              ,       ,        ,       ,        ,              1,      ,    1);
+    setup_dmenu("Stillwell Event Horizon Clipper", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.5); // setup menu, arguments: jsfx name, version, graphics, zoom
+
+    mouse_wheel=0;
+
+  ):gfx_ext_flags == 1 ? ( // embedded mcp ui
+    set_background(1,0.412,0.333,0.059);
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                   (slider    default     min      max  step        x        y   frames  scaling  file  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    kThres.parameter_config   ( 1,             0,    -30,       0,  0.1,     28/2,   214/2,     0,       1,     2,    1,       0);    
+    kSoft.parameter_config    ( 3,             2,      0,       6, 0.01,    218/2,   214/2,     0,       1,     2,    1,       0);    
+    kCeil.parameter_config    ( 2,          -0.1,    -20,       0,  0.1,    414/2,   214/2,     0,       1,     2,    1,       0);    
+    //Buttons              (slider     orient  off_val   on_val     x        y           scaling  file  mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
+    //.button_config         (  ,              ,       ,        ,       ,        ,              1,      ,    1);
+
+    mouse_wheel=0;
+
+    barmeter_hor(grv, 80/2, 25/2, 520/2, 460/2, 0); // grvalue, y, h, x, w
+
+  );
+  
+  // update parameters
+  S2_sample_on == 0 ? (
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
+  group_check_gfx(); // tk extra features
+    caller == 1 ? (
+        parameters_update_on == 0 ? (
+          parameters_update();
+        );
+    );
+  );
+  S2_sample_on = 0;

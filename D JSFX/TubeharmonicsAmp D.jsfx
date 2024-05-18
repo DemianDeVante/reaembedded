@@ -1,0 +1,341 @@
+// (C) 2009, Lubomir I. Ivanov
+//
+// NO WARRANTY IS GRANTED. THIS PLUG-IN IS PROVIDED ON AN "AS IS" BASIS, WITHOUT
+// WARRANTY OF ANY KIND. NO LIABILITY IS GRANTED, INCLUDING, BUT NOT LIMITED TO,
+// ANY DIRECT OR INDIRECT,  SPECIAL,  INCIDENTAL OR CONSEQUENTIAL DAMAGE ARISING
+// OUT OF  THE  USE  OR INABILITY  TO  USE  THIS PLUG-IN,  COMPUTER FAILTURE  OF
+// MALFUNCTION INCLUDED.  THE USE OF THE SOURCE CODE,  EITHER  PARTIALLY  OR  IN
+// TOTAL, IS ONLY GRANTED,  IF USED IN THE SENSE OF THE AUTHOR'S INTENTION,  AND
+// USED WITH ACKNOWLEDGEMENT OF THE AUTHOR. FURTHERMORE IS THIS PLUG-IN A  THIRD
+// PARTY CONTRIBUTION,  EVEN IF INCLUDED IN REAPER(TM),  COCKOS INCORPORATED  OR
+// ITS AFFILIATES HAVE NOTHING TO DO WITH IT.  LAST BUT NOT LEAST, BY USING THIS
+// PLUG-IN YOU RELINQUISH YOUR CLAIM TO SUE IT'S AUTHOR, AS WELL AS THE CLAIM TO
+// ENTRUST SOMEBODY ELSE WITH DOING SO.
+// 
+// Released under GPL:
+// <http://www.gnu.org/licenses/>.
+//
+//**********************************************************
+// Tube Harmonics:
+// Simulates the behaviour of a vacuum tube circuit stage. 
+// Adds odd and even harmonics to the signal.
+// Has flux and program dependent saturation.
+//**********************************************************
+
+desc: Tube Harmonics (DD)
+
+slider1:0.3<0,1,0.001>-Even Harmonics
+slider2:0.3<0,1,0.001>-Odd Harmonics
+slider3:0.3<0,1,0.001>-Fluctuation
+slider4:0<-24,24,0.001>-TS Input (dB)
+slider5:0<-24,24,0.001>-TS Output (dB)
+slider6:0<-12,12,0.001>-Output Gain (dB)
+slider7:0<0,1,1>-Normal/Amp
+
+filename:0,DGFX/tubeharmonics/bg.png
+filename:1,DGFX/tubeharmonics/knob.png
+filename:2,DGFX/tubeharmonics/knob-small.png
+filename:3,DGFX/tubeharmonics/button-switch.png
+filename:4,DGFX/tubeharmonics/button-tubes.png
+filename:5,DGFX/tubeharmonics/bgmcp.png
+
+import DGFX/tk_lib_d.jsfx-inc 
+options:no_meter
+options:gmem=tubeharmonicsD   
+@init
+    gfx_ext_retina = 1;
+    gfx_clear=0;
+    lastCap=1;
+    mouse_wheel=1;
+    Number_input = 0;
+    number_input_invalid = 0;
+    number_input_x = 0;
+    number_input_y=0;
+    ext_noinit=1;
+
+    // tk extra features
+    lastCap=1;
+    mouse_wheel=1;
+    is_recording = 0; is_playing = 0; is_stopped = 1;
+    while_playing = 1; while_recording = 1; while_stopped = 1;
+    Number_input = 0;
+    number_input_raw = 0;
+    number_input_use = 0;
+    komma = 0;
+    in_key = 0;
+    number_input_x = 0;
+    number_input_y=0;
+    number_input_slider = 0;
+    number_input_min=0;
+    number_input_max=0;
+    number_input_invalid = 0;
+    number_input_sign=1;
+    s2_numbers_of_sliders = 10; // set the number of sliders for gorup linking
+    s2_numbers_of_generics = 0;
+    group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
+    sliders_old = group_generics + 16*200;
+    generics_old = sliders_old + 16*64;
+
+    mouse_sensivity();
+    seed0=rand(999)|0;
+    while(seed1=rand(999)|0;seed1==seed0;);
+    sc_y0=sc_y1=1;
+
+    function parameters_update() (
+    parameters_update_on = 1;
+    group_parameters(); // tk extra features
+    // Paste all contents of @slider here
+    amp=slider7;
+    amp==0?(
+        tgt_drve=slider1*4;
+        drvo=slider2*9;
+        kr=slider3;
+        kabs=slider3*10;
+        ingain=2^((slider4/2)/6);
+        hgain=2^((slider5/2)/6);
+        trim=2^(slider6/6);
+    ):( // amp mode
+        tgt_drve=slider1*2;
+        drvo=slider2*2;
+        kr=slider3*0.3;
+        kabs=slider3*0.3;
+        ingain=2^(slider4/6);
+        hgain=2^(slider5/6);
+        trim=2^(slider6/6);
+    );
+    parameters_update_on = 0;
+    caller = 0;
+    );
+@slider
+  caller = 1;
+
+@serialize // add this block for tk extra features
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped);
+  //file_var(0, LA2Kan_VERSION);
+  file_var(0, link_group);
+  seriloop = 0;
+  loop(64*16 + 27 + 16,
+  file_var(0, gmem[seriloop]);
+  seriloop += 1;
+  );
+  seriloop = 0;
+  loop(200*16,
+  file_var(0, group_generics[seriloop]);
+  seriloop += 1;
+  );
+
+@sample
+
+  S2_sample_on = 1;
+
+  // extra tk features
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0;
+  group_check_smpl();
+
+  caller == 1 ? (
+    parameters_update_on == 0 ? (
+      parameters_update();
+    );
+  );
+
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
+
+  process == 1 ? ( 
+        
+        amp==0?(
+            ka=0.97;
+            kb=1-ka;
+            lim=0.5;
+        ):( // amp mode
+            ka=0.99;
+            kb=1-ka;
+            lim=0.4;
+        );
+        // set in gain
+        ch0=spl0*ingain;
+        ch1=spl1*ingain;
+
+        //interpolate
+        y0+=d_y0;
+        y1+=d_y1;
+        abs0+=d_abs0;
+        abs1+=d_abs1;
+        drve+=d_drve;
+
+        //set drive values
+        drve_rnd0=drve-abs0;
+        drve_rnd1=drve-abs1;
+        drvo_rnd0=drvo-abs0-y0;
+        drvo_rnd1=drvo-abs1-y1;
+
+        //apply harmonics
+        amp==0?(
+            h0=sin(ch0)/sin(ch0*2)*drve_rnd0+(ch0-tan(ch0))*drvo_rnd0;
+            h1=sin(ch1)/sin(ch1*2)*drve_rnd1+(ch1-tan(ch1))*drvo_rnd1;
+        ):( // amp mode
+            h0=sin(ch0*drve_rnd0)/sin(ch0)*drve+(tan(ch0)*drvo_rnd0)*drvo*0.3;
+            h1=sin(ch1*drve_rnd1)/sin(ch1)*drve+(tan(ch1)*drvo_rnd1)*drvo*0.3;
+        );
+
+        //dc filter i
+        dc00=h0-(dcf00=h0*kb+dcf00*ka);
+        dc01=h1-(dcf01=h1*kb+dcf01*ka);
+
+        //limiter
+        lim0=min(max(dc00*hgain,-lim),lim);
+        lim1=min(max(dc01*hgain,-lim),lim);
+
+        //fir filter
+        amp==0?(
+            m01=m00;m03=m02;m05=m04;
+            fir0=0.5*(m05+m04=0.5*(m03+m02=0.5*(m01+m00=lim0)));
+            m11=m10;m13=m12;m15=m14;
+            fir1=0.5*(m15+m14=0.5*(m13+m12=0.5*(m11+m10=lim1)));
+        ):( // amp mode
+            m01=m00;m03=m02;
+            fir0=0.5*(m03+m02=0.5*(m01+m00=lim0));
+            m11=m10;m13=m12;
+            fir1=0.5*(m13+m12=0.5*(m11+m10=lim1));
+        );
+
+        //dc filter ii
+        dc10=fir0-(dcf10=fir0*kb+dcf10*ka);
+        dc11=fir1-(dcf11=fir1*kb+dcf11*ka);
+
+        //sum
+        spl0=(spl0+dc10)*trim;
+        spl1=(spl1+dc11)*trim;
+    );
+
+@block
+    //*** interpolate parameters
+
+    d_drve=(tgt_drve-src_drve)/samplesblock;
+    drve=src_drve;
+    src_drve=tgt_drve;
+
+    sc_y0=sin((seed0+=1)*sc_y0);
+    tgt_y0=sc_y0*kr;
+    d_y0=(tgt_y0-src_y0)/samplesblock;
+    y0=src_y0;
+    src_y0=tgt_y0;
+
+    sc_y1=sin((seed1+=1)*sc_y1);
+    tgt_y1=sc_y1*kr;
+    d_y1=(tgt_y1-src_y1)/samplesblock;
+    y1=src_y1;
+    src_y1=tgt_y1;
+
+    tgt_abs0=abs(ch0)*kabs;
+    d_abs0=(tgt_abs0-src_abs0)/samplesblock;
+    abs0=src_abs0;
+    src_abs0=tgt_abs0;
+
+    tgt_abs1=abs(ch1)*kabs;
+    d_abs1=(tgt_abs1-src_abs1)/samplesblock;
+    abs1=src_abs1;
+    src_abs1=tgt_abs1;
+
+//@gfx  170 200 // linux
+@gfx 135 158 // windows
+  tk_gfx_setup();
+  gfx_ext_flags == 0 ? (  // full ui
+    set_background(0);
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                 (slider    default     min      max  step         x          y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    Even.parameter_config   ( 1,           0.3,      0,       1,    0,     195/2,      62/2,     0,       1,     1,    1,       0);    
+    Odd.parameter_config    ( 2,           0.3,      0,       1,    0,     348/2,      62/2,     0,       1,     1,    1,       0);   
+    Fluct.parameter_config  ( 3,           0.3,      0,       1,    0,     136/2,     140/2,     0,       1,     2,    1,       0);   
+    Input.parameter_config  ( 4,             0,    -24,      24,    0,      77/2,      27/2,     0,       1,     1,    1,       0);    
+    Output.parameter_config ( 5,             0,    -24,      24,    0,     465/2,      27/2,     0,       1,     1,    1,       0);   
+    Gain.parameter_config   ( 6,             0,    -12,      12,    0,     438/2,     135/2,     0,       1,     2,    1,       0); 
+    //Buttons               (slider     orient  off_val   on_val     x        y           scaling   png  mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
+    Mode.button_config      ( 7,             1,      0,       1,    283/2,   100/2,              1,     3,    1);
+
+    gfx_a=0.8;
+    slider7==0?(
+        //left tube
+        gfx_x=20*zoom/2;
+        gfx_y=120*zoom/2;
+        gfx_blit(4,1*zoom/2,0, 0, 0, 33, 73);
+        //right tube
+        gfx_x=570*zoom/2;
+        gfx_y=120*zoom/2;
+        gfx_blit(4,1*zoom/2,0, 0, 0, 33, 73);
+    ):(
+        //left tube
+        gfx_x=20*zoom/2;
+        gfx_y=120*zoom/2;
+        gfx_blit(4,1*zoom/2,0, 0,73, 33, 73);
+        //right tube
+        gfx_x=570*zoom/2;
+        gfx_y=120*zoom/2;
+        gfx_blit(4,1*zoom/2,0, 0,73, 33, 73);
+    );
+
+    setup_dmenu("Liteon TubeHarmonics", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.1); // setup menu, arguments: jsfx name, version, graphics, zoom
+
+    mouse_wheel=0;
+  ):gfx_ext_flags == 1 ? ( // embedded mcp ui
+    set_background(5,0.424,0.424,0.424);
+
+    //Knobs                 (slider    default     min      max  step         x          y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    Even.parameter_config   ( 1,           0.3,      0,       1,    0,      18/2,      26/2,     0,       1,     1,    1,       0);    
+    Odd.parameter_config    ( 2,           0.3,      0,       1,    0,     114/2,      26/2,     0,       1,     1,    1,       0);   
+    Fluct.parameter_config  ( 3,           0.3,      0,       1,    0,      35/2,     195/2,     0,       1,     2,    1,       0);   
+    Input.parameter_config  ( 4,             0,    -24,      24,    0,      18/2,     118/2,     0,       1,     1,    1,       0);    
+    Output.parameter_config ( 5,             0,    -24,      24,    0,     114/2,     118/2,     0,       1,     1,    1,       0);   
+    Gain.parameter_config   ( 6,             0,    -12,      12,    0,     112/2,     195/2,     0,       1,     2,    1,       0); 
+
+    //Knobs                 (slider    default     min      max  step         x          y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    Even.parameter_config   ( 1,           0.3,      0,       1,    0,      18/2,     118/2,     0,       1,     1,    1,       0);    
+    Odd.parameter_config    ( 2,           0.3,      0,       1,    0,     114/2,     118/2,     0,       1,     1,    1,       0);   
+    Fluct.parameter_config  ( 3,           0.3,      0,       1,    0,      35/2,     195/2,     0,       1,     2,    1,       0);   
+    Input.parameter_config  ( 4,             0,    -24,      24,    0,      18/2,      26/2,     0,       1,     1,    1,       0);    
+    Output.parameter_config ( 5,             0,    -24,      24,    0,     114/2,      26/2,     0,       1,     1,    1,       0);   
+    Gain.parameter_config   ( 6,             0,    -12,      12,    0,     112/2,     195/2,     0,       1,     2,    1,       0); 
+
+    //Buttons               (slider     orient  off_val   on_val     x        y           scaling   png  mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
+    Mode.button_config      ( 7,             1,      0,       1,    78/2,   85/2,              1,     3,    1);
+    gfx_a=0.8;
+    slider7==0?(
+        //left tube
+        gfx_x=10*zoom/2;
+        gfx_y=195*zoom/2;
+        gfx_blit(4,0.7*zoom/2,0, 0, 0, 33, 73);
+        //right tube
+        gfx_x=165*zoom/2;
+        gfx_y=195*zoom/2;
+        gfx_blit(4,0.7*zoom/2,0, 0, 0, 33, 73);
+    ):(
+        //left tube
+        gfx_x=10*zoom/2;
+        gfx_y=195*zoom/2;
+        gfx_blit(4,0.7*zoom/2,0, 0,73, 33, 73);
+        //right tube
+        gfx_x=165*zoom/2;
+        gfx_y=195*zoom/2;
+        gfx_blit(4,0.7*zoom/2,0, 0,73, 33, 73);
+    );
+    mouse_wheel=0;
+  );
+  
+  // update parameters
+  S2_sample_on == 0 ? (
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
+  group_check_gfx(); // tk extra features
+    caller == 1 ? (
+        parameters_update_on == 0 ? (
+          parameters_update();
+        );
+    );
+  );
+  S2_sample_on = 0;
+
