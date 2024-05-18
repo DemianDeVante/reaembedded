@@ -1,7 +1,7 @@
 import os
 
 def generate_github_links(username, repository, branch, file_paths):
-    base_url = f"https://raw.githubusercontent.com/{username}/{repository}/{branch}/"
+    base_url = f"https://raw.githubusercontent.com/{username}/{repository}/{branch}/D%20JSFX/"
     links = [base_url + path.replace("\\", "/") for path in file_paths]
     return links
 
