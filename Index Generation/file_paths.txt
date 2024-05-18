@@ -1,0 +1,380 @@
+.gitattributes
+LICENSE
+README.md
+index.xml
+.git/HEAD
+.git/FETCH_HEAD
+.git/index
+.git/config
+.git/description
+.git/COMMIT_EDITMSG
+.git/logs/HEAD
+.git/logs/refs/heads/main
+.git/logs/refs/remotes/origin/HEAD
+.git/logs/refs/remotes/origin/main
+.git/objects/b8/5b584229ec2bb943d414cbcb22a94c2ef29fdd
+.git/objects/14/a1061f47df7b72e5ceccdb77d2c2c5d5387509
+.git/objects/14/8b1c1f09d271056a6b4070c1e4296e805df445
+.git/objects/6d/1a3645aa7359c09167bf94b10693054d2c2ae2
+.git/objects/8b/7914bbaac9491dab98b3e920ca48aefc1be768
+.git/objects/10/71994147de12c385fb2929b98617761d852d0d
+.git/objects/8a/4f5cc86da8c031c7fb7e824f70199d8ece96a1
+.git/objects/f6/c35fa2a200ab7c3ac0179e3782581f08a0c24f
+.git/objects/6e/9b1400f85ffca8a1655d6267a06d7bbe60c1a2
+.git/objects/a2/36f69439a12c3ec2586fb1817b1f8061991550
+.git/objects/cc/5af08601ffb41923f4144886962b7b2938527d
+.git/objects/cc/cefc3910222a8df808b8aaa8a6b2b0ceda69c7
+.git/objects/ef/0a77f3d61c0db467c4ad4ea55bfba209c1bf53
+.git/objects/5d/e4dac54540f71b52570589aa811fce3d47f462
+.git/objects/5d/0657515cfa8bb86485a0122d642ae474012b9f
+.git/objects/28/32f474ce16f53c80c6549879c5a78c9d052616
+.git/objects/30/c4f40619084a780005ab321bea6e708fc36892
+.git/objects/6b/740a5c7711bd17765c0042f6b0fcad86693320
+.git/objects/6b/364675f3cb49a8cb7899d275896570a4f00ea6
+.git/objects/9b/41797e1a2d34a8713f1af1c5355cee55da9621
+.git/objects/70/2eb7110f4aab003bb868f2054bb69a79e8b786
+.git/objects/70/abb2ee2a6bedb558919a3e62f3b050568b2913
+.git/objects/7f/948df5480a24a54683169fade90a32a78a3ed6
+.git/objects/d8/18fb50190ab68b09cfde33b1d7ec6412e28d4c
+.git/objects/c3/b58e1e6773e4f5f120c72dcb8b43b84e54ea2c
+.git/objects/c3/8da1fa4ee39ee4f5df42feaafc2108d7a40edf
+.git/objects/c3/238ad74da980d82aee8fffebb9376f0d35c5e1
+.git/objects/3e/c006098cc680f9a4511c38c633fdd5b51afbb3
+.git/objects/3e/751f80dfd018c39f498c1771cbd2dc1b08d124
+.git/objects/cf/cea4d985f6c24b0fd66a791d40730ad37fa7bc
+.git/objects/95/68e9c514fee75e1e628e3b73d8f1d966836ea3
+.git/objects/27/8cef95c437029e009d8850f67e75b06750cdda
+.git/objects/7d/d53614b0c918c4a463291820a815035cc2315f
+.git/objects/d0/d5058836e03a57a699f3356665cf329cc2e311
+.git/objects/d0/d2bdae35c37a351bc2f92d550eda5099e7a808
+.git/objects/4e/eda172dd20fd90fc83dcb34fb4db24828bdb92
+.git/objects/4e/633a262030aa308e0f64ed5ad6342b24d9eb5e
+.git/objects/4e/455d8992eeb38746abe2a08beecf9a286995e5
+.git/objects/55/f43e1ac86977440c957339d9c0caab68f6e510
+.git/objects/55/f30f386b9d50cf13182e1f3c9934b25b1ad73d
+.git/objects/0b/76426c3d6af741f1839cce40cf3a55f71fc9ca
+.git/objects/0b/85ec1da7e9e49cd0dfa7372dfe3a48ae69efaf
+.git/objects/b5/6fcc7c9d1565a7c1a3334e8f93437c6a880d19
+.git/objects/be/c621a414773356f81c51a19551cb5d64541646
+.git/objects/67/9032195bc3a55fff91cfd634d2159f601865e3
+.git/objects/86/c68d74202c66fa1a1df7108d75cd287757e6e0
+.git/objects/34/b86e32971e51dd4d00b3c0c3e5fd858a2c1039
+.git/objects/20/5ba6e17e756134328ecca1bd92f81bbeac79d0
+.git/objects/78/1c7eabcaf240c2b834b2a77389de1e53621548
+.git/objects/84/173ea59a323002b28d54eff9bb1036b1f07d25
+.git/objects/84/06b3add81b8f6932b0384b6916d9ae46775ca2
+.git/objects/cd/1c6f467306e79795294a24d1e30a68bd9267a3
+.git/objects/79/4b49005c31187a5d111607b4612548152ee0bc
+.git/objects/79/4db8c06058bf799553ca2f006b1e452dfcb470
+.git/objects/2c/ab2f85654afba8238c616e00419996b9e05f25
+.git/objects/2c/d5f1f504e7ca84802002e98cd0e9a3777c4145
+.git/objects/2c/932d2c67fa58f161a776cab7ad007efb7e62db
+.git/objects/2c/d3431f925a10230bff863565ee3767639d96f6
+.git/objects/02/742459a987d069a030622cc28dce5e597b250e
+.git/objects/02/d0886e44540a28af9609f5cccbaba85087e726
+.git/objects/1d/0a39c704cbb28c20b683f824b26475fa9b985d
+.git/objects/1d/116ff24108e7e51daf02c27a977817230849d9
+.git/objects/f1/0671f85863518df9e1bfaf32fd3d182976cdf7
+.git/objects/f3/d371ecb50c7b2acf9e6e50c983c956207fed5c
+.git/objects/f3/683c6563fd356baf769880b99fd0e04767345b
+.git/objects/e8/72eac0c2d6ece935400e6f5db81a9ad5e57d9e
+.git/objects/45/7d1514f4d56ea35fbaf78242e984614a840366
+.git/objects/7a/4e87a610b14d8ac4d5359f7d5657df1fc0b6d0
+.git/objects/7a/6e56bcf54dc7a8d2856f34bd745b860a781b1e
+.git/objects/96/1ae5ab02fbd09df69e75b95b14fb92fb339c21
+.git/objects/c0/db5bc53c11da5ebd2763f00994591c6d464b46
+.git/objects/a5/d57e5cdf6dd2d6b2ac89b5a25cf55763869b0f
+.git/objects/83/d8959d9367494eebf58e227eb6ed91a8764757
+.git/objects/83/f3104414c5bdce6877821d9817f7c95169f63f
+.git/objects/83/651f3a7181394c659d74172b96c0970b17a00a
+.git/objects/08/0f53adb4f3cccb2c60a9a6433a7923d97ac796
+.git/objects/c2/2b3f30ff8b78a6e3d8759b1a5af2d69cff1b24
+.git/objects/a7/336d0c25c92b9222dc11e0ae0617ab35863b2d
+.git/objects/e4/c4b61273daf60c725f19cbcbc8dfbaf223f271
+.git/objects/e4/426d6783ee58ea96dee63e956bce4375321976
+.git/objects/a4/c6941ceb921fbbb3e14646c57af864e6272c18
+.git/objects/a0/7da6d8f0c88667cd11198c9d8e4a7f90aca681
+.git/objects/dc/93b15a65f034411d7c75bc626fc0ecb3fe0319
+.git/objects/6a/47c841e735d5b0fd83d0a355e95ff42018458e
+.git/objects/76/fb2f6b8a736662b88a925025fdfa377e425172
+.git/objects/e0/537577b8ca102d6aab4c4008e6ad3a13886843
+.git/objects/b9/6e712d817065fee85d9fff81c29d52ea58944a
+.git/objects/b9/93f6ffc93041e83728db8a769ffbb11cfccbd5
+.git/objects/47/5e5ecca90b1c0715debb4225f0db61daf5f70d
+.git/objects/21/270126a39f6c390289b037faa59fe6026327a3
+.git/objects/90/8453753d0f325854250145d8895817d8713388
+.git/objects/90/9b49feed76f2b2658d0e066a18d57aa40b5fcf
+.git/objects/90/9e61034a631cba61657764d7fa1578cca34f2c
+.git/objects/05/4d6befe71c478b28680054cb6da5019a7d7c70
+.git/objects/05/2832ed60d871389cf8b22ba3e486a0eaa9a0a5
+.git/objects/f9/df0baf8ce4498046b478f8dd7186677f191202
+.git/objects/c6/b555adc31950ebde0f3d2299bd6caaeeed0ca3
+.git/objects/97/a206a0db63193c6ef664bf06f6f713151c1477
+.git/objects/9a/f3a76a6886434237bc3a6f4c664e5b318cb073
+.git/objects/9a/faaa8bef931f9e155a820efb894a9f48c75211
+.git/objects/7e/6885e1d0e66827fcdf9afabe71b6014f6894aa
+.git/objects/ba/b7cb6a87e2ac532519b907c710b98157d77e91
+.git/objects/72/c4a7a63a4264770418d4d25fdc5388ac86e8a9
+.git/objects/49/fdda88da119010f483d19242013f33d1c9d7aa
+.git/objects/fc/b22b4c18dd2703497166d0e21eb20115e718ec
+.git/objects/2a/8a37189093476cde4d416a04432a3a0046472d
+.git/objects/61/916e95eb16c91b2e7381c7628be4aeb62543d0
+.git/objects/56/953d871dbd9290869e57e3ccb800f19e0adbc9
+.git/objects/59/1a7469dfde011b86a54a2b93331ecf9ad040ff
+.git/objects/59/906b3985f5508f8860e6411debb12c152a4fe0
+.git/objects/0c/d6c522d25fffbdf98fa205b2c00ad3326cd322
+.git/objects/0c/409b78389dccb5823dbab324431e3e5ca68a7b
+.git/objects/4b/20413a5404bb06f19ffb54c70be0758de65c93
+.git/objects/4b/35ce116c3ea7fcbaaefc80e10ad0762b461ada
+.git/objects/71/6b40c2395b82b838dcce8f91474c2c2e8ee130
+.git/objects/71/5ddfb2a6c43603a189484b083e7af44f2a8cd0
+.git/objects/ce/a3e7f75d86e237487a3142640dc217bc589cbd
+.git/objects/d6/b5577926bc90396169aaab812a6faac32ab25a
+.git/objects/1c/4dab9faac1aa3c087337c1e83c107e0caaea4c
+.git/objects/c5/c5d46ff122aeb8a21e8d9e66cb8fcf0ac5ab34
+.git/objects/c5/72bbaf15e83db05db59f8eab99e1b77f2912cb
+.git/objects/a3/59e8dff83ffd670bc82fef3520d0bcbea1d4fb
+.git/objects/39/5bcb1af627683dacb6dcf93eea95f26edc7ee2
+.git/objects/ed/3dd7401ea6822fc202bd3c047f156cad749968
+.git/objects/92/babbb1727c3831d0365dda647797352d3566b9
+.git/objects/dd/f6fadc857ba478c8eb9cac9d2621a0a064cf1c
+.git/objects/dd/54d192d681e8b48a10ef33b69e88bd0b7fe9f2
+.git/objects/0d/c58f818d871bb8c1758e6845d6b754441be903
+.git/objects/01/9e6ec641f9f39f15a7a0e7bea4e02451fed3da
+.git/objects/1f/5320b509d4d778d84c4125c8c271250503946a
+.git/objects/da/c5c43ac3cc67bf0cc372b8666e9ad0b7662fbf
+.git/objects/07/69c792d763324487e3eb545afb340d087ecc12
+.git/objects/41/eee33ee301ba248295d796046a64b2555c32a0
+.git/objects/41/d053fe47df03e42d143e5d0f3ffe61d5a32f7a
+.git/objects/0f/aa1d1459edee62203a4726bceab0bd8bcdd620
+.git/objects/e2/39e6aa9786b724f725259557db1901dfba5242
+.git/objects/e2/252b2c5891364f154481e1f15e194ee3f84890
+.git/objects/e2/df025b80e4132b8076451ee133e93214774911
+.git/objects/23/af641d1b362d4f523832e2794f1b8a91c55ed4
+.git/objects/3a/328f9fdee08c8c4223dfd30a057dfe10c15a49
+.git/objects/3a/1a32a9e7f945a8538f567e5dd40beb76697d6e
+.git/objects/19/180c73a259f0064c1e6784628dd2f2ee2dc755
+.git/objects/c1/0e0426df7d421a3db247dd38118a57883898ee
+.git/objects/50/3b3ea6ac8f71727f9ba62ec6f2218cfcf2da41
+.git/objects/e5/14bb51d1a6227b95113e00ed10217a8b02503e
+.git/objects/74/3a8adbd0063058db3b968ac0b102c42dec83fd
+.git/objects/74/1d70732885f5cb51a1c3d8679af1c0f790ccf2
+.git/objects/8d/fd8b3e7a30520e0905292628e81c69596f31e4
+.git/objects/5f/246548b8bc0f80b3077cfca80006531b820312
+.git/objects/31/2f5b2024f3b601cc445ba1dae1e957827554b8
+.git/objects/60/4c4ba37b857eb74b0854ab513eaf1265fbe484
+.git/objects/b0/6a045965b39a3b4598b9420a0457eb204fa0a8
+.git/objects/82/ccd1dd7196a997e869918b9f7882a83fde38ae
+.git/objects/37/789db3754e43d1617e175fd1bc80dc19a7120d
+.git/objects/e3/6b3b247d04157ec1db1245fa39c1cd6c26a064
+.git/objects/e3/77982f580f9ccc00c01d49eef1c8a539cf28e1
+.git/objects/e3/bd904aa0adbefbacab1c03cddb137fe0c686be
+.git/objects/04/56da3a336706b58f1fc1952e619ffe4fc7f4b3
+.git/objects/04/a4c2ab2666a47af62cd03aae42ebbb2e2e9391
+.git/objects/69/f10a354f1bb0db1f4429250189d00f79508457
+.git/objects/38/337ba4af5dc4dd1ba82a294249cd37f71d747a
+.git/objects/5e/76c69351291ed843be7ff1c4d145d885c35603
+.git/objects/5e/6f37c5d342d3844d6e933deabccc3a6ac01967
+.git/objects/89/86f188892b6d25877343654cda5dcb98c78cf7
+.git/objects/7c/55f79f8176002c33c715d8c5891fd68bdaffc5
+.git/objects/73/7668ba97c7e1dae6e32330e6acb68efe6ab4cc
+.git/objects/e6/2ec04cdeece724caeeeeaeb6ae1f6af1bb6b9a
+.git/objects/d4/9d66c856078a44fd1830633d62587d7e41073f
+.git/objects/d4/f3500b190663a4b2557b826c26cdc72c3dea54
+.git/objects/d4/44901526afbd5376b720f2ed6185784574c154
+.git/objects/93/02f5991712a1b26ac3a2f0b5a59fb75e1f392f
+.git/objects/93/08655e38e7bf8209f03e4b00752733ddd4003b
+.git/objects/2e/3604e847507c037f822c99f7f9ea0985b7b632
+.git/objects/68/56cbd3d8fda66c1c965a3fe642e2517a96eaf1
+.git/objects/75/315179d713b8d3b5200eb3ec00fe4bb8a42ec5
+.git/objects/c7/dafa573bb8614d810fd464f51370cf06dad9e9
+.git/objects/df/e0770424b2a19faf507a501ebfc23be8f54e7b
+.git/objects/85/ba806cfc3254a2818fcba3549000bf38082d6b
+.git/objects/d2/de6c90c73af0498be99e4818210888c4bc4fb1
+.git/objects/09/5e449fab3996a84dd856c6a1c8e6cc1a679082
+.git/objects/8c/5fab1dcdd808b7e859d9a9a061d5fdc178331e
+.git/objects/a1/b9cb1d801f7336409d01cdc611cc55407c468a
+.git/objects/a1/1c7798278f58027ce25505a1011cbb1f6b264a
+.git/objects/99/fb8435970856b4d0b192aef12b776da2b11ce4
+.git/objects/77/30c88a8d83fd706d378c55b3c87ce532760f28
+.git/objects/17/8e6daeec8f2157ef1146c2c8cedf69913ffc8c
+.git/objects/17/f2f13b9d5574ec97bbb825f8a4e51f8709c717
+.git/objects/1e/acd09b869c174fedaa0d3f5c602655f43233da
+.git/objects/1e/adc0ca93251f7c89085e8be5fbbecd0df8a884
+.git/objects/ff/786a6ea5dcaa455fda2ce2b4cbbbe4cb1f4f6c
+.git/objects/a8/761d84ac3ca74ebf902bf833f62c7001b1f503
+.git/objects/a8/800af6c609f8620c9a50710c301771902f8a32
+.git/objects/1a/aefae0ed70b84c6f83b67e1cbc3d9aee3f8c4d
+.git/objects/65/202dfe8700900951b23ac22ac2eb671bebe3ff
+.git/hooks/prepare-commit-msg.sample
+.git/hooks/sendemail-validate.sample
+.git/hooks/pre-rebase.sample
+.git/hooks/fsmonitor-watchman.sample
+.git/hooks/pre-applypatch.sample
+.git/hooks/commit-msg.sample
+.git/hooks/pre-receive.sample
+.git/hooks/applypatch-msg.sample
+.git/hooks/update.sample
+.git/hooks/pre-commit.sample
+.git/hooks/post-update.sample
+.git/hooks/push-to-checkout.sample
+.git/hooks/pre-push.sample
+.git/hooks/pre-merge-commit.sample
+.git/refs/heads/main
+.git/refs/remotes/origin/HEAD
+.git/refs/remotes/origin/main
+.git/info/exclude
+Index Generation/formatxml.py
+Index Generation/filepaths.py
+Index Generation/gitlinks.py
+D JSFX/1175 D.jsfx
+D JSFX/1979 D.jsfx
+D JSFX/LA-2KAN D.jsfx
+D JSFX/EQT-2Kan D.jsfx
+D JSFX/Smooth Limiter D.jsfx
+D JSFX/Saturation D.jsfx
+D JSFX/TubeharmonicsAmp D.jsfx
+D JSFX/MGALimiter D.jsfx
+D JSFX/Stereo Enhancer D.jsfx
+D JSFX/Majortom D.jsfx
+D JSFX/Transpire D.jsfx
+D JSFX/eventhorizon D.jsfx
+D JSFX/SaturationFancy D.jsfx
+D JSFX/AnalogSumming D.jsfx
+D JSFX/SLAX D.jsfx
+D JSFX/Fairlychildish D.jsfx
+D JSFX/masterLimiter D.jsfx
+D JSFX/rbj1073 D.jsfx
+D JSFX/DGFX/ui-lib_d.jsfx-inc
+D JSFX/DGFX/st-oversampler.jsfx-inc
+D JSFX/DGFX/spectrum.jsfx-inc
+D JSFX/DGFX/VT_Filters.jsfx-inc
+D JSFX/DGFX/delay-utils.jsfx-inc
+D JSFX/DGFX/rbj_filter.jsfx-inc
+D JSFX/DGFX/tk_lib_d.jsfx-inc
+D JSFX/DGFX/cookdsp.jsfx-inc
+D JSFX/DGFX/zdf_filter.jsfx-inc
+D JSFX/DGFX/firhalfband.jsfx-inc
+D JSFX/DGFX/svf_filter.jsfx-inc
+D JSFX/DGFX/tk-vu_lib_d.jsfx-inc
+D JSFX/DGFX/eventhorizonclipper/bgmcp.png
+D JSFX/DGFX/eventhorizonclipper/meter.png
+D JSFX/DGFX/eventhorizonclipper/bg.png
+D JSFX/DGFX/eventhorizonclipper/knob.png
+D JSFX/DGFX/saturationfancy/bgmcp.png
+D JSFX/DGFX/saturationfancy/bg.png
+D JSFX/DGFX/saturationfancy/knob.png
+D JSFX/DGFX/GeraintUI/theme-stock.png
+D JSFX/DGFX/eqt2kan/bgmcp.png
+D JSFX/DGFX/eqt2kan/knob-lf.png
+D JSFX/DGFX/eqt2kan/bg.png
+D JSFX/DGFX/eqt2kan/knob-hf.png
+D JSFX/DGFX/eqt2kan/knob-sel.png
+D JSFX/DGFX/eqt2kan/knob.png
+D JSFX/DGFX/rbj1073/bgmcp.png
+D JSFX/DGFX/rbj1073/knob-gain.png
+D JSFX/DGFX/rbj1073/knob-hpf.png
+D JSFX/DGFX/rbj1073/knob-boost.png
+D JSFX/DGFX/rbj1073/knob-lf.png
+D JSFX/DGFX/rbj1073/bg.png
+D JSFX/DGFX/rbj1073/knob-mf.png
+D JSFX/DGFX/saturation/bgmcp.png
+D JSFX/DGFX/saturation/pill.png
+D JSFX/DGFX/saturation/spotlight.png
+D JSFX/DGFX/saturation/title.png
+D JSFX/DGFX/saturation/bg.png
+D JSFX/DGFX/saturation/glow.png
+D JSFX/DGFX/saturation/knob.png
+D JSFX/DGFX/transpire_gfx/bgmcp.png
+D JSFX/DGFX/transpire_gfx/knob_2.png
+D JSFX/DGFX/transpire_gfx/clip.png
+D JSFX/DGFX/transpire_gfx/knob_4.png
+D JSFX/DGFX/transpire_gfx/credits.png
+D JSFX/DGFX/transpire_gfx/bg.png
+D JSFX/DGFX/transpire_gfx/knob_3.png
+D JSFX/DGFX/transpire_gfx/knob_1.png
+D JSFX/DGFX/mgalimiter/bgmcp.png
+D JSFX/DGFX/mgalimiter/meter.png
+D JSFX/DGFX/mgalimiter/bg.png
+D JSFX/DGFX/mgalimiter/knob.png
+D JSFX/DGFX/masterlimiter/bgmcp.png
+D JSFX/DGFX/masterlimiter/screw.png
+D JSFX/DGFX/masterlimiter/meter.png
+D JSFX/DGFX/masterlimiter/bg.png
+D JSFX/DGFX/masterlimiter/knob.png
+D JSFX/DGFX/fairlychildish/bgmcp.png
+D JSFX/DGFX/fairlychildish/button.png
+D JSFX/DGFX/fairlychildish/bg-lr.png
+D JSFX/DGFX/fairlychildish/bg-latvert.png
+D JSFX/DGFX/fairlychildish/button-agc.png
+D JSFX/DGFX/fairlychildish/button-lr.png
+D JSFX/DGFX/fairlychildish/meter.png
+D JSFX/DGFX/fairlychildish/knob-time.png
+D JSFX/DGFX/fairlychildish/button-latvert.png
+D JSFX/DGFX/fairlychildish/knob-screw.png
+D JSFX/DGFX/fairlychildish/knob.png
+D JSFX/DGFX/majortom/bgmcp.png
+D JSFX/DGFX/majortom/button.png
+D JSFX/DGFX/majortom/meter.png
+D JSFX/DGFX/majortom/button-ext.png
+D JSFX/DGFX/majortom/bg.png
+D JSFX/DGFX/majortom/button-detect.png
+D JSFX/DGFX/majortom/knob.png
+D JSFX/DGFX/slax_gfx/bgmcp.png
+D JSFX/DGFX/slax_gfx/needles.png
+D JSFX/DGFX/slax_gfx/bigpot.png
+D JSFX/DGFX/slax_gfx/bg.png
+D JSFX/DGFX/slax_gfx/prepot.png
+D JSFX/DGFX/slax_gfx/optbut.png
+D JSFX/DGFX/slax_gfx/opt.png
+D JSFX/DGFX/tubeharmonics/button-tubes.png
+D JSFX/DGFX/tubeharmonics/bgmcp.png
+D JSFX/DGFX/tubeharmonics/knob-small.png
+D JSFX/DGFX/tubeharmonics/button-switch.png
+D JSFX/DGFX/tubeharmonics/bg.png
+D JSFX/DGFX/tubeharmonics/knob.png
+D JSFX/DGFX/1979/bgmcp.png
+D JSFX/DGFX/1979/button-phase.png
+D JSFX/DGFX/1979/knob-trim.png
+D JSFX/DGFX/1979/button-bypass.png
+D JSFX/DGFX/1979/knob-gainlow.png
+D JSFX/DGFX/1979/knob-eqmid.png
+D JSFX/DGFX/1979/bg.png
+D JSFX/DGFX/1979/knob-eqhpf.png
+D JSFX/DGFX/1979/knob-eqlow.png
+D JSFX/DGFX/1979/knob-gainmid.png
+D JSFX/DGFX/1979/knob-drive.png
+D JSFX/DGFX/1979/knob-gainhigh.png
+D JSFX/DGFX/1175/bgmcp.png
+D JSFX/DGFX/1175/knob-s.png
+D JSFX/DGFX/1175/button-sc.png
+D JSFX/DGFX/1175/button-scb.png
+D JSFX/DGFX/1175/button-allb.png
+D JSFX/DGFX/1175/knob-b.png
+D JSFX/DGFX/1175/button-blb.png
+D JSFX/DGFX/1175/meter.png
+D JSFX/DGFX/1175/button-8.png
+D JSFX/DGFX/1175/button-12b.png
+D JSFX/DGFX/1175/button-4b.png
+D JSFX/DGFX/1175/button-12.png
+D JSFX/DGFX/1175/bg.png
+D JSFX/DGFX/1175/button-20b.png
+D JSFX/DGFX/1175/button-by.png
+D JSFX/DGFX/1175/button-bl.png
+D JSFX/DGFX/1175/button-20.png
+D JSFX/DGFX/1175/button-8b.png
+D JSFX/DGFX/1175/button-4.png
+D JSFX/DGFX/1175/knob-screw.png
+D JSFX/DGFX/1175/button-all.png
+D JSFX/DGFX/la2kan/bgmcp.png
+D JSFX/DGFX/la2kan/button-led.png
+D JSFX/DGFX/la2kan/meter.png
+D JSFX/DGFX/la2kan/knob-big.png
+D JSFX/DGFX/la2kan/bg.png
+D JSFX/DGFX/la2kan/button-toggle.png
+D JSFX/DGFX/stereoenhancer/bgmcp.png
+D JSFX/DGFX/stereoenhancer/knob-small.png
+D JSFX/DGFX/stereoenhancer/button-v.png
+D JSFX/DGFX/stereoenhancer/button-h.png
+D JSFX/DGFX/stereoenhancer/knob-big.png
+D JSFX/DGFX/stereoenhancer/bg.png
