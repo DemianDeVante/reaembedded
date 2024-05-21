@@ -3,11 +3,15 @@
 
 **Use effects right away in the mixer, just like in Cakewalk's ProChannel.**
 
+[Reaper Forums](https://forums.cockos.com/showthread.php?p=2783634)|[Linux Version](https://github.com/DemianDeVante/reaembeddedlinux)
+
 A few weeks ago, I created a UI library based on Tukan's jsfx, to simplify the process of adding a GUI to js effects. I began by sharing some examples of classic js that could benefit from a facelift using designs from Analog Obsession, Tukan, Pitufodelbosque, and ReArtist. The positive feedback encouraged me to develop original designs from scratch.
 
 Now available on ReaPack with this repository:
 
 [https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/index.xml](https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/index.xml)
+
+![jsfxmcpdesigns](https://stash.reaper.fm/48598/jsfxmcpdesigns.png)
 
 As my library is based on Tukan's, it supports parameter group linking, UI scaling, shift/ctrl modifiers, etc. However, some effects don't provide parameter linking such as Smooth Limiter by GeraintLuff and Sonic Anomaly js.
 
@@ -39,7 +43,6 @@ The main purpose of this collection is to provide an embedded version. If you ow
 - Transpire by Sonic Anomaly
 - Spatial Enhancer by Jonas (Stereo Enhancer)
 
-![jsfxmcpdesigns](https://stash.reaper.fm/48598/jsfxmcpdesigns.png)
 ![screenshot](https://i.imgur.com/3jJMBOr.png)
 
 If you want to modify the designs, you can find the krita files in [this dropbox](https://www.dropbox.com/scl/fo/quy19ss8fme8w9v7jho92/AJGYaDq7Eq4x67pMeS0BjZk?rlkey=ljbzmmjnsjtbibbbph8ar3clt&st=h5np7bkt&dl=0)
