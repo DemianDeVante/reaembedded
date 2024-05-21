@@ -6,7 +6,7 @@
   <category name="DDD"></category>
   <category name="..">
     <reapack name="D JSFX" type="effect" desc="embeDDed collection">
-      <version name="1.0.0" author="Demian D">
+      <version name="1.0.1" author="Demian D">
         <source file="1175 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1175%20D.jsfx</source>
         <source file="1979 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1979%20D.jsfx</source>
         <source file="LA-2KAN D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/LA-2KAN%20D.jsfx</source>

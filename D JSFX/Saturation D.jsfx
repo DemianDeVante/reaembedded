@@ -17,7 +17,6 @@ desc:Saturation (DD)
 //author: LOSER, ZenoMOD
 
 slider1:50<0,100,1>-Amount (%)
-slider2:0<-3,0,0.1>-Volume Compensation (dB)
 
 filename:0,DGFX/saturation/bg.png
 filename:1,DGFX/saturation/glow.png
@@ -71,17 +70,12 @@ out_pin:right output
     sliders_old = group_generics + 16*200;
     generics_old = sliders_old + 16*64;
 
-    AMP_dB_i=1/8.68588963806504;
-    db=slider2; 
-
     mouse_sensivity();
     function parameters_update() (
         parameters_update_on = 1;
         group_parameters(); // tk extra features
-        foo=slider1/200*$pi;
-        bar = sin(slider1/200*$pi);
-        ddb=0.0;
-        slider2= -slider1/100*$pi;
+        foo = slider1/200*$pi;
+        bar = sin(foo);
         // Paste all contents of @slider here
         parameters_update_on = 0;
         caller = 0;
@@ -146,28 +140,10 @@ out_pin:right output
   while_stopped ? is_stopped ? process = 1;
 
   process == 1 && slider1 ? ( // remove this line if not using tk extra features, it means "if jsfx is enabled then do..."
-    slider1 ? (
-    spl0 = min(max( sin(max(min(spl0,1),-1)*foo)/bar ,-1) ,1);
-    spl1 = min(max( sin(max(min(spl1,1),-1)*foo)/bar ,-1) ,1);
-    );
-
-    cnt == db_chg_splpos ? 
-    (
-      ddb=0.0;
-      db_chg_splpos=slider_next_chg(1, tgtdb);
-      db_chg_splpos > cnt ? 
-      (
-        ddb=(tgtdb-db)/(db_chg_splpos-cnt);
-      );
-    );
-
-    adj=exp(db*AMP_DB_i);
-
-    spl0 *= adj;
-    spl1 *= adj;
-
-    db += ddb;
-    cnt += 1;
+    sat0 = min(max( sin(max(min(spl0,1),-1)*foo)/bar ,-1) ,1);
+    sat1 = min(max( sin(max(min(spl1,1),-1)*foo)/bar ,-1) ,1);
+    spl0 = sat0 / foo*bar;
+    spl1 = sat1 / foo*bar;
   ); // remove this line if not using tk extra features, if using a meter be sure to set the gain reduction value to 0 instead:     ):(grv=0);
 
 //@gfx 340 262 // linux
@@ -179,7 +155,7 @@ out_pin:right output
                                     //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
     //Knobs                     (slider    default     min      max  step         x          y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
     drive.parameter_config      (  1,           50,      0,     100,    1,      103,        25,     0,       0.89,     4,    0,       0);    
-    gcomp1.parameter_config     (  2,            0,    -$pi,       0, 0.01,      50,         6,    137,          1,     6,    0,       1);    
+    ktube.parameter_config     (  1,           50,      0,     100,    0,       50,         6,    137,          1,     6,    0,       0);    
 
     // handling Drive
         gfx_x=drive.xIn*zoom; gfx_y=drive.yIn*zoom;
@@ -220,16 +196,16 @@ out_pin:right output
           );
         );
     // handling left pill
-        gfx_x=gcomp1.xIn*zoom; gfx_y=gcomp1.yIn*zoom;
+        gfx_x=ktube.xIn*zoom; gfx_y=ktube.yIn*zoom;
         weg = abs(minVal - maxVal);
-        kframe = (gcomp1.maxVal - slider(gcomp1.slider)) * (gcomp1.frames-1) / (gcomp1.maxVal - gcomp1.minVal); // normal
+				kframe = (slider(ktube.slider) - ktube.minVal) * (ktube.frames-1) / (ktube.maxVal - ktube.minVal);
         kframe = max(kframe+vfx_liquid.effect_oscillate(-10,0,0.4),0);
-        scry =  gcomp1.kheight* floor(kframe);
+        scry =  ktube.kheight* floor(kframe);
         gfx_a=glow_value;
-        gfx_blit(gcomp1.file, gcomp1.scaling * zoom / 2, 0, 0, scry, gcomp1.size,gcomp1.kheight);
+        gfx_blit(ktube.file, ktube.scaling * zoom / 2, 0, 0, scry, ktube.size,ktube.kheight);
     // handling right pill
-        gfx_x=(gcomp1.xIn+112)*zoom; gfx_y=gcomp1.yIn*zoom;
-        gfx_blit(gcomp1.file, gcomp1.scaling * zoom / 2, 0, 0, scry, gcomp1.size,gcomp1.kheight);
+        gfx_x=(ktube.xIn+112)*zoom; gfx_y=ktube.yIn*zoom;
+        gfx_blit(ktube.file, ktube.scaling * zoom / 2, 0, 0, scry, ktube.size,ktube.kheight);
     input_handling();
     setup_dmenu("LOSER Saturation ZenoMOD", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.2); // setup menu, arguments: jsfx name, version, graphics, zoom
     mouse_wheel=0;
@@ -257,7 +233,7 @@ out_pin:right output
                                     //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
     //Knobs                     (slider    default     min      max  step         x          y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
     drive.parameter_config      (  1,           50,      0,     100,    1,      43/2,        10,     0,       0.89,     4,    0,       0);    
-    gcomp1.parameter_config     (  2,            0,    -$pi,       0, 0.01,      -8,        -8,    137,          1,     6,    0,       1);    
+    ktube.parameter_config     (  1,           50,      0,     100,    0,         -8,        -8,    137,          1,     6,    0,       0);    
     // handling
         gfx_x=drive.xIn*zoom; gfx_y=drive.yIn*zoom;
         weg = abs(minVal - maxVal);
@@ -298,15 +274,15 @@ out_pin:right output
 
         );
     // handling left pill
-        gfx_x=gcomp1.xIn*zoom; gfx_y=gcomp1.yIn*zoom;
+        gfx_x=ktube.xIn*zoom; gfx_y=ktube.yIn*zoom;
         weg = abs(minVal - maxVal);
-        kframe = (gcomp1.maxVal - slider(gcomp1.slider)) * (gcomp1.frames-1) / (gcomp1.maxVal - gcomp1.minVal); // normal
-        scry =  gcomp1.kheight* floor(kframe);
+				kframe = (slider(ktube.slider) - ktube.minVal) * (ktube.frames-1) / (ktube.maxVal - ktube.minVal);
+        scry =  ktube.kheight* floor(kframe);
         gfx_a=glow_value;
-        gfx_blit(gcomp1.file, gcomp1.scaling * zoom / 2, 0, 0, scry, gcomp1.size,gcomp1.kheight);
+        gfx_blit(ktube.file, ktube.scaling * zoom / 2, 0, 0, scry, ktube.size,ktube.kheight);
     // handling right pill
-        gfx_x=(gcomp1.xIn+65)*zoom; gfx_y=gcomp1.yIn*zoom;
-        gfx_blit(gcomp1.file, gcomp1.scaling * zoom / 2, 0, 0, scry, gcomp1.size,gcomp1.kheight);
+        gfx_x=(ktube.xIn+65)*zoom; gfx_y=ktube.yIn*zoom;
+        gfx_blit(ktube.file, ktube.scaling * zoom / 2, 0, 0, scry, ktube.size,ktube.kheight);
 
     input_handling();
 
