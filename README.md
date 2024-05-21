@@ -3,13 +3,14 @@
 
 **Use effects right away in the mixer, just like in Cakewalk's ProChannel.**
 
-[Reaper Forums](https://forums.cockos.com/showthread.php?p=2783634)|[Linux Version](https://github.com/DemianDeVante/reaembeddedlinux)
+[Reaper Forums](https://forums.cockos.com/showthread.php?p=2783634) | [Linux Version](https://github.com/DemianDeVante/reaembeddedlinux)
 
 A few weeks ago, I created a UI library based on Tukan's jsfx, to simplify the process of adding a GUI to js effects. I began by sharing some examples of classic js that could benefit from a facelift using designs from Analog Obsession, Tukan, Pitufodelbosque, and ReArtist. The positive feedback encouraged me to develop original designs from scratch.
 
 Now available on ReaPack with this repository:
 
 [https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/index.xml](https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/index.xml)
+
 
 ![jsfxmcpdesigns](https://stash.reaper.fm/48598/jsfxmcpdesigns.png)
 
