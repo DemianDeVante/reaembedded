@@ -1,0 +1,305 @@
+// Copyright 2006, Thomas Scott Stillwell
+// All rights reserved.
+//
+//Redistribution and use in source and binary forms, with or without modification, are permitted 
+//provided that the following conditions are met:
+//
+//Redistributions of source code must retain the above copyright notice, this list of conditions 
+//and the following disclaimer. 
+//
+//Redistributions in binary form must reproduce the above copyright notice, this list of conditions 
+//and the following disclaimer in the documentation and/or other materials provided with the distribution. 
+//
+//The name of Thomas Scott Stillwell may not be used to endorse or 
+//promote products derived from this software without specific prior written permission. 
+//
+//THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR 
+//IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND 
+//FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS 
+//BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+//(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+//PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+//STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF 
+//THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+desc:RBJ Highpass Lowpass (DD)
+//tags: filter
+//author: Stillwell
+
+slider1:0<0,1000,10>-HPF
+slider2:22000<1000,22000,100>-LPF
+slider3:0<-20,20,0.1>-Gain
+
+filename:0,DGFX/rbjhilopass/bg.png
+filename:1,DGFX/rbjhilopass/bgmcp.png
+filename:2,DGFX/rbjhilopass/knob.png
+filename:3,DGFX/rbjhilopass/screw.png
+
+import DGFX/tk_lib_d.jsfx-inc 
+
+options:no_meter
+// write a cool name to store jsfx memory below
+options:gmem=rbjhilopassD 
+
+@init
+  gfx_ext_retina = 1;
+  gfx_clear=0;
+  lastCap=1;
+  mouse_wheel=1;
+  Number_input = 0;
+  number_input_invalid = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  ext_noinit=1;
+
+  // tk extra features
+  lastCap=1;
+  mouse_wheel=1;
+  is_recording = 0; is_playing = 0; is_stopped = 1;
+  while_playing = 1; while_recording = 1; while_stopped = 1;
+  Number_input = 0;
+  number_input_raw = 0;
+  number_input_use = 0;
+  komma = 0;
+  in_key = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  number_input_slider = 0;
+  number_input_min=0;
+  number_input_max=0;
+  number_input_invalid = 0;
+  number_input_sign=1;
+  s2_numbers_of_sliders = 3; // set the number of sliders for gorup linking
+  s2_numbers_of_generics = 0;
+  group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
+  sliders_old = group_generics + 16*200;
+  generics_old = sliders_old + 16*64;
+
+  mouse_sensivity();
+
+  ext_tail_size = -1;
+  hpf = 0;
+  gain1 = 0;
+  freq1 = slider1;
+  a1 = 1;
+  s1 = 1;
+  q1 = 1 / (sqrt((a1 + 1/a1)*(1/s1 - 1) + 2));
+  w01 = 2 * $pi * freq1/srate;
+  cosw01 = cos(w01);
+  sinw01 = sin(w01);
+  alpha1 = sinw01 / (2 * q1);
+
+  b01 = (1 + cosw01)/2;
+  b11 = -(1 + cosw01);
+  b21 = (1 + cosw01)/2;
+  a01 = 1 + alpha1;
+  a11 = -2 * cosw01;
+  a21 = 1 - alpha1;
+  b01 /= a01;
+  b11 /= a01;
+  b21 /= a01;
+  a11 /= a01;
+  a21 /= a01;
+
+  lpf = 0;
+  gain3 = 0;
+  freq3 = 22000;
+  a3 = 10^(gain3/40);
+  s3 = 2;
+  q3 = 1 / (sqrt((a3 + 1/a3)*(1/s3 - 1) + 2));
+  w03 = 2 * $pi * freq3/srate;
+  cosw03 = cos(w03);
+  sinw03 = sin(w03);
+  alpha3 = sinw03 / (2 * q3);
+
+  b03 = (1 - cosw03)/2;
+  b13 = (1 - cosw03);
+  b23 = (1 - cosw03)/2;
+  a03 = 1 + alpha3;
+  a13 = -2 * cosw03;
+  a23 = 1 - alpha3;
+  b03 /= a03;
+  b13 /= a03;
+  b23 /= a03;
+  a13 /= a03;
+  a23 /= a03;
+
+  gain = 1;
+
+  function parameters_update() (
+    parameters_update_on = 1;
+    group_parameters(); // tk extra features
+    // Paste all contents of @slider here
+    freq1 = slider1;
+    freq3 = slider2;
+    gain = 10^(slider3/20);
+
+    slider1 == 0 ? hpf = 0 : hpf = 1;
+    slider2 == 22000 ? lpf = 0 : lpf = 1;
+
+    a1 = 1;
+    s1 = 1;
+    q1 = 1 / (sqrt((a1 + 1/a1)*(1/s1 - 1) + 2));
+    w01 = 2 * $pi * freq1/srate;
+    cosw01 = cos(w01);
+    sinw01 = sin(w01);
+    alpha1 = sinw01 / (2 * q1);
+
+    b01 = (1 + cosw01)/2;
+    b11 = -(1 + cosw01);
+    b21 = (1 + cosw01)/2;
+    a01 = 1 + alpha1;
+    a11 = -2 * cosw01;
+    a21 = 1 - alpha1;
+    b01 /= a01;
+    b11 /= a01;
+    b21 /= a01;
+    a11 /= a01;
+    a21 /= a01;
+
+    a3 = 1;
+    s3 = 1;
+    q3 = 1 / (sqrt((a3 + 1/a3)*(1/s3 - 1) + 2));
+    w03 = 2 * $pi * freq3/srate;
+    cosw03 = cos(w03);
+    sinw03 = sin(w03);
+    alpha3 = sinw03 / (2 * q3);
+
+    b03 = (1 - cosw03)/2;
+    b13 = (1 - cosw03);
+    b23 = (1 - cosw03)/2;
+    a03 = 1 + alpha3;
+    a13 = -2 * cosw03;
+    a23 = 1 - alpha3;
+    b03 /= a03;
+    b13 /= a03;
+    b23 /= a03;
+    a13 /= a03;
+    a23 /= a03;
+    parameters_update_on = 0;
+    caller = 0;
+  );
+
+@slider
+  caller=1;
+
+@serialize // add this block for tk extra features
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped);
+  //file_var(0, LA2Kan_VERSION);
+  file_var(0, link_group);
+  seriloop = 0;
+  loop(64*16 + 27 + 16,
+  file_var(0, gmem[seriloop]);
+  seriloop += 1;
+  );
+  seriloop = 0;
+  loop(200*16,
+  file_var(0, group_generics[seriloop]);
+  seriloop += 1;
+  );
+
+@sample
+
+  S2_sample_on = 1;
+
+  // extra tk features
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0;
+  group_check_smpl();
+
+  caller == 1 ? (
+    parameters_update_on == 0 ? (
+      parameters_update();
+    );
+  );
+
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
+
+  process==1?(
+    hpf != 0 ? (
+    ospl0 = spl0;
+    spl0 = b01 * spl0 + b11 * xl11 + b21 * xl21 - a11 * yl11 - a21 * yl21;
+    xl21 = xl11;
+    xl11 = ospl0;
+    yl21 = yl11;
+    yl11 = spl0;
+
+    ospl1 = spl1;
+    spl1 = b01 * spl1 + b11 * xr11 + b21 * xr21 - a11 * yr11 - a21 * yr21;
+    xr21 = xr11;
+    xr11 = ospl1;
+    yr21 = yr11;
+    yr11 = spl1;
+    );
+
+    lpf != 0 ? (
+    ospl0 = spl0;
+    spl0 = b03 * spl0 + b13 * xl13 + b23 * xl23 - a13 * yl13 - a23 * yl23;
+    xl23 = xl13;
+    xl13 = ospl0;
+    yl23 = yl13;
+    yl13 = spl0;
+
+    ospl1 = spl1;
+    spl1 = b03 * spl1 + b13 * xr13 + b23 * xr23 - a13 * yr13 - a23 * yr23;
+    xr23 = xr13;
+    xr13 = ospl1;
+    yr23 = yr13;
+    yr13 = spl1;
+    );
+
+    spl0 *= gain;
+    spl1 *= gain;
+  );
+
+
+//@gfx 340 262 // linux
+@gfx 271 207 // windows
+  tk_gfx_setup();
+  gfx_ext_flags == 0 ? (  // full ui
+    set_background(0);
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                      (slider    default     min      max     step           x            y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    kHighpass.parameter_config   ( 1,             0,      0,    1000,      10,       125/2,        61/2,     0,     1.2,     2,    1,       0);    
+    kGain.parameter_config       ( 3,             0,    -20,      20,     0.1,       251/2,       105/2,     0,     1.5,     3,    1,       0);    
+    kLowPass.parameter_config    ( 2,         22000,   1000,   22000,     100,       305/2,        61/2,     0,     1.2,     2,    1,       0);    
+    //gfx_r=0.616;gfx_g=0.569;gfx_b=0.141;
+    gfx_r=gfx_g=gfx_b=1;
+    gfx_a=0.4;
+    kGain.attached_label("GAIN",2, "Helvetica",7,'b');
+    kHighpass.attached_label("HIGH PASS",-2, "Helvetica",12,'');
+    kLowpass.attached_label("LOW PASS",-2, "Helvetica",12,'');
+
+    setup_dmenu("UglyPitch fom Warble by Geraint Luff", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.2); // setup menu, arguments: jsfx name, version, graphics, zoom
+
+    mouse_wheel=0;
+  ):gfx_ext_flags == 1 ? ( // embedded mcp ui
+    set_background(1,0.078,0.055,0.047);
+    kHighpass.parameter_config   ( 1,             0,      0,    1000,      10,       20/2,        63/2,     0,       1.2,     2,    1,       0);    
+    kLowpass.parameter_config    ( 2,         22000,   1000,   22000,     100,      165/2,        63/2,     0,       1.2,     2,    1,       0);   
+    kGain.parameter_config       ( 3,             0,    -20,      20,     0.1,      124/2,       105/2,     0,       2.8,     3,    1,       0);    
+    gfx_r=gfx_g=gfx_b=1;
+    gfx_a=0.6;
+    kHighpass.attached_label("HI PASS",-4, "Helvetica",16,'b');
+    kGain.attached_label("GAIN",-8, "Helvetica",7,'b');
+    kLowPass.attached_label("LO PASS",-4, "Helvetica",16,'b');
+    mouse_wheel=0;
+  );
+  
+  // update parameters
+  S2_sample_on == 0 ? (
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
+  group_check_gfx(); // tk extra features
+    caller == 1 ? (
+        parameters_update_on == 0 ? (
+          parameters_update();
+        );
+    );
+  );
+  S2_sample_on = 0;
+

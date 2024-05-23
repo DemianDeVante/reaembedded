@@ -913,7 +913,7 @@ function button_toggle()(
 			);
 );  
 function button_config  (slider_ dist_ off_val on_val xIn_ yIn_ scaling_ file_ handle_mode) // // autohandle=1 toggle first and second value; autohandle=0 write your own code
-	instance        (xIn yIn slider file dist scaling onval offval)
+	instance        (xIn yIn slider file dist scaling onval offval size kheight)
 	(
 		xIn = xIn_;
 		yIn = yIn_;
@@ -927,28 +927,26 @@ function button_config  (slider_ dist_ off_val on_val xIn_ yIn_ scaling_ file_ h
 		gfx_getimgdim(this.file, d_btn_w, d_btn_h);
 		gfx_x=this.xIn*zoom; gfx_y=this.yIn*zoom;
 		this.dist == 0 ? ( // horizontal
+			size=d_btn_w/2;
+			kheight=d_btn_h;
 			slider(this.slider) != on_val ? (
-				gfx_blit(this.file, ((zoom/2)*this.scaling), 0, 0, 0,d_btn_w/2,d_btn_h);
+				gfx_blit(this.file, ((zoom/2)*this.scaling), 0, 0, 0,size,d_btn_h);
 			):(
-				gfx_blit(this.file, ((zoom/2)*this.scaling), 0, d_btn_w/2, 0,d_btn_w/2,d_btn_h);
+				gfx_blit(this.file, ((zoom/2)*this.scaling), 0, size, 0,size,d_btn_h);
 			);
 		):this.dist == 1 ? ( // vertical
+			size=d_btn_w;
+			kheight=d_btn_h/2;
 			slider(this.slider) != on_val ? (
-				gfx_blit(this.file, ((zoom/2)*this.scaling), 0, 0, 0,d_btn_w,d_btn_h/2);
+				gfx_blit(this.file, ((zoom/2)*this.scaling), 0, 0, 0,d_btn_w,kheight);
 			):(
-				gfx_blit(this.file, ((zoom/2)*this.scaling), 0, 0, d_btn_h/2,d_btn_w,d_btn_h/2);
+				gfx_blit(this.file, ((zoom/2)*this.scaling), 0, 0, kheight,d_btn_w,kheight);
 			);
 		);
 
 		handle_mode == 1 ? ( // if auto toggling is enabled
 			this.button_toggle()
 		);		
-	);
-
-	function attached_label(d_xoffset d_yoffset d_string) (
-		gfx_x = this.xIn*zoom + d_xoffset*zoom;
-		gfx_y = this.yin*zoom + d_yoffset*zoom;
-		gfx_drawstr(d_string);
 	);
 
 	function potWheel()
@@ -1038,6 +1036,33 @@ function Parameter_config  (slider_ default_ minVal_ maxVal_ step_ xIn_ yIn_ fra
 			);
 			input_handling();
 		);
+);
+
+/*
+Text
+center below frame
+-distance
+-text
+-scale
+Helvetica
+*/
+
+// d_string and d_font are strings ("string"), d_fontflags are multibyte characters ('multibyte'), not the difference between "" and ''
+function attached_label(d_string d_yoffset d_font d_fontsize d_fontflags) local(d_fontflags d_font d_x_offset d_fontwidth d_fontheight d_string d_fontsize save_gfx_x save_gfx_y d_yoffset)(
+	save_gfx_x=gfx_x; // just to prevent conflict with functions in future versions
+	save_gfx_y=gfx_y;
+	gfx_setfont(1,d_font, this.scaling*d_fontsize*zoom/2, d_fontflags);
+	gfx_measurestr(d_string,d_fontwidth,d_fontheight);
+
+	d_x_offset=((this.scaling*this.size)-d_fontwidth)/2;
+	//gfx_x=0;//this.scaling*zoom*(this.xIn*zoom)+d_x_offset);
+	gfx_x=(zoom*this.xIn)+ (((zoom*this.scaling*this.size/2)-d_fontwidth)/2) ;
+	gfx_y=zoom*( this.yIn+ ( this.scaling* (d_yoffset+ (this.kheight/2) ) ) );
+	//gfx_r=gfx_g=gfx_b=0.9;
+	gfx_drawstr(d_string);
+
+	gfx_x=save_gfx_x; // just to prevent conflict with functions in future versions
+	gfx_y=save_gfx_y;
 );
 
 function Parameter_configEQT  (slider_ default_ minVal_ maxVal_ step_ xIn_ yIn_ frames_ scaling_ file_ d_autohandle d_isrev) // autohandle=default mouse handling; autohandle=0 write your own code
@@ -1334,4 +1359,20 @@ function effect_oscillate(d_alpha_min d_alpha_max d_alpha_speed) instance(d_alph
     d_alpha=max(min(d_alpha+d_alpha_add,d_alpha_max),d_alpha_min);
 	//d_alpha=d_alpha+d_alpha_add;
     d_alpha;
+);
+
+function sideright(d_sideoffset) (
+	d_sideoffset=this.xIn+(this.size/2*this.scaling)+d_sideoffset;
+);
+
+function sideleft(d_sideoffset) (
+	d_sideoffset=this.xIn-(this.size/2*this.scaling)-d_sideoffset;
+);
+
+function sideup(d_sideoffset) (
+	d_sideoffset=this.yIn-(this.kheight/2*this.scaling)-d_sideoffset;
+);
+
+function sidedown(d_sideoffset) (
+	d_sideoffset=this.yIn+(this.kheight/2*this.scaling)+d_sideoffset;
 );
