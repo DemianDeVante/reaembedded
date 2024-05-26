@@ -43,6 +43,9 @@ The main purpose of this collection is to provide an embedded version. If you ow
 - Saturation ZenoMOD (Saturation)
 - Transpire by Sonic Anomaly
 - Spatial Enhancer by Jonas (Stereo Enhancer)
+- Thanx EQ by VladG
+- RBJ Highpass Lowpass
+- Ugly Pitch
 
 ![screenshot](https://i.imgur.com/3jJMBOr.png)
 
