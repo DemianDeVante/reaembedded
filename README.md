@@ -43,14 +43,14 @@ The main purpose of this collection is to provide an embedded version. If you ow
 - Thanx EQ by VladG
 - RBJ Highpass Lowpass
 - Ugly Pitch
--Ugly Pitch based on Warble by Geraint Luff
--RBJ Highpass Lowpass
--Thanx by VladG
--QuickDelay by TILR
--Floaty Delay by Remaincalm
--Bricastic2 by chmaha based on Airwindows Verbity
--NW8Plate Reverb by chmaha based on Airwindows kPlate
--Hall Reverb by Witti
+- Ugly Pitch based on Warble by Geraint Luff
+- RBJ Highpass Lowpass
+- Thanx by VladG
+- QuickDelay by TILR
+- Floaty Delay by Remaincalm
+- Bricastic2 by chmaha based on Airwindows Verbity
+- NW8Plate Reverb by chmaha based on Airwindows kPlate
+- Hall Reverb by Witti
 
 ![screenshot](https://i.imgur.com/VICiyJ7.png)
 
