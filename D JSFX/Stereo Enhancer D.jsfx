@@ -1,0 +1,339 @@
+desc: Stereo Enhancer (DD)
+
+//author: Jonas; Spatial Enhancer based on the Open Ambience Project
+//modification by Demian DeVante, adds mono monitoring and balance/panning
+
+//simplified version
+slider1:0<-60,12,.1>-Dry (incl Mid/Side)
+slider2:0<-60,12,.1>-Wet (enhancer)
+slider3:20<20,1500,1>-HP Frequency
+slider4:10000<20,10000,1>-LP Frequency
+slider5:0<-1,1,0.01>-Balance
+slider6:0<-1,1,0.01>-Pan
+slider7:<0,1,1>-Monitor Mono
+
+filename:0,DGFX/stereoenhancer/bg.png
+filename:1,DGFX/stereoenhancer/knob-big.png
+filename:2,DGFX/stereoenhancer/knob-small.png
+filename:3,DGFX/stereoenhancer/button-v.png
+filename:4,DGFX/stereoenhancer/button-h.png
+filename:5,DGFX/stereoenhancer/bgmcp.png
+
+import DGFX/tk_lib_d.jsfx-inc 
+options:no_meter
+options:gmem=JonStereoEnhancer     
+
+@init
+
+  gfx_ext_retina = 1;
+  gfx_clear=0;
+  lastCap=1;
+  mouse_wheel=1;
+  Number_input = 0;
+  number_input_invalid = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  ext_noinit=1;
+
+  // tk extra features
+  lastCap=1;
+  mouse_wheel=1;
+  is_recording = 0; is_playing = 0; is_stopped = 1;
+  while_playing = 1; while_recording = 1; while_stopped = 1;
+  Number_input = 0;
+  number_input_raw = 0;
+  number_input_use = 0;
+  komma = 0;
+  in_key = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  number_input_slider = 0;
+  number_input_min=0;
+  number_input_max=0;
+  number_input_invalid = 0;
+  number_input_sign=1;
+  s2_numbers_of_sliders = 7; // set the number of sliders for gorup linking
+  s2_numbers_of_generics = 0;
+  group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
+  sliders_old = group_generics + 16*200;
+  generics_old = sliders_old + 16*64;
+    
+  scale = log( 10.0 ) * 0.05;
+  delay_ms = 30;
+  buf_size = ceil( delay_ms * srate * 0.001 );
+  pos = 0;
+  feedback_damp = exp( -16.95 * scale ) / exp( -2 * scale ) ;  //utr殻nat fr系 impulsen som Dallas skickade
+
+  //memory management
+  l_buf = 1000;
+  r_buf = l_buf + buf_size + 1;
+  memset( l_buf, 0 , buf_size * 2 );
+
+  //filters
+  pi = 3.1415926535897932384626433832795;
+  e = 2.718281828459045;
+  ln_2 = 0.693147180559945;
+
+  // panning variables
+  slpan=-1;
+  srpan=1;
+  slvol=0;
+  srvol=0;
+
+
+  mouse_sensivity();
+  function parameters_update() (
+    parameters_update_on = 1;
+    group_parameters(); // tk extra features
+    // Paste all contents of @slider here
+    dry = exp( slider1 * scale );
+    slider1 == -60 ? dry = 0;
+    wet = exp( slider2 * scale );
+
+    wide = -1; // wide=-1:wide on; wide=1;wide off
+    deep = 1; // deep=1:feedback on; deep=0:feedback off
+    M_gain = exp( 0 * scale );//0 was Mid gain (pre-enhancer)
+    S_gain = exp( 0 * scale );//0 was Side gain (pre-enhancer)
+
+    //filters
+    slider3 != 20 ? hp = 1 : hp = 0;
+    slider4 != 10000 ? lp = 1 : lp = 0;
+
+    //-----------------------------------------------------------
+    //High-pass
+    f0 = slider3;
+    w0 = 2 * pi * f0 / srate;
+    cos_w0 = cos(w0);
+    sin_w0 = sin(w0);
+
+    //ny alpha
+    q = sqrt(2);
+    alpha = sin_w0 / ( 2 * q );
+
+    b0 =  (1 + cos_w0)/2;
+    b1 = -(1 + cos_w0);
+    b2 =  (1 + cos_w0)/2;
+    a0 =   1 + alpha;
+    a1 =  -2 * cos_w0;
+    a2 =   1 - alpha;
+
+    //Pre-calculate b0,b1 and b2 divided by a0
+    //High-pass
+    b0_a0 = b0/a0;
+    b1_a0 = b1/a0;
+    b2_a0 = b2/a0;
+    a1_a0 = a1/a0;
+    a2_a0 = a2/a0;
+
+    //-----------------------------------------------------------
+    //Low_pass
+    f0 = slider4;
+    w0 = 2 * pi * f0 / srate;
+    cos_w0 = cos(w0);
+    sin_w0 = sin(w0);
+
+    //ny alpha
+    q = sqrt(2);
+    alpha = sin_w0 / ( 2 * q );
+
+    lp_b0 = (1 - cos_w0)/2;
+    lp_b1 = 1 - cos_w0;
+    lp_b2 = (1 - cos_w0)/2;
+    lp_a0 =   1 + alpha;
+    lp_a1 =  -2 * cos_w0;
+    lp_a2 =   1 - alpha;
+
+    //Pre-calculate b0,b1 and b2 divided by a0
+    //Low_pass
+    lp_b0_a0 = lp_b0 / lp_a0;
+    lp_b1_a0 = lp_b1 / lp_a0;
+    lp_b2_a0 = lp_b2 / lp_a0;
+    lp_a1_a0 = lp_a1 / lp_a0;
+    lp_a2_a0 = lp_a2 / lp_a0;
+
+    // Panning Code
+    slpan=max(-1+slider6*2,-1);
+    srpan=min(1+slider6*2,1);
+
+    slvol=-max(slider5*120,0);
+    srvol=min(slider5*120,0);
+
+    slvol==0?slvol=abs(slider5*12);
+    srvol==0?srvol=abs(slider5*12);
+
+    llv=(2^(slvol/6))*min(1-slpan,1);
+    lrv=(2^(srvol/6))*min(1-srpan,1);
+    rlv=(2^(slvol/6))*min(1+slpan,1);
+    rrv=(2^(srvol/6))*min(1+srpan,1);
+    parameters_update_on = 0;
+    caller = 0;
+  );
+
+@slider
+  caller=1;
+
+@serialize // add this block for tk extra features
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped);
+  //file_var(0, LA2Kan_VERSION);
+  file_var(0, link_group);
+  seriloop = 0;
+  loop(64*16 + 27 + 16,
+  file_var(0, gmem[seriloop]);
+  seriloop += 1;
+  );
+  seriloop = 0;
+  loop(200*16,
+  file_var(0, group_generics[seriloop]);
+  seriloop += 1;
+  );
+
+@sample
+  S2_sample_on = 1;
+
+  // extra tk features
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0;
+  group_check_smpl();
+
+  caller == 1 ? (
+    parameters_update_on == 0 ? (
+      parameters_update();
+    );
+  );
+
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
+
+  process == 1 ? (
+    M = ( spl0 + spl1 ) * 0.5;
+    S = ( spl0 + spl1 * -1 ) * 0.5;
+
+    spl0 = S * S_gain  + M * M_gain;
+    spl1 = -S * S_gain + M * M_gain;
+
+    del_l = l_buf[ pos ];
+    del_r = r_buf[ pos ] * wide;
+
+    l_buf[ pos ] = ( spl0 + del_r * deep ) * feedback_damp ;
+    r_buf[ pos ] = ( spl1 + del_l * deep ) * feedback_damp ;
+    pos += 1;
+    pos > buf_size ? pos = 0;
+
+    //filters
+
+    //High-pass
+
+    hp ? 
+    (
+
+    l = del_l;
+    del_l = b0_a0*del_l + b1_a0*l_prev_bf_eq + b2_a0*l_prev2_bf_eq - a1_a0*l_prev_af_eq - a2_a0*l_prev2_af_eq ;
+    l_prev2_bf_eq = l_prev_bf_eq;
+    l_prev_bf_eq = l;
+    l_prev2_af_eq = l_prev_af_eq;
+    l_prev_af_eq = del_l;
+
+    r = del_r;
+    del_r = b0_a0*del_r + b1_a0*r_prev_bf_eq + b2_a0*r_prev2_bf_eq - a1_a0*r_prev_af_eq - a2_a0*r_prev2_af_eq ;
+    r_prev2_bf_eq = r_prev_bf_eq;
+    r_prev_bf_eq = r;
+    r_prev2_af_eq = r_prev_af_eq;
+    r_prev_af_eq = del_r;
+
+    );
+
+    //Low_pass
+
+    lp ?
+    (
+
+    lp_l = del_l;
+    del_l = lp_b0_a0*del_l + lp_b1_a0*lp_l_prev_bf_eq + lp_b2_a0*lp_l_prev2_bf_eq - lp_a1_a0*lp_l_prev_af_eq - lp_a2_a0*lp_l_prev2_af_eq;
+    lp_l_prev2_bf_eq = lp_l_prev_bf_eq;
+    lp_l_prev_bf_eq = lp_l;
+    lp_l_prev2_af_eq = lp_l_prev_af_eq;
+    lp_l_prev_af_eq = del_l;
+
+    lp_r = del_r;
+    del_r = lp_b0_a0*del_r + lp_b1_a0*lp_r_prev_bf_eq + lp_b2_a0*lp_r_prev2_bf_eq - lp_a1_a0*lp_r_prev_af_eq - lp_a2_a0*lp_r_prev2_af_eq ;
+    lp_r_prev2_bf_eq = lp_r_prev_bf_eq;
+    lp_r_prev_bf_eq = lp_r;
+    lp_r_prev2_af_eq = lp_r_prev_af_eq;
+    lp_r_prev_af_eq = del_r;
+
+    );
+
+
+    //output
+
+    spl0 = spl0 * dry + del_r * wet;
+    spl1 = spl1 * dry + del_l * wet;
+
+    // Panning Code
+    s0=spl0; s1=spl1;
+    spl0=s0*llv+s1*lrv; spl1=s0*rlv+s1*rrv;
+
+    // Monitor Mono
+    slider7 == 1 ? (
+      spl0 = spl1 = .5 * (spl0 + spl1);
+    );
+  );
+
+<? // @gfx setup
+  w_bg=800;
+  h_bg=293;
+  mcp_ratio="wide";
+  include("ddconfig.jsfx-inc");
+?>
+
+  tk_gfx_setup();
+  gfx_ext_flags == 0 ? (  // full ui
+    set_background(0);
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                    (slider    default     min      max  step         x          y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    kDry.parameter_config      ( 1,             0,    -60,      12,  0.1,     138/2,     112/2,     0,       1,     1,    1,       0);    
+    kWet.parameter_config      ( 2,             0,    -60,      12,  0.1,     553/2,     112/2,     0,       1,     1,    1,       0);    
+    kHPF.parameter_config      ( 3,            20,     20,    1500,    1,      47/2,     138/2,     0,       1,     2,    1,       0);    
+    kLPF.parameter_config      ( 4,         10000,     20,   10000,    1,     277/2,     138/2,     0,       1,     2,    1,       0);    
+    kBal.parameter_config      ( 5,             0,     -1,       1, 0.01,     462/2,     138/2,     0,       1,     2,    1,       0);    
+    kPan.parameter_config      ( 6,             0,     -1,       1, 0.01,     692/2,     138/2,     0,       1,     2,    1,       0);    
+
+    //Buttons                  (slider     orient  off_val   on_val     x        y           scaling   png  mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
+    kMon.button_config         ( 7,             1,      0,       1, 379/2,   145/2,              1,     3,    1);
+
+    setup_dmenu("Jonas Spatial Enhancer", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.4); // setup menu, arguments: jsfx name, version, graphics, zoom
+
+    mouse_wheel=0;
+  ):gfx_ext_flags == 1 ? ( // embedded mcp ui
+    set_background(5,0.086,0.086,0.086);
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                    (slider    default     min      max  step         x          y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    kDry.parameter_config      ( 1,             0,    -60,      12,  0.1,     143/2,      45/2,     0,       1,     1,    1,       0);    
+    kWet.parameter_config      ( 2,             0,    -60,      12,  0.1,     143/2,     210/2,     0,       1,     1,    1,       0);    
+    kHPF.parameter_config      ( 3,            20,     20,    1500,    1,      40/2,      66/2,     0,     1.4,     2,    1,       0);    
+    kLPF.parameter_config      ( 4,         10000,     20,   10000,    1,     270/2,      66/2,     0,     1.4,     2,    1,       0);    
+    kBal.parameter_config      ( 5,             0,     -1,       1, 0.01,      40/2,     231/2,     0,     1.4,     2,    1,       0);    
+    kPan.parameter_config      ( 6,             0,     -1,       1, 0.01,     270/2,     231/2,     0,     1.4,     2,    1,       0);    
+
+    //Buttons                  (slider     orient  off_val   on_val     x        y           scaling   png  mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
+    kMon.button_config         ( 7,             0,      0,       1, 166/2,   140/2,              1,     4,    1);
+
+    mouse_wheel=0;
+  );
+  
+  // update parameters
+  S2_sample_on == 0 ? (
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
+  group_check_gfx(); // tk extra features
+    caller == 1 ? (
+        parameters_update_on == 0 ? (
+          parameters_update();
+        );
+    );
+  );
+  S2_sample_on = 0;

@@ -1,0 +1,423 @@
+// License: GPL - http://www.gnu.org/licenses/gpl.html
+// floaty (modulated delay)
+// by daniel arena (dan@remaincalm.org)
+// http://remaincalm.org
+// 2008/09/16 - first version! contact me with bugs etc
+// 2008/09/20 - updated: less glitching on overlap, tempo sync (backward compatible)
+// 2008/10/04 - updated: L/R offset
+// 2009/10/08 - updated: fixed bug where L/R offset active with playrate != 1, tweaked clamping behaviour (default = old behaviour)
+// 2009/10/09 - updated: fixed default clamp value
+
+desc: Delay Floaty (DD)
+//tags: delay modulation mangler
+//author: remaincalm.org
+
+slider1:250<0,1000,1>-Delay (ms)
+slider2:0<-48,6,0.1>-Dry (dB)
+slider3:-6<-48,6,0.1>-Wet (dB)
+//slider2:100<0,100,1>-Dry (%)
+//slider3:20<0,100,1>-Wet (%)
+slider4:30<0,80,1>-Feedback (%)
+slider5:0.1<0,10,0.001>-Warp Rate (Hz)
+slider6:0.5<0,4,0.1>-Warp Amount (%)
+slider7:80<0,100,1>-Filter Cutoff (%)
+slider8:80<0,150,1>-Filter Resonance (%)
+slider9:1<-2,2,0.5>-Playback Rate
+slider10:1<0,64,1>-Tempo Sync (32nd notes, 0 to disable)
+slider11:98<70,100,1>-Wide (%)
+slider12:6<-12,12,0.1>-Pre-Filter Clip (dB)
+slider13:0<-60,0,0.1>-Threshold (dB)
+slider14:4<1,10,0.5>-Ratio
+slider15:0<0,1,1>-Toggle Sync
+slider16:1<0,1,1>-Toggle Page
+
+import DGFX/tk_lib_d.jsfx-inc 
+import DGFX/demian-effects.jsfx-inc
+
+options:gmem=FloatyDelayD     
+options:no_meter
+
+filename:0,DGFX/delayfloaty/bg.png
+filename:1,DGFX/delayfloaty/bgmcp.png
+filename:2,DGFX/delayfloaty/button.png
+filename:3,DGFX/delayfloaty/knob-black.png
+filename:4,DGFX/delayfloaty/knob-white.png
+filename:5,DGFX/delayfloaty/knob-blue.png
+filename:6,DGFX/delayfloaty/knob-red.png
+
+in_pin:left input
+in_pin:right input
+out_pin:left output
+out_pin:right output
+
+@init
+  gfx_ext_retina = 1;
+  gfx_clear=0;
+  lastCap=1;
+  mouse_wheel=1;
+  Number_input = 0;
+  number_input_invalid = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  ext_noinit=1;
+
+  // tk extra features
+  lastCap=1;
+  mouse_wheel=1;
+  is_recording = 0; is_playing = 0; is_stopped = 1;
+  while_playing = 1; while_recording = 1; while_stopped = 1;
+  Number_input = 0;
+  number_input_raw = 0;
+  number_input_use = 0;
+  komma = 0;
+  in_key = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  number_input_slider = 0;
+  number_input_min=0;
+  number_input_max=0;
+  number_input_invalid = 0;
+  number_input_sign=1;
+  s2_numbers_of_sliders = 16; // set the number of sliders for gorup linking
+  s2_numbers_of_generics = 0;
+  group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
+  sliders_old = group_generics + 16*200;
+  generics_old = sliders_old + 16*64;
+
+  mouse_sensivity();
+  pi = 3.141592653589793;
+  old_delaysiz = -1; 
+  reset = 1;
+  clamp = 2; // ugly limiter (pre-filter)
+  target_clamp = clamp;
+  smooth_overlap = 128; // smooth out if rec/play csr overlap
+  function parameters_update() (
+    parameters_update_on = 1;
+    group_parameters(); // tk extra features
+    // Paste all contents of @slider here
+    delaysiz = (slider_delay * srate / 1000)|0;
+    bufsiz = delaysiz*4; //max(delaysiz, srate);
+    (delaysiz != old_delaysiz || slider9 != old_slider9 || slider5 != old_slider5 || slider11 != old_slider11 ) ?
+    (
+      play_csr = 0;
+      rec_csrL = delaysiz-2 ;
+      rec_csrR = (slider11 * rec_csrL / 100) | 0;
+      t = 0;
+      reset = 1;
+      old_delaysiz = delaysiz; 
+      old_slider9 = slider9;
+      old_slider5 = slider5;
+      old_slider11 = slider11;
+    );
+
+    rate = 2*pi*slider5/srate;
+
+    // RC filter params (hi/lo)
+    LPF_c = 0.5^(5-(slider7/25));
+    LPF_r = 0.5^((slider8/40)-0.6);
+    HPF_c = 0.5^4.8;
+    HPF_r = 0.5^(3-(slider8/40));
+
+    // update clamp value
+    target_clamp = 2 ^ (slider12/6);
+
+    //dry = slider2 / 100;
+    //wet = slider3 / 100;
+    dry = slider2 <= -48.0 ? 0.0 : 10^(slider2/20);
+    wet = slider3 <= -48.0 ? 0.0 : 10^(slider3/20)*0.5;
+
+    parameters_update_on = 0;
+    caller = 0;
+  );
+@block
+(slider15 == 1 && tempo > 0) ?
+(
+  slider_delay = 1000 * slider10 * 60/8/tempo;
+):(slider_delay=slider1);
+
+@slider
+  caller=1;
+  parameters_update();
+@serialize // add this block for tk extra features
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped);
+  //file_var(0, LA2Kan_VERSION);
+  file_var(0, link_group);
+  seriloop = 0;
+  loop(64*16 + 27 + 16,
+  file_var(0, gmem[seriloop]);
+  seriloop += 1;
+  );
+  seriloop = 0;
+  loop(200*16,
+  file_var(0, group_generics[seriloop]);
+  seriloop += 1;
+  );
+
+@sample
+
+  S2_sample_on = 1;
+
+  // extra tk features
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0;
+  group_check_smpl();
+
+  caller == 1 ? (
+    parameters_update_on == 0 ? (
+      parameters_update();
+    );
+  );
+
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
+
+  process == 1 ? (
+      
+    // move play head
+    lplay_csr = play_csr;
+    play_csr += (reset>0) ? slider9 : (slider9 + (slider6/100) * sin(t)); 
+    t+= (reset>0) ? 0 : rate;
+    reset = (play_csr >= bufsiz) ? 0 : reset; // allow one full record cycle before modulation
+    play_csr += (play_csr >= bufsiz) ? -bufsiz: 0;
+    play_csr += (play_csr < 0) ? bufsiz: 0;
+
+    play_csr_0 = 0|play_csr;
+    play_csr_1 = (play_csr_0+1 == bufsiz) ? 0 : play_csr_0+1;
+
+    // get from play head
+    frac0= play_csr - play_csr_0;
+    tmpL =  (buf[play_csr_0] * (1-frac0) + buf[play_csr_1] * (frac0));
+    tmpR =  (buf[play_csr_0+bufsiz] * (1-frac0) + buf[play_csr_1+bufsiz] * (frac0));
+
+    // clean up if play/rec overlapping
+    overlap_distL = abs((play_csr % bufsiz) - (rec_csrL % bufsiz));
+    overlap_multL = (overlap_distL >= smooth_overlap) ? 1 : overlap_distL/smooth_overlap;
+
+    overlap_distR = abs((play_csr % bufsiz) - (rec_csrR % bufsiz));
+    overlap_multR = (overlap_distR >= smooth_overlap) ? 1 : overlap_distR/smooth_overlap;
+
+    tmpL *= overlap_multL;
+    tmpR *= overlap_multR;
+
+    // clamp (before filter!)
+    // updated
+    (clamp != target_clamp) ? (clamp = 0.8 * clamp + 0.2 * target_clamp) ;
+    (abs(tmpL) > clamp) ? ( tmpL = (tmpL > 0) ? clamp : -clamp );
+    (abs(tmpR) > clamp) ? ( tmpR = (tmpR > 0) ? clamp : -clamp );
+
+
+    // run filter
+    (slider7 > 0 && slider8 > 0) ?
+    (
+      // new lpf
+      v0L = (1 - LPF_r*LPF_c)*v0L - LPF_c*v1L + LPF_c*tmpL;
+      v1L = (1 - LPF_r*LPF_c)*v1L + LPF_c*v0L;
+      tmpL = v1L;
+
+      // new hpf 
+      hv0L = (1 - HPF_r*HPF_c)*hv0L - HPF_c*hv1L + HPF_c*tmpL;
+      hv1L = (1 - HPF_r*HPF_c)*hv1L + HPF_c*hv0L;
+      tmpL -= hv1L;
+
+      // new lpf
+      v0R = (1 - LPF_r*LPF_c)*v0R - LPF_c*v1R + LPF_c*tmpR;
+      v1R = (1 - LPF_r*LPF_c)*v1R + LPF_c*v0R;
+      tmpR = v1R;
+
+      // new hpf 
+      hv0R = (1 - HPF_r*HPF_c)*hv0R - HPF_c*hv1R + HPF_c*tmpR;
+      hv1R = (1 - HPF_r*HPF_c)*hv1R + HPF_c*hv0R;
+      tmpR -= hv1R;
+    );
+
+    // store and feedback
+    buf[rec_csrL]= tmpL * slider4/100 + spl0;
+    buf[rec_csrR+bufsiz]= tmpR * slider4/100 + spl1;
+
+    // move rec head
+    rec_csrL += 1;
+    rec_csrL += (rec_csrL >= bufsiz) ? -bufsiz : 0;
+    rec_csrL += (rec_csrL < 0) ? bufsiz : 0;
+
+    rec_csrR += 1;
+    rec_csrR += (rec_csrR >= bufsiz) ? -bufsiz : 0;
+    rec_csrR += (rec_csrR < 0) ? bufsiz : 0;
+
+    // output
+    //spl0 = tmpL*(slider2/100) + spl0*(1-(slider2/100));
+    //spl1 = tmpR*(slider2/100) + spl1*(1-(slider2/100));
+    compress.channel_ducking_stereo(tmpL,tmpR,spl0,spl1,slider13,slider14);
+    tmpL=compress.spl_l;
+    tmpR=compress.spl_r;
+
+    spl0 = spl0*dry + tmpL*wet;
+    spl1 = spl1*dry + tmpR*wet;
+  );
+
+<? // @gfx setup
+  w_bg=768;
+  h_bg=324;
+  mcp_ratio="tall";
+  include("ddconfig.jsfx-inc");
+?>
+  tk_gfx_setup();
+  function handle_parameter_tempo()(
+    !Number_input ?(  // if not default handling
+      mouseClick == 1 ? (
+        this.k_collision() ? (this.dragstart());
+      ); 
+      mouseclick == -1 ? (  // stop knobs dragging
+        this.dragstop();
+      );
+      this.isrev==0 || this.isrev==3?(
+        mouse_wheel ? (  // handle wheel
+          this.k_collision() ? this.potwheel();
+          
+          caller = 1;
+        );
+        gfx_a=1;  // handle drag
+        this.dragging ? (this.potdrag();caller = 1;);
+      ):this.isrev==1 || this.isrev==2?(
+        mouse_wheel ? (  // handle wheel
+          this.k_collision() ? this.potwheel_rev();
+          
+          caller = 1;
+        );
+        gfx_a=1;  // handle drag
+        this.dragging ? (this.potdrag_rev();caller = 1;);
+      );
+      this.dragging ? (
+        gfx_setfont(1,"Verdana");
+        sprintf(#readout, "%d/32", slider(this.slider));
+        gfx_x = this.xIn*zoom; gfx_y = this.yIn*zoom - gfx_texth - 2*zoom;
+        gfx_y<0?gfx_y=0;
+        gfx_x<0?gfx_x=0;
+        gfx_measurestr(#readout, rdow, rdoh);
+        gfx_r=gfx_b=gfx_g=0; gfx_a=0.4; gfx_rect(gfx_x+2*zoom, gfx_y, rdow+3*zoom, gfx_texth+2*zoom);
+        gfx_r=gfx_g=gfx_b=1; gfx_a=0.7;
+        gfx_x += 3*zoom;
+        gfx_drawstr(#readout);
+        gfx_a=1;
+      );
+    );
+    input_handling();
+  );
+  gfx_ext_flags == 0 ? (  // full ui
+    set_background(0);
+    gfx_a=1;
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                (slider    default     min      max     step           x            y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    bducking.button_config (16, 1, 0, 1, 115/2, 178/2, 1, 2, 1);
+    slider16==0?(
+      kfilter_cutoff.parameter_config     ( 7,  80,   0,  100,     1,   65/2,    60/2, 0, 1, 3, 1, 0);
+      kfilter_resonance.parameter_config  ( 8,  80,   0,  150,     1,  165/2,    60/2, 0, 1, 3, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kfilter_cutoff.attached_label("CUTOFF",0, "Verdana",13,'b');
+      kfilter_resonance.attached_label("RESONANCE",0, "Verdana",13,'b');
+      bducking.attached_label("DUCK",-3, "Verdana",10,'b');
+    ):(
+      kthresh.parameter_config            (13,   0, -60,    0,   0.1,   65/2,    60/2, 0, 1, 3, 1, 0);
+      kratio.parameter_config             (14,   4,   1,   10,   0.5,  165/2,    60/2, 0, 1, 3, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kthresh.attached_label("THRESH",0, "Verdana",13,'b');
+      kratio.attached_label("RATIO",0, "Verdana",13,'b');
+      bducking.attached_label("EQ",-3, "Verdana",10,'b');
+    );
+    gfx_a=1;
+    kpre_filter_clip_db.parameter_config(12,   6, -12,   12,   0.1,  283/2,    60/2, 0, 1, 4, 1, 0);
+    kplayback_rate.parameter_config     ( 9,   1,  -2,    2,   0.5,  383/2,    60/2, 0, 1, 4, 1, 0);
+    kwarp_rate_hz.parameter_config      ( 5, 0.1,   0,   10, 0.001,  500/2,    60/2, 0, 1, 4, 1, 0);
+    kwarp_amount.parameter_config       ( 6, 0.5,   0,    4,   0.1,  600/2,    60/2, 0, 1, 4, 1, 0);
+    // tempo sync logic
+    btempo_sync.button_config (15, 1, 0, 1, 115/2, 218/2, 1, 2, 1);
+    slider15==0?(
+      kdelay_ms.parameter_config          ( 1, 250,   0, 1000,     1,  170/2,   175/2, 0, 1, 5, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kdelay_ms.attached_label("DELAY",0, "Verdana",13,'b');
+      btempo_sync.attached_label("SYNC",-3, "Verdana",10,'b');
+    ):(
+      ktempo_sync.parameter_config        (10,   1,   1,   32,     1,  170/2,   175/2, 0, 1, 5, 0, 0);
+      ktempo_sync.draw_parameter();
+      ktempo_sync.handle_parameter_tempo();
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      ktempo_sync.attached_label("SYNCED",0, "Verdana",13,'b');
+      btempo_sync.attached_label("FREE",-3, "Verdana",10,'b');
+    );
+    gfx_a=1;
+    kfeedback.parameter_config          ( 4,  30,   0,   80,     1,  270/2,   175/2, 0, 1, 5, 1, 0);
+    kwide.parameter_config              (11,  98,  70,  100,     1,  370/2,   175/2, 0, 1, 5, 1, 1);
+    kwet.parameter_config               ( 3,  -6, -48,    6,   0.1,  470/2,   175/2, 0, 1, 5, 1, 0);
+    kdry.parameter_config               ( 2,   0, -48,    6,   0.1,  570/2,   175/2, 0, 1, 4, 1, 0);
+
+    gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+    kpre_filter_clip_db.attached_label("CLIP",0, "Verdana",13,'b');
+    kplayback_rate.attached_label("SPEED",0, "Verdana",13,'b');
+    kwarp_rate_hz.attached_label("WARP RATE",0, "Verdana",13,'b');
+    kwarp_amount.attached_label("AMOUNT",0, "Verdana",13,'b');
+    kfeedback.attached_label("FEEDBACK",0, "Verdana",13,'b');
+    kwide.attached_label("WIDE",0, "Verdana",13,'b');
+    kwet.attached_label("WET",0, "Verdana",13,'b');
+    kdry.attached_label("DRY",0, "Verdana",13,'b');
+
+    setup_dmenu_nogrouping("ReaminCalm Delay Floaty", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+
+    mouse_wheel=0;
+  ):gfx_ext_flags == 1 ? ( // embedded mcp ui
+    set_background(1,0.196,0.192,0.2);
+    gfx_a=1;
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                (slider    default     min      max     step           x            y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    slider16==0?(
+      kfilter_cutoff.parameter_config     ( 7,  80,   0,  100,     1,   33/2,    10/2, 0, 1, 3, 1, 0);
+      kfilter_resonance.parameter_config  ( 8,  80,   0,  150,     1,  141/2,    10/2, 0, 1, 3, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kfilter_cutoff.attached_label("CUT",-4, "Verdana",22,'b');
+      kfilter_resonance.attached_label("RES",-4, "Verdana",22,'b');
+    ):(
+      kthresh.parameter_config            (13,   0, -60,    0,   0.1,   33/2,    10/2, 0, 1, 3, 1, 0);
+      kratio.parameter_config             (14,   4,   1,   10,   0.5,  141/2,    10/2, 0, 1, 3, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kthresh.attached_label("THRES",-4, "Verdana",22,'b');
+      kratio.attached_label("RATIO",-4, "Verdana",22,'b');
+    );
+    gfx_a=1;
+    slider15==0?(
+      kdelay_ms.parameter_config          ( 1, 250,   0, 1000,     1,  33/2,   105/2, 0, 1, 5, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kdelay_ms.attached_label("DELAY",-4, "Verdana",22,'b');
+    ):(
+      ktempo_sync.parameter_config        (10,   1,   1,   32,     1,  33/2,   105/2, 0, 1, 5, 0, 0);
+      ktempo_sync.draw_parameter();
+      ktempo_sync.handle_parameter_tempo();
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      ktempo_sync.attached_label("SYNC",-4, "Verdana",22,'b');
+    );
+
+    gfx_a=1;
+    kfeedback.parameter_config          ( 4,  30,   0,   80,     1,  141/2,   105/2, 0, 1, 5, 1, 0);
+    kwide.parameter_config              (11,  98,  70,  100,     1,   33/2,   200/2, 0, 1, 5, 1, 1);
+    kwet.parameter_config               ( 3,  -6, -48,    6,   0.1,  141/2,   200/2, 0, 1, 5, 1, 0);
+
+    gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+    kfeedback.attached_label("FEED",-4, "Verdana",22,'b');
+    kwide.attached_label("WIDE",-4, "Verdana",22,'b');
+    kwet.attached_label("WET",-4, "Verdana",22,'b');
+    mouse_wheel=0;
+  );
+  
+  // update parameters
+  S2_sample_on == 0 ? (
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
+  group_check_gfx(); // tk extra features
+    caller == 1 ? (
+        parameters_update_on == 0 ? (
+          parameters_update();
+        );
+    );
+  );
+  S2_sample_on = 0;

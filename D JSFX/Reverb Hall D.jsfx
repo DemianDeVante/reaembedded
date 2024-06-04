@@ -1,0 +1,346 @@
+desc: Hall Reverb (DD)
+// Hall Reverb 3 by Witti
+
+slider1:_dry=0<-48,6,0.1>-Dry (dB)
+slider2:_wet=-6<-48,6,0.1>-Wet (dB)
+slider3:1<0,10,0.001>-Length (s)
+slider4:0<0,100,1>-Pre-Delay (ms)
+slider5:240<0,1000,1>-Lowdamp (Hz)
+slider6:2400<1000,10000,1>-Highdamp (Hz)
+slider7:20<1,25,1>-xth Prime
+slider8:37<0,100,1>-(if stereo) L/R offset (%)
+slider9:duckthres=0<-60,0,0.1>-Threshold (dB)
+slider10:duckratio=4<1,10,0.5>-Ratio
+
+import DGFX/demian-effects.jsfx-inc
+import DGFX/tk_lib_d.jsfx-inc 
+
+options:gmem=WittiHallD     
+options:no_meter
+
+filename:0,DGFX/wittihall/bg.png
+filename:1,DGFX/wittihall/bgmcp.png
+filename:2,DGFX/wittihall/button.png
+filename:3,DGFX/wittihall/knob-black.png
+filename:4,DGFX/wittihall/knob-white.png
+filename:5,DGFX/wittihall/knob-blue.png
+
+in_pin:L in
+in_pin:R in
+out_pin:L out
+out_pin:R out
+
+@init
+  gfx_ext_retina = 1;
+  gfx_clear=0;
+  lastCap=1;
+  mouse_wheel=1;
+  Number_input = 0;
+  number_input_invalid = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  ext_noinit=1;
+
+  // tk extra features
+  lastCap=1;
+  mouse_wheel=1;
+  is_recording = 0; is_playing = 0; is_stopped = 1;
+  while_playing = 1; while_recording = 1; while_stopped = 1;
+  Number_input = 0;
+  number_input_raw = 0;
+  number_input_use = 0;
+  komma = 0;
+  in_key = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  number_input_slider = 0;
+  number_input_min=0;
+  number_input_max=0;
+  number_input_invalid = 0;
+  number_input_sign=1;
+  s2_numbers_of_sliders = 10; // set the number of sliders for gorup linking
+  s2_numbers_of_generics = 0;
+  group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
+  sliders_old = group_generics + 16*200;
+  generics_old = sliders_old + 16*64;
+
+  //tmp1 = tmp2 = 0;
+  t1 = t2 = 0;
+  t12 = t22 = 0;
+
+  g1 = g2 = g3 = g4 = 0.62;
+  g5 = 0.62;
+  g7 = 0.62;
+  g9 = 0.62;
+  g11 = 0.62;
+
+  mouse_sensivity();
+  function parameters_update() (
+    parameters_update_on = 1;
+    group_parameters(); // tk extra features
+    // Paste all contents of @slider here
+
+    dry = _dry <= -48.0 ? 0.0 : 10^(_dry/20);
+    wet = _wet <= -48.0 ? 0.0 : 10^(_wet/20)*0.5;
+    d = exp( -$pi*slider5/srate );
+    d2 = exp( -2*$pi*slider6/srate );
+
+    primenumber= (slider7-1)^2+slider7+40;
+    primenumber2= primenumber+(5-1)^2+5+40;
+    primenumber3= primenumber2+(10-1)^2+10+40;
+    primenumber4= primenumber3+(14-1)^2+14+40;
+    primenumber5= primenumber4+(18-1)^2+18+40;
+    primenumber6= primenumber5+(4-1)^2+4+40;
+    primenumber7= primenumber6+(16-1)^2+16+40;
+    primenumber8= primenumber7+(2-1)^2+2+40;
+    primenumber9= primenumber8+(10-1)^2+10+40;
+    primenumber10= primenumber9+(5-1)^2+5+40;
+    primenumber11= primenumber10+(15-1)^2+15+40;
+    primenumber12= primenumber11+(3-1)^2+3+40;
+
+    l0 = slider4/1000*srate + 1|0; // added "|0"
+    l1 = primenumber;
+    l2 = primenumber2;
+    l3 = primenumber3;
+    l4 = primenumber4;
+    l5 = primenumber5;
+    l6 = primenumber6;
+    l7 = primenumber7;
+    l8 = primenumber8;
+    l9 = primenumber9;
+    l10 = primenumber10;
+    l11 = primenumber11;
+    l12 = primenumber12;
+
+    f = exp( log(0.001) / (slider3*srate / (l5+l6+l7+l8)) );
+
+    Rl0 = slider4/1000*srate + 1|0; // added "|0"
+    Rl1 = l1;
+    Rl2 = l2-slider8;
+    Rl3 = l3+slider8;
+    Rl4 = l4-slider8;
+    Rl5 = l5+slider8;
+    Rl6 = l6-slider8;
+    Rl7 = l7+slider8;
+    Rl8 = l8-slider8;
+    Rl9 = l9+slider8;
+    Rl10 = l10-slider8;
+    Rl11 = l11+slider8;
+    Rl12 = l12-slider8;
+
+    b0 = 0;
+    b1 = b0+l0;
+    b2 = b1+l1;
+    b3 = b2+l2;
+    b4 = b3+l3;
+    b5 = b4+l4;
+    b6 = b5+l5;
+    b7 = b6+l6;
+    b8 = b7+l7;
+    b9 = b8+l8;
+    b10 = b9+l9;
+    b11 = b10+l10;
+    b12 = b11+l11;
+
+    Rb0 = b12+l12;
+    Rb1 = Rb0+Rl0;
+    Rb2 = Rb1+Rl1;
+    Rb3 = Rb2+Rl2;
+    Rb4 = Rb3+Rl3;
+    Rb5 = Rb4+Rl4;
+    Rb6 = Rb5+Rl5;
+    Rb7 = Rb6+Rl6;
+    Rb8 = Rb7+Rl7;
+    Rb9 = Rb8+Rl8;
+    Rb10 = Rb9+Rl9;
+    Rb11 = Rb10+Rl10;
+    Rb12 = Rb11+Rl11;
+
+    parameters_update_on = 0;
+    caller = 0;
+  );
+
+
+
+@slider
+    caller=1;
+
+@serialize
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped);
+  //file_var(0, LA2Kan_VERSION);
+  file_var(0, link_group);
+  seriloop = 0;
+  loop(64*16 + 27 + 16,
+  file_var(0, gmem[seriloop]);
+  seriloop += 1;
+  );
+  seriloop = 0;
+  loop(200*16,
+  file_var(0, group_generics[seriloop]);
+  seriloop += 1;
+  );
+
+@sample
+  S2_sample_on = 1;
+
+  // extra tk features
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0;
+  group_check_smpl();
+
+  caller == 1 ? (
+    parameters_update_on == 0 ? (
+      parameters_update();
+    );
+  );
+
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
+
+  process == 1 ? (
+    input = spl0;
+    Rinput = spl1;
+
+    /* LEFT CHANNEL */
+    in = spl0;
+    in0=in;out0=b0[p0];b0[p0]=in0;p0=(p0+1)%l0;
+    in1=out0;out1=b1[p1]-g1*in1;b1[p1]=in1+g1*out1;p1=(p1+1)%l1;
+    in2=out1;out2=b2[p2]-g2*in2;b2[p2]=in2+g2*out2;p2=(p2+1)%l2;
+    in3=out2;out3=b3[p3]-g3*in3;b3[p3]=in3+g3*out3;p3=(p3+1)%l3;
+    in4=out3;out4=b4[p4]-g4*in4;b4[p4]=in4+g4*out4;p4=(p4+1)%l4;
+
+    tmp1 = out4 + out12 * f;
+    tmp2 = out4 + out8 * f;
+
+    tmp1 -= t12 = tmp1 + d * (t12-tmp1);
+    tmp2 -= t22 = tmp2 + d * (t22-tmp2);
+
+    tmp1 = t1 = tmp1 + d2 * (t1-tmp1);
+    tmp2 = t2 = tmp2 + d2 * (t2-tmp2);
+
+    in5=tmp1;out5=b5[p5]-g5*in5;b5[p5]=in5+g5*out5;p5=(p5+1)%l5;
+    in6=out5;out6=b6[p6];b6[p6]=in6;p6=(p6+1)%l6;
+    in7=out6;out7=b7[p7]-g7*in7;b7[p7]=in7+g7*out7;p7=(p7+1)%l7;
+    in8=out7;out8=b8[p8];b8[p8]=in8;p8=(p8+1)%l8;
+
+    in9=tmp2;out9=b9[p9]-g9*in9;b9[p9]=in9+g9*out9;p9=(p9+1)%l9;
+    in10=out9;out10=b10[p10];b10[p10]=in10;p10=(p10+1)%l10;
+    in11=out10;out11=b11[p11]-g11*in11;b11[p11]=in11+g11*out11;p11=(p11+1)%l11;
+    in12=out11;out12=b12[p12];b12[p12]=in12;p12=(p12+1)%l12;
+
+    out = out5 + out7 + out9 + out11;
+
+    /* RIGHT CHANNEL */
+    Rin = spl1;
+    Rin0=Rin;Rout0=Rb0[Rp0];Rb0[Rp0]=Rin0;Rp0=(Rp0+1)%Rl0;
+    Rin1=Rout0;Rout1=Rb1[Rp1]-g1*Rin1;Rb1[Rp1]=Rin1+g1*Rout1;Rp1=(Rp1+1)%Rl1;
+    Rin2=Rout1;Rout2=Rb2[Rp2]-g2*Rin2;Rb2[Rp2]=Rin2+g2*Rout2;Rp2=(Rp2+1)%Rl2;
+    Rin3=Rout2;Rout3=Rb3[Rp3]-g3*Rin3;Rb3[Rp3]=Rin3+g3*Rout3;Rp3=(Rp3+1)%Rl3;
+    Rin4=Rout3;Rout4=Rb4[Rp4]-g4*Rin4;Rb4[Rp4]=Rin4+g4*Rout4;Rp4=(Rp4+1)%Rl4;
+
+    Rtmp1 = Rout4 + Rout12 * f;
+    Rtmp2 = Rout4 + Rout8 * f;
+
+    Rtmp1 -= Rt12 = Rtmp1 + d * (Rt12-Rtmp1);
+    Rtmp2 -= Rt22 = Rtmp2 + d * (Rt22-Rtmp2);
+
+    Rtmp1 = Rt1 = Rtmp1 + d2 * (Rt1-Rtmp1);
+    Rtmp2 = Rt2 = Rtmp2 + d2 * (Rt2-Rtmp2);
+
+    Rin5=Rtmp1;Rout5=Rb5[Rp5]-g5*Rin5;Rb5[Rp5]=Rin5+g5*Rout5;Rp5=(Rp5+1)%Rl5;
+    Rin6=Rout5;Rout6=Rb6[Rp6];Rb6[Rp6]=Rin6;Rp6=(Rp6+1)%Rl6;
+    Rin7=Rout6;Rout7=Rb7[Rp7]-g7*Rin7;Rb7[Rp7]=Rin7+g7*Rout7;Rp7=(Rp7+1)%Rl7;
+    Rin8=Rout7;Rout8=Rb8[Rp8];Rb8[Rp8]=Rin8;Rp8=(Rp8+1)%Rl8;
+
+    Rin9=Rtmp2;Rout9=Rb9[Rp9]-g9*Rin9;Rb9[Rp9]=Rin9+g9*Rout9;Rp9=(Rp9+1)%Rl9;
+    Rin10=Rout9;Rout10=Rb10[Rp10];Rb10[Rp10]=Rin10;Rp10=(Rp10+1)%Rl10;
+    Rin11=Rout10;Rout11=Rb11[Rp11]-g11*Rin11;Rb11[Rp11]=Rin11+g11*Rout11;Rp11=(Rp11+1)%Rl11;
+    Rin12=Rout11;Rout12=Rb12[Rp12];Rb12[Rp12]=Rin12;Rp12=(Rp12+1)%Rl12;
+
+    Rout = Rout5 + Rout7 + Rout9 + Rout11;
+
+    compress.channel_ducking_stereo(out,Rout,input,Rinput,duckthres,duckratio);
+    out=compress.spl_l;
+    Rout=compress.spl_r;
+
+    // OUTPUT
+    spl0 = input*dry + out*wet;
+    spl1 = Rinput*dry + Rout*wet;
+  );
+
+
+<? // @gfx setup
+  w_bg=768;
+  h_bg=324;
+  mcp_ratio="tall";
+  include("ddconfig.jsfx-inc");
+?>
+  tk_gfx_setup();
+  gfx_ext_flags == 0 ? (  // full ui
+    set_background(0);
+    gfx_a=1;  
+    // y= 60 & 175
+    // x= each parameter offset by 100px, starting from 65
+    kHPF.parameter_config     ( 5, 240,   0, 1000,     1, 133/2,  60/2, 0, 1, 3, 1, 0);
+    kLPF.parameter_config     ( 6,2400,1000,10000,     1, 233/2,  60/2, 0, 1, 3, 1, 0);
+    kthresh.parameter_config  ( 9,   0, -60,    0,   0.1, 333/2,  60/2, 0, 1, 3, 1, 0);
+    kratio.parameter_config   (10,   4,   1,   10,   0.5, 433/2,  60/2, 0, 1, 3, 1, 0);
+    kspecial.parameter_config ( 7,  20,   1,   25,     1, 533/2,  60/2, 0, 1, 4, 1, 0);
+    kpredelay.parameter_config( 4,   0,   0,  100,     1, 185/2, 175/2, 0, 1, 5, 1, 0);
+    ksustain.parameter_config ( 3,   1,   0,   10, 0.001, 285/2, 175/2, 0, 1, 5, 1, 0);
+    kwet.parameter_config     ( 2,  -6, -48,    6,   0.1, 385/2, 175/2, 0, 1, 5, 1, 0);
+    kdry.parameter_config     ( 1,   0, -48,    6,   0.1, 485/2, 175/2, 0, 1, 4, 1, 0);
+
+    gfx_r=gfx_g=gfx_b=gfx_a=0.7; // LABELS
+    kthresh.attached_label("THRESH",0, "Verdana",13,'b');
+    kratio.attached_label("RATIO",0, "Verdana",13,'b');
+    kHPF.attached_label("LOW DAMP",0, "Verdana",13,'b');
+    kLPF.attached_label("HIGH DAMP",0, "Verdana",13,'b');
+    kspecial.attached_label("DISTANCE",0, "Verdana",13,'b');
+    kpredelay.attached_label("PREDELAY",0, "Verdana",13,'b');
+    ksustain.attached_label("LENGTH",0, "Verdana",13,'b');
+    kdry.attached_label("DRY",0, "Verdana",13,'b');
+    kwet.attached_label("WET",0, "Verdana",13,'b');
+    setup_dmenu_nogrouping("Witti Hall 3", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+    mouse_wheel=0;
+  ):gfx_ext_flags == 1 ? ( // embedded mcp ui
+    //       33  10 141  10
+    //   6 105  83 105 160 105
+    //       33 200 141 200
+    set_background(1,0.525,0.525,0.525);
+    kHPF.parameter_config     ( 5, 240,   0, 1000,     1,   33/2,  10/2, 0, 1, 3, 1, 0);
+    kLPF.parameter_config     ( 6,2400,1000,10000,     1,  141/2,  10/2, 0, 1, 3, 1, 0);
+    kpredelay.parameter_config( 4,   0,   0,  100,     1,    6/2, 105/2, 0, 1, 5, 1, 0);
+    ksustain.parameter_config ( 3,   1,   0,   10, 0.001,   83/2, 105/2, 0, 1, 5, 1, 0);
+    kwet.parameter_config     ( 2,  -6, -48,    6,   0.1,  160/2, 105/2, 0, 1, 5, 1, 0);
+    kthresh.parameter_config  ( 9,   0, -60,    0,   0.1,   33/2, 200/2, 0, 1, 3, 1, 0);
+    kratio.parameter_config   (10,   4,   1,   10,   0.5,  141/2, 200/2, 0, 1, 3, 1, 0);
+    gfx_r=gfx_g=gfx_b=gfx_a=0.7; // LABELS
+    kHPF.attached_label("LOW",-4, "Verdana",22,'b');
+    kLPF.attached_label("HIGH",-4, "Verdana",22,'b');
+    kthresh.attached_label("THR",-4, "Verdana",22,'b');
+    kratio.attached_label("RAT",-4, "Verdana",22,'b');
+    kpredelay.attached_label("PRE",-4, "Verdana",22,'b');
+    ksustain.attached_label("LEN",-4, "Verdana",22,'b');
+    kwet.attached_label("WET",-4, "Verdana",22,'b');
+    mouse_wheel=0;
+  );
+  
+  // update parameters
+  S2_sample_on == 0 ? (
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
+  group_check_gfx(); // tk extra features
+    caller == 1 ? (
+        parameters_update_on == 0 ? (
+          parameters_update();
+        );
+    );
+  );
+  S2_sample_on = 0;
+
+  

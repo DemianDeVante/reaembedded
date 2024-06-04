@@ -1,0 +1,76 @@
+desc: Demian DeVante Filters & Effects
+// Testing, in this example the lowpass filter compresses the volume
+@init
+
+  function channel_filter_highpass_stereo(l_channel r_channel value minval) 
+    local(RC l_channel r_channel value minval) 
+    instance(l_prev_in l_prev_out r_prev_in r_prev_out spl_l spl_r) 
+    (
+    value > 0 && value > minval ? (
+        RC = 1.0 / (value * 2 * $pi);
+        l_channel = RC / (RC + 1.0/srate) * (this.l_prev_out - this.l_prev_in + (this.l_prev_in = l_channel) );
+        r_channel = RC / (RC + 1.0/srate) * (this.r_prev_out - this.r_prev_in + (this.r_prev_in = r_channel) );
+        this.l_prev_out = l_channel;
+        this.r_prev_out = r_channel;
+      );
+      this.spl_l=l_channel;
+      this.spl_r=r_channel;
+  );
+
+  function channel_filter_lowpass_stereo(l_channel r_channel value maxval) 
+      local(RC l_channel r_channel value maxval) 
+      instance(l_output r_output spl_l spl_r) 
+      (
+      value >= 0 && value < maxval ? (
+        RC = (2* $pi * value / srate) / ((2* $pi * value / srate) + 1);
+        this.l_output = RC * l_channel + (1 - RC) * this.l_output;
+        this.r_output = RC * r_channel + (1 - RC) * this.r_output;
+        this.spl_l = this.l_output;
+        this.spl_r = this.r_output;
+      ):(
+        this.spl_l = l_channel;
+        this.spl_r = r_channel;
+      );
+  );
+
+  function channel_ducking_stereo(channel_l, channel_r, schannel_l, schannel_r, thresh, cratio) //uses major tom compression
+      instance(log2db db2log attime reltime attcoef relcoef fbacoef fbrcoef rundb grv maxover runmax spl_l spl_r) 
+      local(maxspl runave overdb schannel_l schannel_r channel_r channel_r thresh cratio) 
+      (
+          this.spl_l = channel_l;
+          this.spl_r = channel_r; 
+          ! this.initialize ? (
+              this.log2db = 8.6858896380650365530225783783321; // 20 / ln(10)
+              this.db2log = 0.11512925464970228420089957273422; // ln(10) / 20 
+              this.attime=0.010;
+              this.reltime=0.100;
+              this.attcoef=exp(-1/(attime * srate));
+              this.relcoef=exp(-1/(reltime * srate));
+              this.fbacoef=exp(-1000/(2 * srate)); // 2 msec. opto attack for feedback detection
+              this.fbrcoef=exp(-1000/(200 * srate)); // 200 msec. opto release for feedback detection
+          );
+          this.initialize=1;
+          maxspl = max(abs(schannel_l), abs(schannel_r))^ 2;
+          runave = maxspl + exp(-1000/(0.0025 * srate)) * (runave - maxspl);
+          overdb = log(sqrt(max(0,runave))/exp(thresh * this.db2log)) * this.log2db;
+          overdb > this.maxover ? (
+              this.maxover = overdb;
+              this.attime = ((0.08924 / abs(overdb)) + (0.60755 / (overdb ^ 2)) - 0.00006);
+              this.attcoef = exp(-1/(this.attime * srate));
+              this.reltime = overdb / 125;
+              this.relcoef = exp(-1/(this.reltime * srate));
+          );
+          overdb = max(0,overdb);
+          overdb > this.rundb ? (
+              this.rundb = overdb + this.attcoef * (this.rundb - overdb);
+          ) : (
+              this.rundb = overdb + this.relcoef * (this.rundb - overdb);
+          );
+          overdb = this.rundb;
+          ext_gr_meter = gr = -overdb * (cratio-1)/cratio;
+          this.grv = exp(gr * db2log);
+          this.runmax = this.maxover + this.relcoef * (this.runmax - this.maxover);
+          this.maxover = this.runmax;
+          this.spl_l *= this.grv;
+          this.spl_r *= this.grv; 
+  );

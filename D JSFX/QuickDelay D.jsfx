@@ -1,0 +1,479 @@
+desc: QuickDelay (DD)
+/*
+author: tilr
+version: 1.0
+provides:
+  qdelay/qd.delay.jsfx-inc
+  qdelay/qd.rbj_filter.jsfx-inc
+  qdelay/qd.saike_pitchlib.jsfx-inc
+screenshot: https://raw.githubusercontent.com/tiagolr/tilr_jsfx/master/doc/qdelay.png
+about:
+  # QuickDelay
+
+  A simple delay with ping-pong mode, tempo sync, feedback filters and pitch shift.
+
+  #### Features
+
+  * Dual or single delay modes
+  * Normal and ping-pong modes
+  * Ping-pong stereo width control
+  * Tempo sync
+  * Low pass and high pass feedback filters with Q controls
+  * Feedback pitch shift
+  * Delay modulation
+*/
+slider1:slider_delayms=250<1,1000>-Delay Time (ms)
+slider2:0<-48,6,0.1>-Dry (dB)
+slider3:-6<-48,6,0.1>-Wet (dB)
+//slider2:100<0,100,1>-Dry (%)
+//slider3:20<0,100,1>-Wet (%)
+slider4:_feedback=50<0,100>-Feedback
+slider5:mod_freq=1<1,8>-Modulation freq (Hz)
+slider6:mod_amp=0<0,100>-Modulation amp
+slider7:hp_freq=20<20,1000,1:log>-High Pass
+slider8:lp_freq=20000<1000,20000,1:log>-Low Pass
+slider9:_semitones=0<-12,12,1>-Transpose
+slider10:sync=0<0,4,1>-Tempo sync
+slider11:syncmode=0<0,3,1>-Sync Mode
+slider12:spread=50<0,100,1>-Spread
+slider13:filter_q=0.707<0.707,4,0.01:log>-Punch
+slider14:thresh=0<-60,0,0.1>-Threshold (dB)
+slider15:ratio=4<1,10,0.5>-Ratio
+slider16:page=1<0,1,1>-Toggle Page
+
+import DGFX/tk_lib_d.jsfx-inc 
+import DGFX/qd.delay.jsfx-inc
+import DGFX/qd.rbj_filter.jsfx-inc
+import DGFX/qd.saike_pitchlib.jsfx-inc
+import DGFX/demian-effects.jsfx-inc
+
+options:gmem=QuickDelayD     
+options:no_meter
+
+filename:0,DGFX/delayquick/bg.png
+filename:1,DGFX/delayquick/bgmcp.png
+filename:2,DGFX/delayquick/button.png
+filename:3,DGFX/delayquick/knob-black.png
+filename:4,DGFX/delayquick/knob-white.png
+filename:5,DGFX/delayquick/knob-blue.png
+
+in_pin:left input
+in_pin:right input
+out_pin:left output
+out_pin:right output
+
+@init
+  gfx_ext_retina = 1;
+  gfx_clear=0;
+  lastCap=1;
+  mouse_wheel=1;
+  Number_input = 0;
+  number_input_invalid = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  ext_noinit=1;
+
+  // tk extra features
+  lastCap=1;
+  mouse_wheel=1;
+  is_recording = 0; is_playing = 0; is_stopped = 1;
+  while_playing = 1; while_recording = 1; while_stopped = 1;
+  Number_input = 0;
+  number_input_raw = 0;
+  number_input_use = 0;
+  komma = 0;
+  in_key = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  number_input_slider = 0;
+  number_input_min=0;
+  number_input_max=0;
+  number_input_invalid = 0;
+  number_input_sign=1;
+  s2_numbers_of_sliders = 16; // set the number of sliders for gorup linking
+  s2_numbers_of_generics = 0;
+  group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
+  sliders_old = group_generics + 16*200;
+  generics_old = sliders_old + 16*64;
+
+  mouse_sensivity();
+  // 10 second stereo delay line
+  d0.delay(2000000, srate * 10);
+  d1.delay(3000000, srate * 10);
+
+  function sine_wave(cycle) (
+    sin(cycle * 2 * $pi);
+  );
+
+  function rc_set(rc)
+    instance(a) (
+      a = 1 / (rc * srate + 1);
+  );
+  function rc_lp(sample)
+    instance(lp, a) (
+      lp += a * (sample - lp);
+  );
+  function smooth()
+    instance (lp, smooth) (
+      lp = smooth;
+      smooth = this.rc_lp(this);
+  );
+
+  function init_pitchlib ()
+  (
+    transition_region = 1024;
+    bufferSize = 4 * transition_region;
+    shifter.pitchShifter(1, transition_region, bufferSize, 2*65536, 3*65536, transition_region, 1);
+  );
+
+  init_pitchlib();
+
+  samps.rc_set(0.5);
+  function parameters_update() (
+    parameters_update_on = 1;
+    group_parameters(); // tk extra features
+    // Paste all contents of @slider here
+    feedback = _feedback / 100;
+    lfactor = spread > 0 ? 1 - spread / 100 : 1;
+    rfactor = spread < 0 ? 1 + spread / 100 : 1;
+    rhaas = -spread > 0 ? srate / 100 * -spread / 100 : 0; // 100 ms max haas
+    lhaas = spread > 0 ? srate / 100 * spread / 100 : 0; // 100 ms max haas
+
+    lp_l.rbj_lp(lp_freq, filter_q);
+    lp_r.rbj_lp(lp_freq, filter_q);
+    hp_l.rbj_hp(hp_freq, filter_q);
+    hp_r.rbj_hp(hp_freq, filter_q);
+
+    semitones = 2*((2^(_semitones/12))-1.0);
+
+    //dry = slider2 / 100;
+    //wet = slider3 / 100;
+    dry = slider2 <= -48.0 ? 0.0 : 10^(slider2/20);
+    wet = slider3 <= -48.0 ? 0.0 : 10^(slider3/20)*0.5;
+
+    parameters_update_on = 0;
+    caller = 0;
+  );
+@block
+  while (midirecv(offset, msg1, note, vel)) (
+    event = msg1 & 0xF0;
+    event == 0xB0 && note == 123 ? ( // All notes off
+      memset(d0.buf, 0, d0.size);
+      memset(d1.buf, 0, d1.size);
+    );
+  );
+    //{Off,1/16,1/8,1/4,1/2,1/1,1/16t,1/8t,1/4t,1/2t,1/1t,1/16.,1/8.,1/4.,1/2.,1/1.}
+
+  syncmode == 0 ? (
+    delayms=slider_delayms;
+  ): syncmode == 1 ?(
+    sync == 0 ? delayms = 60000 / 4 / tempo:        // 1/16
+    sync == 1 ? delayms = 60000 / 2 / tempo:        // 1/8
+    sync == 2 ? delayms = 60000 / tempo:            // 1/4
+    sync == 3 ? delayms = 60000 * 2 / tempo:        // 1/2
+    sync == 4 ? delayms = 60000 * 4 / tempo;        // 1/1
+  ): syncmode == 2 ?(
+    sync == 0 ? delayms = 60000 / 6 / tempo:        // 1/16t
+    sync == 1 ? delayms = 60000 / 3 / tempo:        // 1/8t
+    sync == 2 ? delayms = 60000 / 3 * 2 / tempo:    // 1/4t
+    sync == 3 ? delayms = 60000 / 3 * 4 / tempo:    // 1/2t
+    sync == 4 ? delayms = 60000 / 3 * 8 / tempo;   // 1/1t
+  ): syncmode == 3 ?(
+    sync == 0 ? delayms = 60000 / 4 * 1.5 / tempo: // 1/16.
+    sync == 1 ? delayms = 60000 / 2 * 1.5 / tempo: // 1/8.
+    sync == 2 ? delayms = 60000 * 1.5 / tempo:     // 1/4.
+    sync == 3 ? delayms = 60000 * 2 * 1.5 / tempo: // 1/2.
+    sync == 4 ? delayms = 60000 * 4 * 1.5 / tempo; // 1/1.
+  );
+
+  delayms > 10000 ? delayms = 10000;
+  samps = delayms * 0.001 * srate; // delay time in samples
+
+@slider
+  caller=1;
+
+@serialize // add this block for tk extra features
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped);
+  //file_var(0, LA2Kan_VERSION);
+  file_var(0, link_group);
+  seriloop = 0;
+  loop(64*16 + 27 + 16,
+  file_var(0, gmem[seriloop]);
+  seriloop += 1;
+  );
+  seriloop = 0;
+  loop(200*16,
+  file_var(0, group_generics[seriloop]);
+  seriloop += 1;
+  );
+
+@sample
+
+  S2_sample_on = 1;
+
+  // extra tk features
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0;
+  group_check_smpl();
+
+  caller == 1 ? (
+    parameters_update_on == 0 ? (
+      parameters_update();
+    );
+  );
+
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
+
+  process == 1 ? (
+
+    play_state & 1 && !(lplay_state & 1) ? (
+      samps.smooth = samps;
+    );
+    lplay_state = play_state;
+
+    samps.smooth();
+
+    // modulation sinewave
+    mod_amp ? (
+      cycle += mod_freq / srate;
+      cycle > 1 ? cycle -= 1;
+      wave = sine_wave(cycle);
+    ) : (
+      wave = 0;
+    );
+
+    // read with cubic interpolation
+    val0 = d0.delay_read3(samps.smooth + wave * mod_amp + lhaas);
+    val1 = d1.delay_read3(samps.smooth + wave * mod_amp + rhaas);
+
+    // apply filters on delay signal
+    lp_freq < 20000 ? (
+      val0 = lp_l.rbj_df1(val0);
+      val1 = lp_r.rbj_df1(val1);
+    );
+    hp_freq > 20 ? (
+      val0 = hp_l.rbj_df1(val0);
+      val1 = hp_r.rbj_df1(val1);
+    );
+
+
+    left = spl0 + val0 * feedback;
+    right = spl1 + val1 * feedback;
+
+
+    _semitones ? (
+      shifter.pitchShifterUpdate(left, right);
+      shifter.setPitchShifterSpeed(semitones);
+      left = shifter.outL;
+      right = shifter.outR;
+    );
+
+    // write values in delay lines
+    d0.delay_write(left);
+    d1.delay_write(right);
+
+    compress.channel_ducking_stereo(val0,val1,spl0,spl1,thresh,ratio);
+    val0=compress.spl_l;
+    val1=compress.spl_r;
+
+    // sum and output
+    spl0 = spl0*dry + val0*wet;
+    spl1 = spl1*dry + val1*wet;
+  );
+
+<? // @gfx setup
+  w_bg=768;
+  h_bg=324;
+  mcp_ratio="tall";
+  include("ddconfig.jsfx-inc");
+?>
+  function handle_parameter_tempo()(
+    !Number_input ?(  // if not default handling
+      mouseClick == 1 ? (
+        this.k_collision() ? (this.dragstart());
+      ); 
+      mouseclick == -1 ? (  // stop knobs dragging
+        this.dragstop();
+      );
+      this.isrev==0 || this.isrev==3?(
+        mouse_wheel ? (  // handle wheel
+          this.k_collision() ? this.potwheel();
+          
+          caller = 1;
+        );
+        gfx_a=1;  // handle drag
+        this.dragging ? (this.potdrag();caller = 1;);
+      ):this.isrev==1 || this.isrev==2?(
+        mouse_wheel ? (  // handle wheel
+          this.k_collision() ? this.potwheel_rev();
+          
+          caller = 1;
+        );
+        gfx_a=1;  // handle drag
+        this.dragging ? (this.potdrag_rev();caller = 1;);
+      );
+      this.dragging ? (
+        gfx_setfont(1,"Verdana");
+        syncmode == 0 ? (
+          sprintf(#readout, "%s", "Off");
+        ): syncmode == 1 ?(
+          sync == 0 ? sprintf(#readout, "%s", "1/16"):
+          sync == 1 ? sprintf(#readout, "%s", "1/8"): 
+          sync == 2 ? sprintf(#readout, "%s", "1/4"):  
+          sync == 3 ? sprintf(#readout, "%s", "1/2"):  
+          sync == 4 ? sprintf(#readout, "%s", "1/1"); 
+        ): syncmode == 2 ?(
+          sync == 0 ? sprintf(#readout, "%s", "1/16t"):
+          sync == 1 ? sprintf(#readout, "%s", "1/8t"): 
+          sync == 2 ? sprintf(#readout, "%s", "1/4t"):  
+          sync == 3 ? sprintf(#readout, "%s", "1/2t"):  
+          sync == 4 ? sprintf(#readout, "%s", "1/1t"); 
+        ): syncmode == 3 ?(
+          sync == 0 ? sprintf(#readout, "%s", "1/16."):
+          sync == 1 ? sprintf(#readout, "%s", "1/8."): 
+          sync == 2 ? sprintf(#readout, "%s", "1/4."):  
+          sync == 3 ? sprintf(#readout, "%s", "1/2."):  
+          sync == 4 ? sprintf(#readout, "%s", "1/1."); 
+        );
+        gfx_x = this.xIn*zoom; gfx_y = this.yIn*zoom - gfx_texth - 2*zoom;
+        gfx_y<0?gfx_y=0;
+        gfx_x<0?gfx_x=0;
+        gfx_measurestr(#readout, rdow, rdoh);
+        gfx_r=gfx_b=gfx_g=0; gfx_a=0.4; gfx_rect(gfx_x+2*zoom, gfx_y, rdow+3*zoom, gfx_texth+2*zoom);
+        gfx_r=gfx_g=gfx_b=1; gfx_a=0.7;
+        gfx_x += 3*zoom;
+        gfx_drawstr(#readout);
+        gfx_a=1;
+      );
+    );
+    input_handling();
+  );
+
+  tk_gfx_setup();
+  gfx_ext_flags == 0 ? (  // full ui
+    set_background(0);
+    gfx_a=1;  
+    bducking.button_config         (16, 1, 0, 1, 105/2, 190/2, 0.7, 2, 1);
+    page==0?(
+      kfilter_cutoff.parameter_config     ( 7,  20,  20, 1000,     1,   65/2,    60/2, 0, 1, 3, 1, 0);
+      kfilter_resonance.parameter_config  ( 8,20000,1000,20000,     1,  165/2,    60/2, 0, 1, 3, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kfilter_cutoff.attached_label("HPF",0, "Verdana",13,'b');
+      kfilter_resonance.attached_label("LPF",0, "Verdana",13,'b');
+      bducking.attached_label("DUCK",-3, "Verdana",13,'b');
+    ):(
+      kthresh.parameter_config            (14,   0, -60,    0,   0.1,   65/2,    60/2, 0, 1, 3, 1, 0);
+      kratio.parameter_config             (15,   4,   1,   10,   0.5,  165/2,    60/2, 0, 1, 3, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kthresh.attached_label("THRESH",0, "Verdana",13,'b');
+      kratio.attached_label("RATIO",0, "Verdana",13,'b');
+      bducking.attached_label("EQ",-3, "Verdana",13,'b');
+    );
+    gfx_a=1;
+    kpre_filter_clip_db.parameter_config(13,0.707,0.707,  4,  0.01,  283/2,    60/2, 0, 1, 4, 1, 0);
+    kplayback_rate.parameter_config     ( 9,   0, -12,   12,     1,  383/2,    60/2, 0, 1, 4, 1, 0);
+    kwarp_rate_hz.parameter_config      ( 5,   1,   1,    8,   0.1,  500/2,    60/2, 0, 1, 4, 1, 0);
+    kwarp_amount.parameter_config       ( 6,   0,   0,  100,   0.1,  600/2,    60/2, 0, 1, 4, 1, 0);
+    btempo_sync_1.button_config (11, 1, 0, 1, 138/2, 190/2, 0.7, 2, 1);
+    btempo_sync_2.button_config (11, 1, 0, 2, 105/2, 220/2, 0.7, 2, 1);
+    btempo_sync_3.button_config (11, 1, 0, 3, 138/2, 220/2, 0.7, 2, 1);
+    syncmode==0?(
+      kdelay_ms.parameter_config          ( 1, 250,   1, 1000,     1,  175/2,   175/2, 0, 1, 5, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kdelay_ms.attached_label("DELAY",0, "Verdana",13,'b');
+    ):(
+      ktempo_sync.parameter_config        (10,   0,   0,    4,     1,  175/2,   175/2, 0, 1, 5, 0, 0);
+      syncmode==1?(
+        ktempo_sync.label="NOTES";
+      ):syncmode==2?(
+        ktempo_sync.label="TRIPLETS";
+      ):syncmode==3?(
+        ktempo_sync.label="DOTTED";
+      );
+      ktempo_sync.draw_parameter();
+      ktempo_sync.handle_parameter_tempo();
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      ktempo_sync.attached_label(ktempo_sync.label,0, "Verdana",13,'b');
+    );
+    gfx_a=1;
+    kfeedback.parameter_config          ( 4,  50,   0,  100,     1,  275/2,   175/2, 0, 1, 5, 1, 0);
+    kwide.parameter_config              (12,  50,   0,  100,     1,  375/2,   175/2, 0, 1, 5, 1, 0);
+    kwet.parameter_config               ( 3,  -6, -48,    6,   0.1,  475/2,   175/2, 0, 1, 5, 1, 0);
+    kdry.parameter_config               ( 2,   0, -48,    6,   0.1,  575/2,   175/2, 0, 1, 4, 1, 0);
+    gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+    kpre_filter_clip_db.attached_label("PUNCH",0, "Verdana",13,'b');
+    kplayback_rate.attached_label("PITCH",0, "Verdana",13,'b');
+    kwarp_rate_hz.attached_label("WARP RATE",0, "Verdana",13,'b');
+    kwarp_amount.attached_label("AMOUNT",0, "Verdana",13,'b');
+    kfeedback.attached_label("FEEDBACK",0, "Verdana",13,'b');
+    kwide.attached_label("WIDE",0, "Verdana",13,'b');
+    kdry.attached_label("DRY",0, "Verdana",13,'b');
+    kwet.attached_label("WET",0, "Verdana",13,'b');
+    btempo_sync_1.attached_label("NOTE",-3, "Verdana",13,'b');
+    btempo_sync_2.attached_label("TRIP",-3, "Verdana",13,'b');
+    btempo_sync_3.attached_label("DOTT",-3, "Verdana",13,'b');
+    setup_dmenu_nogrouping("TILR QuickDelay", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+    mouse_wheel=0;
+  ):gfx_ext_flags == 1 ? ( // embedded mcp ui
+    set_background(1,0.525,0.525,0.525);
+    gfx_a=1;
+    page==0?(
+      kfilter_cutoff.parameter_config     ( 7,  20,  20, 1000,     1,   33/2,    10/2, 0, 1, 3, 1, 0);
+      kfilter_resonance.parameter_config  ( 8,20000,1000,20000,     1,  141/2,    10/2, 0, 1, 3, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kfilter_cutoff.attached_label("HPF",-4, "Verdana",22,'b');
+      kfilter_resonance.attached_label("LPF",-4, "Verdana",22,'b');
+    ):(
+      kthresh.parameter_config            (14,   0, -60,    0,   0.1,   33/2,    10/2, 0, 1, 3, 1, 0);
+      kratio.parameter_config             (15,   4,   1,   10,   0.5,  141/2,    10/2, 0, 1, 3, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kthresh.attached_label("THRESH",-4, "Verdana",22,'b');
+      kratio.attached_label("RATIO",-4, "Verdana",22,'b');
+    );
+    gfx_a=1;
+    syncmode==0?(
+      kdelay_ms.parameter_config          ( 1, 250,   1, 1000,     1,  33/2,   105/2, 0, 1, 5, 1, 0);
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      kdelay_ms.attached_label("DELAY",-4, "Verdana",22,'b');
+    ):(
+      ktempo_sync.parameter_config        (10,   0,   0,    4,     1,  33/2,   105/2, 0, 1, 5, 0, 0);
+      syncmode==1?(
+        ktempo_sync.label="NOTES";
+      ):syncmode==2?(
+        ktempo_sync.label="TRIPLET";
+      ):syncmode==3?(
+        ktempo_sync.label="DOTTED";
+      );
+      ktempo_sync.draw_parameter();
+      ktempo_sync.handle_parameter_tempo();
+      gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+      ktempo_sync.attached_label(ktempo_sync.label,-4, "Verdana",22,'b');
+    );
+    gfx_a=1;
+    kfeedback.parameter_config          ( 4,  50,   0,  100,     1,  141/2,   105/2, 0, 1, 5, 1, 0);
+    kwide.parameter_config              (12,  50,   0,  100,     1,   33/2,   200/2, 0, 1, 5, 1, 0);
+    kwet.parameter_config               ( 3,  -6, -48,    6,   0.1,  141/2,   200/2, 0, 1, 5, 1, 0);
+    gfx_r=gfx_g=gfx_b=gfx_a=0.7; // color for labels
+    kfeedback.attached_label("FEED",-4, "Verdana",22,'b');
+    kwide.attached_label("WIDE",-4, "Verdana",22,'b');
+    kwet.attached_label("WET",-4, "Verdana",22,'b');
+    mouse_wheel=0;
+  );
+  
+  // update parameters
+  S2_sample_on == 0 ? (
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
+  group_check_gfx(); // tk extra features
+    caller == 1 ? (
+        parameters_update_on == 0 ? (
+          parameters_update();
+        );
+    );
+  );
+  S2_sample_on = 0;

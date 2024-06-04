@@ -1,0 +1,482 @@
+// Copyright 2006, Thomas Scott Stillwell
+// All rights reserved.
+//
+//Redistribution and use in source and binary forms, with or without modification, are permitted 
+//provided that the following conditions are met:
+//
+//Redistributions of source code must retain the above copyright notice, this list of conditions 
+//and the following disclaimer. 
+//
+//Redistributions in binary form must reproduce the above copyright notice, this list of conditions 
+//and the following disclaimer in the documentation and/or other materials provided with the distribution. 
+//
+//The name of Thomas Scott Stillwell may not be used to endorse or 
+//promote products derived from this software without specific prior written permission. 
+//
+
+
+//THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR 
+//IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND 
+//FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS 
+//BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+//(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+//PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+//STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF 
+//THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+desc:Major Tom Compressor (DD)
+//tags: dynamics compressor
+//author: Stillwell
+
+slider1:0<-60,0,0.1>-Threshold (dB)
+slider2:3<1,20,0.1>-Ratio
+slider3:0<-20,20,0.1>-Gain
+slider4:2<0,3,1{Hard (Blown Capacitor),Soft (Blown Capacitor),Hard,Soft}>-Knee
+slider5:0<0,1,1{Normal,Sidechain}>-Detector Input
+slider6:0<0,1,1{No,Yes}>-Automatic Make-Up
+slider7:0<0,1,1{Peak,RMS}>-Detection
+slider8:0<0,1,1{Feedforward,Feedback}>-Detection Source
+slider9:0<0,1000,10>-HPF
+slider10:22000<1000,22000,100>-LPF
+
+// add ext lowpass and highpass
+in_pin:left input
+in_pin:right input
+in_pin:sidechain left input
+in_pin:sidechain right input
+out_pin:left output
+out_pin:right output
+out_pin:sidechain left output
+out_pin:sidechain right output
+
+import DGFX/tk_lib_d.jsfx-inc 
+// vu meter library, skip this line if not using a meter
+import DGFX/tk-vu_lib_d.jsfx-inc
+
+options:no_meter
+options:gfx_hz=60
+// write a cool name to store jsfx memory below
+options:gmem=majortomd
+
+filename:0,DGFX/majortom/bg.png
+filename:1,DGFX/majortom/button.png
+filename:2,DGFX/majortom/button-ext.png
+filename:3,DGFX/majortom/button-detect.png
+filename:4,DGFX/majortom/knob.png
+filename:5,DGFX/majortom/meter.png
+filename:6,DGFX/majortom/bgmcp.png
+// bg.png  button-detect.png  button-ext.png  button.png  knob.png  meter.png
+
+
+@init
+  THISJSFX_VERSION = 1;
+  gfx_ext_retina = 1;
+  gfx_clear=0;
+  lastCap=1;
+  mouse_wheel=1;
+  Number_input = 0;
+  number_input_invalid = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  ext_noinit=1;
+
+  // tk extra features
+  lastCap=1;
+  mouse_wheel=1;
+  is_recording = 0; is_playing = 0; is_stopped = 1;
+  while_playing = 1; while_recording = 1; while_stopped = 1;
+  Number_input = 0;
+  number_input_raw = 0;
+  number_input_use = 0;
+  komma = 0;
+  in_key = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  number_input_slider = 0;
+  number_input_min=0;
+  number_input_max=0;
+  number_input_invalid = 0;
+  number_input_sign=1;
+  s2_numbers_of_sliders = 10; // set the number of sliders
+  s2_numbers_of_generics = 0;
+  group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
+  sliders_old = group_generics + 16*200;
+  generics_old = sliders_old + 16*64;
+  
+  mouse_sensivity();
+
+  function parameters_update() (
+    parameters_update_on = 1;
+    group_parameters(); // tk extra features
+
+    // Paste all contents of @slider here
+    thresh = slider1;
+    threshv = exp(thresh * db2log);
+    ratio = slider2;
+    softknee = slider4&1;
+    capsc = (slider4&2) ? log2db : log2db * 2.08136898;
+    cthresh = (softknee ? (thresh -3) : thresh);
+    cthreshv = exp(cthresh * db2log);
+    sidechain = slider5;
+    automakeup = slider6;
+    automakeup ? (
+      autogain = (abs(thresh) - (abs(thresh)/max(1,ratio-1)))/2;
+    ) : (
+      autogain = 0;
+    );
+    makeup = slider3;
+    makeupv = exp((makeup+autogain) * db2log);
+    RMSdet = slider7;
+    RMSdet ? (
+      rmscoef=exp(-1000/(10 * srate));       // 10 ms RMS window
+    ) : (
+      rmscoef=exp(-1000/(0.0025 * srate));  // 2.5 us Peak detector
+    );
+    opto = slider8;
+    //rbjlowpasshighpassfilter
+    freq1 = slider9;
+    freq3 = slider10;
+    //gain = 1
+
+    slider9 == 0 ? hpf = 0 : hpf = 1;
+    slider10 == 22000 ? lpf = 0 : lpf = 1;
+
+    a1 = 1;
+    s1 = 1;
+    q1 = 1 / (sqrt((a1 + 1/a1)*(1/s1 - 1) + 2));
+    w01 = 2 * $pi * freq1/srate;
+    cosw01 = cos(w01);
+    sinw01 = sin(w01);
+    alpha1 = sinw01 / (2 * q1);
+
+    b01 = (1 + cosw01)/2;
+    b11 = -(1 + cosw01);
+    b21 = (1 + cosw01)/2;
+    a01 = 1 + alpha1;
+    a11 = -2 * cosw01;
+    a21 = 1 - alpha1;
+    b01 /= a01;
+    b11 /= a01;
+    b21 /= a01;
+    a11 /= a01;
+    a21 /= a01;
+
+    a3 = 1;
+    s3 = 1;
+    q3 = 1 / (sqrt((a3 + 1/a3)*(1/s3 - 1) + 2));
+    w03 = 2 * $pi * freq3/srate;
+    cosw03 = cos(w03);
+    sinw03 = sin(w03);
+    alpha3 = sinw03 / (2 * q3);
+
+    b03 = (1 - cosw03)/2;
+    b13 = (1 - cosw03);
+    b23 = (1 - cosw03)/2;
+    a03 = 1 + alpha3;
+    a13 = -2 * cosw03;
+    a23 = 1 - alpha3;
+    b03 /= a03;
+    b13 /= a03;
+    b23 /= a03;
+    a13 /= a03;
+    a23 /= a03;
+    //rbjlowpasshighpassfilter
+
+    parameters_update_on = 0;
+    caller = 0;
+  );
+  
+  // skip this 3 lines if not using a gain reduction meter
+  //mn_meter_reinit(40);
+  //GRmeter.mn_meter_init();
+  mnmeterspeed=40;
+  meter_maxdbtunning=1.27; // ----------------------------------------------------------------------------- needle range
+  // skip this 3 lines if not using a gain reduction meter
+  GRmeter.mn_meter_reinit2(mnmeterspeed, meter_maxdbtunning);
+  GRmeter.mn_meter_init(); // you can change GRmeter with any name you want for multiple meters
+
+  ext_gr_meter = 0;
+  ext_tail_size = -1;
+  log2db = 8.6858896380650365530225783783321; // 20 / ln(10)
+  db2log = 0.11512925464970228420089957273422; // ln(10) / 20 
+  i=0;
+  loop(
+    120,
+    attimes[i] = ((0.08924 / i) + (0.60755 / (i ^ 2)) - 0.00006);
+    i+=1;
+  );
+  attime=0.010;
+  reltime=0.100;
+  maxover=0;
+  ratio=0;
+  cratio=0;
+  rundb=0;
+  overdb=0;
+  maxover=0;
+  atcoef=exp(-1/(attime * srate));
+  relcoef=exp(-1/(reltime * srate));
+  fbacoef=exp(-1000/(2 * srate)); // 2 msec. opto attack for feedback detection
+  fbrcoef=exp(-1000/(200 * srate)); // 200 msec. opto release for feedback detection
+  sidechain = 0;
+  automakeup = 0;
+  //rbjlowpasshighpassfilter
+  hpf = 0;
+  gain1 = 0;
+  freq1 = slider9;
+  a1 = 1;
+  s1 = 1;
+  q1 = 1 / (sqrt((a1 + 1/a1)*(1/s1 - 1) + 2));
+  w01 = 2 * $pi * freq1/srate;
+  cosw01 = cos(w01);
+  sinw01 = sin(w01);
+  alpha1 = sinw01 / (2 * q1);
+
+  b01 = (1 + cosw01)/2;
+  b11 = -(1 + cosw01);
+  b21 = (1 + cosw01)/2;
+  a01 = 1 + alpha1;
+  a11 = -2 * cosw01;
+  a21 = 1 - alpha1;
+  b01 /= a01;
+  b11 /= a01;
+  b21 /= a01;
+  a11 /= a01;
+  a21 /= a01;
+
+  lpf = 0;
+  gain3 = 0;
+  freq3 = 22000;
+  a3 = 10^(gain3/40);
+  s3 = 2;
+  q3 = 1 / (sqrt((a3 + 1/a3)*(1/s3 - 1) + 2));
+  w03 = 2 * $pi * freq3/srate;
+  cosw03 = cos(w03);
+  sinw03 = sin(w03);
+  alpha3 = sinw03 / (2 * q3);
+
+  b03 = (1 - cosw03)/2;
+  b13 = (1 - cosw03);
+  b23 = (1 - cosw03)/2;
+  a03 = 1 + alpha3;
+  a13 = -2 * cosw03;
+  a23 = 1 - alpha3;
+  b03 /= a03;
+  b13 /= a03;
+  b23 /= a03;
+  a13 /= a03;
+  a23 /= a03;
+
+  //gain = 1;
+  //rbjlowpasshighpassfilter
+@slider
+  caller = 1;
+
+@serialize // add this block for tk extra features
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped);
+  file_var(0, LA2Kan_VERSION);
+  file_var(0, link_group);
+  seriloop = 0;
+  loop(64*16 + 27 + 16,
+  file_var(0, gmem[seriloop]);
+  seriloop += 1;
+  );
+  seriloop = 0;
+  loop(200*16,
+  file_var(0, group_generics[seriloop]);
+  seriloop += 1;
+  );
+
+@block     // add the following lines at the start of @block if you'll use a gain reduction meter
+  srate != srate_old ? (GRmeter.mn_meter_init();   GRmeter.mn_meter_reinit2(mnmeterspeed, meter_maxdbtunning); caller = 1);
+  srate_old = srate;
+
+@sample
+  S2_sample_on = 1;
+
+  // extra tk features
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0;
+  group_check_smpl();
+
+  caller == 1 ? (
+    parameters_update_on == 0 ? (
+      parameters_update();
+    );
+  );
+
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
+
+  process == 1 ? ( 
+    sidechain ? (
+      //rbjlowpasshighpassfilter
+      hpf != 0 ? (
+      ospl2 = spl2;
+      spl2 = b01 * spl2 + b11 * xl11 + b21 * xl21 - a11 * yl11 - a21 * yl21;
+      xl21 = xl11;
+      xl11 = ospl2;
+      yl21 = yl11;
+      yl11 = spl2;
+
+      ospl3 = spl3;
+      spl3 = b01 * spl3 + b11 * xr11 + b21 * xr21 - a11 * yr11 - a21 * yr21;
+      xr21 = xr11;
+      xr11 = ospl3;
+      yr21 = yr11;
+      yr11 = spl3;
+      );
+
+      lpf != 0 ? (
+      ospl2 = spl2;
+      spl2 = b03 * spl2 + b13 * xl13 + b23 * xl23 - a13 * yl13 - a23 * yl23;
+      xl23 = xl13;
+      xl13 = ospl2;
+      yl23 = yl13;
+      yl13 = spl2;
+
+      ospl3 = spl3;
+      spl3 = b03 * spl3 + b13 * xr13 + b23 * xr23 - a13 * yr13 - a23 * yr23;
+      xr23 = xr13;
+      xr13 = ospl3;
+      yr23 = yr13;
+      yr13 = spl3;
+      );
+
+      //spl2 *= gain;
+      //spl3 *= gain;
+      //rbjlowpasshighpassfilter
+      aspl0 = abs(spl2);
+      aspl1 = abs(spl3);
+    ) : (
+      opto ? (
+        ospl = ospl0 * ospl0 + ospl1 * ospl1;
+        ospl > runospl ? (
+          runospl = ospl + atcoef * (runospl - ospl);
+        ) : (
+          runospl = ospl + relcoef * (runospl - ospl);
+        );
+        ospl = sqrt(max(0,runospl));
+
+        ospl *= 0.5;
+
+        aspl0 = abs(ospl);
+        aspl1 = abs(ospl);
+      ) : (
+        aspl0 = abs(spl0);
+        aspl1 = abs(spl1);
+      );
+    );
+
+    RMSDet ? (  
+      ave = (aspl0 * aspl0) + (aspl1 * aspl1);
+      runave = ave + rmscoef * (runave - ave);
+      det = sqrt(max(0,runave));
+    ) : (
+      maxspl = max(aspl0, aspl1);
+      maxspl = maxspl * maxspl;
+      runave = maxspl + rmscoef * (runave - maxspl);
+      det = sqrt(max(0,runave));
+    );
+    overdb = log(det/cthreshv) * capsc;
+    overdb > maxover ? (
+      maxover = overdb;
+      attime = attimes[max(0,floor(abs(overdb)))];   // attack time per formula
+      atcoef = exp(-1/(attime * srate));
+      reltime = overdb / 125;                        // release at constant 125 dB/sec.
+      relcoef = exp(-1/(reltime * srate));
+    );
+    overdb = max(0,overdb);
+
+    overdb > rundb ? (
+      rundb = overdb + atcoef * (rundb - overdb);
+    ) : (
+      rundb = overdb + relcoef * (rundb - overdb);
+    );
+    overdb = rundb;
+
+    cratio = (softknee ? (1 + (ratio-1) * min(overdb, 6) / 6) : ratio);
+    
+    ext_gr_meter = gr = -overdb * (cratio-1)/cratio;
+    grv = exp(gr * db2log);
+    
+    runmax = maxover + relcoef * (runmax - maxover);  // highest peak for setting att/rel decays in reltime
+    maxover = runmax;
+
+    spl0 *= grv * makeupv;
+    spl1 *= grv * makeupv;  
+
+    ospl0 = spl0;
+    ospl1 = spl1;
+    //GRmeter.mnmetersample(grv*db2ratio(-3.9)); //3.7 
+    GRmeter.gr_mnmetersample(grv); //3.7 ,(grvdb2ratio(-0)
+  ):(GRmeter.gr_mnmetersample(0));
+//full  1210   744                   // full ui background dimensions
+//mcp    601   744                   // mcp version background dimensions
+//win    489   gfx_h                 // windows minimum width (and macOS maybe)
+//lin    619   gfx_h                 // linux minimum width
+// gfx_h= full_h * os_w / full_w 
+// gfx_w = gfx_h*mcp_w/mcp/h         // around this value for some reason the mcp aspect ratio is a bit taller
+<? // @gfx setup
+  w_bg=1210;
+  h_bg=744;
+  mcp_ratio="tall";
+  include("ddconfig.jsfx-inc");
+?>
+  tk_gfx_setup();
+  gfx_ext_flags == 0 ? (  // full ui
+    set_background(0);
+    //GRmeter.draw_meter(183/2, 112/2, 0.9, 5); //draw meter x, y, zoom, png       --remove this line if not using a meter
+    GRmeter.draw_meter2(5, 183/2, 130/2, 0.9, 1, 1, 0.13, 1.185, 37, 110, 0, 1.2);
+
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                  (slider    default     min      max  step    x        y   frames  scaling  file  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    kThres.parameter_config  ( 1,             0,    -60,       0,    0, 82/2,   498/2,     0,       1.025,     4,    1,       0);    
+    kRatio.parameter_config  ( 2,             3,      1,      20,  0.5,287/2,   499/2,     0,       1.025,     4,    1,       0);    
+    kMakeup.parameter_config ( 3,             0,    -20,      20,    0,494/2,   498/2,     0,       1.025,     4,    1,       0);    
+    kHPF.parameter_config    ( 9,             0,      0,    1000,   10,757/2,   498/2,     0,       1.025,     4,    1,       0);    
+    kLPF.parameter_config    (10,         22000,   1000,   22000, 100,1012/2,   498/2,     0,       1.025,     4,    1,       0);    
+    //Buttons                (slider     orient  off_val   on_val     x        y           scaling  file  mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
+    bOptoMode.button_config  ( 8,              1,      0,       1, 1025/2,   194/2,              1,     1,    1);
+    bSoft.button_config      ( 4,              1,      2,       3,  873/2,   194/2,              1,     1,    1);
+    bAuto.button_config      ( 6,              1,      0,       1,  720/2,   194/2,              1,     1,    1);
+    bSidechain.button_config ( 5,              1,      0,       1,  920/2,   532/2,            1.2,     2,    1);
+    bDetection.button_config ( 7,              1,      0,       1,  245/2,   316/2,              1,     3,    1);
+    setup_dmenu("Stillwell Major Tom Compressor", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.6); // setup menu, arguments: jsfx name, version, graphics, zoom
+
+    mouse_wheel=0;
+  ):gfx_ext_flags == 1 ? ( // embedded mcp ui
+    set_background(6,0.118,0.114,0.114);
+    //GRmeter.draw_meter(72/2, 83/2, 0.9, 5); //draw meter x, y, zoom, png       --remove this line if not using a meter
+    GRmeter.draw_meter2(5, 66/2, 105/2, 0.9, 1, 1, 0.13, 1.185, 37, 110, 0, 1.2);
+
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                  (slider    default     min      max  step    x        y   frames  scaling  file  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    kThres.parameter_config  ( 1,             0,    -60,       0,    0, 58/2,   457/2,     0,       1.025,     4,    1,       0);    
+    kRatio.parameter_config  ( 2,             3,      1,      20,  0.5,235/2,   458/2,     0,       1.025,     4,    1,       0);    
+    kMakeup.parameter_config ( 3,             0,    -20,      20,    0,416/2,   458/2,     0,       1.025,     4,    1,       0);      
+    //Buttons                (slider     orient  off_val   on_val     x        y           scaling  file  mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
+    bOptoMode.button_config  ( 8,              1,      0,       1,  466/2,   290/2,            0.75,     1,    1);
+    bSoft.button_config      ( 4,              1,      2,       3,  466/2,   164/2,            0.75,     1,    1);
+    bAuto.button_config      ( 6,              1,      0,       1,  466/2,    38/2,            0.75,     1,    1);
+    bSidechain.button_config ( 5,              1,      0,       1,  379/2,   660/2,            1.2,     2,    1);
+    bDetection.button_config ( 7,              1,      0,       1,  127/2,   305/2,              1,     3,    1);
+
+    mouse_wheel=0;
+  );
+  
+  // update parameters
+  S2_sample_on == 0 ? (
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
+  group_check_gfx(); // tk extra features
+    caller == 1 ? (
+        parameters_update_on == 0 ? (
+          parameters_update();
+        );
+    );
+  );
+  S2_sample_on = 0;
