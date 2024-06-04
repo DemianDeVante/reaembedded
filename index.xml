@@ -5,7 +5,7 @@
   </metadata>
   <category name="DDD"></category>
   <category name="..">
-    <reapack name="D JSFX Linux" type="effect" desc="embeDDed collection (Linux)">
+    <reapack name="D JSFX" type="effect" desc="embeDDed collection (Linux)">
       <version name="1.0.3" author="Demian D">
         <source file="ddconfig.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/ddconfiglinux.jsfx-inc</source>
         <source file="1175 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1175%20D.jsfx</source>
