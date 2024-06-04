@@ -1,12 +1,57 @@
+1175 D.jsfx
+1979 D.jsfx
+LA-2KAN D.jsfx
+DelayFloaty D.jsfx
+EQT-2Kan D.jsfx
+Smooth Limiter D.jsfx
+Saturation D.jsfx
+ddconfig.jsfx-inc
+TubeharmonicsAmp D.jsfx
+MGALimiter D.jsfx
+Stereo Enhancer D.jsfx
 RBJ HighpassLowPass D.jsfx
+Majortom D.jsfx
+Transpire D.jsfx
+Reverb Bricastic2 D.jsfx
+eventhorizon D.jsfx
+SaturationFancy D.jsfx
+AnalogSumming D.jsfx
 UglyPitch D.jsfx
+SLAX D.jsfx
+QuickDelay D.jsfx
+Fairlychildish D.jsfx
+Reverb NW8D Plate D.jsfx
+masterLimiter D.jsfx
+Reverb Hall D.jsfx
 Thanx D.jsfx
+rbj1073 D.jsfx
+DGFX/ui-lib_d.jsfx-inc
+DGFX/qd.delay.jsfx-inc
+DGFX/demian-effects.jsfx-inc
+DGFX/st-oversampler.jsfx-inc
 DGFX/warble-pitch-detection.jsfx-inc
+DGFX/nw8platefunctions.jsfx-inc
+DGFX/spectrum.jsfx-inc
+DGFX/qd.rbj_filter.jsfx-inc
+DGFX/VT_Filters.jsfx-inc
+DGFX/delay-utils.jsfx-inc
+DGFX/rbj_filter.jsfx-inc
+DGFX/tk_lib_d.jsfx-inc
 DGFX/warble-delay-utils.jsfx-inc
+DGFX/cookdsp.jsfx-inc
+DGFX/zdf_filter.jsfx-inc
+DGFX/qd.saike_pitchlib.jsfx-inc
+DGFX/firhalfband.jsfx-inc
+DGFX/svf_filter.jsfx-inc
+DGFX/tk-vu_lib_d.jsfx-inc
 DGFX/uglypitch/bgmcp.png
 DGFX/uglypitch/screw.png
 DGFX/uglypitch/bg.png
 DGFX/uglypitch/knob.png
+DGFX/eventhorizonclipper/bgmcp.png
+DGFX/eventhorizonclipper/meter.png
+DGFX/eventhorizonclipper/bg.png
+DGFX/eventhorizonclipper/knob.png
 DGFX/rbjhilopass/bgmcp.png
 DGFX/rbjhilopass/knob-black.png
 DGFX/rbjhilopass/knob-bold.png
@@ -15,6 +60,113 @@ DGFX/rbjhilopass/bg.png
 DGFX/rbjhilopass/bg.png~
 DGFX/rbjhilopass/bgmcp.png~
 DGFX/rbjhilopass/knob.png
+DGFX/nw8plate/bgmcp.png
+DGFX/nw8plate/button.png
+DGFX/nw8plate/knob-black.png
+DGFX/nw8plate/knob-white.png
+DGFX/nw8plate/bg.png
+DGFX/nw8plate/knob-blue.png
+DGFX/saturationfancy/bgmcp.png
+DGFX/saturationfancy/bg.png
+DGFX/saturationfancy/knob.png
+DGFX/bricastic2/bgmcp.png
+DGFX/bricastic2/button.png
+DGFX/bricastic2/knob-black.png
+DGFX/bricastic2/knob-white.png
+DGFX/bricastic2/bg.png
+DGFX/bricastic2/knob-blue.png
+DGFX/GeraintUI/theme-stock.png
+DGFX/eqt2kan/bgmcp.png
+DGFX/eqt2kan/knob-lf.png
+DGFX/eqt2kan/bg.png
+DGFX/eqt2kan/knob-hf.png
+DGFX/eqt2kan/knob-sel.png
+DGFX/eqt2kan/knob.png
+DGFX/rbj1073/bgmcp.png
+DGFX/rbj1073/knob-gain.png
+DGFX/rbj1073/knob-hpf.png
+DGFX/rbj1073/knob-boost.png
+DGFX/rbj1073/knob-lf.png
+DGFX/rbj1073/bg.png
+DGFX/rbj1073/knob-mf.png
+DGFX/saturation/bgmcp.png
+DGFX/saturation/pill.png
+DGFX/saturation/spotlight.png
+DGFX/saturation/title.png
+DGFX/saturation/bg.png
+DGFX/saturation/glow.png
+DGFX/saturation/knob.png
+DGFX/transpire_gfx/bgmcp.png
+DGFX/transpire_gfx/knob_2.png
+DGFX/transpire_gfx/clip.png
+DGFX/transpire_gfx/knob_4.png
+DGFX/transpire_gfx/credits.png
+DGFX/transpire_gfx/bg.png
+DGFX/transpire_gfx/knob_3.png
+DGFX/transpire_gfx/knob_1.png
+DGFX/mgalimiter/bgmcp.png
+DGFX/mgalimiter/meter.png
+DGFX/mgalimiter/bg.png
+DGFX/mgalimiter/knob.png
+DGFX/masterlimiter/bgmcp.png
+DGFX/masterlimiter/screw.png
+DGFX/masterlimiter/meter.png
+DGFX/masterlimiter/bg.png
+DGFX/masterlimiter/knob.png
+DGFX/fairlychildish/bgmcp.png
+DGFX/fairlychildish/button.png
+DGFX/fairlychildish/bg-lr.png
+DGFX/fairlychildish/bg-latvert.png
+DGFX/fairlychildish/button-agc.png
+DGFX/fairlychildish/button-lr.png
+DGFX/fairlychildish/meter.png
+DGFX/fairlychildish/knob-time.png
+DGFX/fairlychildish/button-latvert.png
+DGFX/fairlychildish/knob-screw.png
+DGFX/fairlychildish/knob.png
+DGFX/wittihall/bgmcp.png
+DGFX/wittihall/button.png
+DGFX/wittihall/knob-black.png
+DGFX/wittihall/knob-white.png
+DGFX/wittihall/bg.png
+DGFX/wittihall/knob-blue.png
+DGFX/majortom/bgmcp.png
+DGFX/majortom/button.png
+DGFX/majortom/meter.png
+DGFX/majortom/button-ext.png
+DGFX/majortom/bg.png
+DGFX/majortom/button-detect.png
+DGFX/majortom/knob.png
+DGFX/reverbnw8plate/bgmcp.png
+DGFX/reverbnw8plate/bgmcpold.png
+DGFX/reverbnw8plate/button.png
+DGFX/reverbnw8plate/knob-black.png
+DGFX/reverbnw8plate/bgmcp-floaty.png
+DGFX/reverbnw8plate/bg quick.png
+DGFX/reverbnw8plate/bg.kra
+DGFX/reverbnw8plate/knob-white.png
+DGFX/reverbnw8plate/bgmcp-quick.png
+DGFX/reverbnw8plate/bgmcp.kra
+DGFX/reverbnw8plate/bg.png
+DGFX/reverbnw8plate/knob-delay.kra
+DGFX/reverbnw8plate/knob-red.png
+DGFX/reverbnw8plate/knob-blue.png
+DGFX/reverbnw8plate/bkp/bgmcp.png
+DGFX/reverbnw8plate/bkp/knob-black.png
+DGFX/reverbnw8plate/bkp/knob-white.png
+DGFX/reverbnw8plate/bkp/bg.png
+DGFX/reverbnw8plate/bkp/knob-delay.kra
+DGFX/reverbnw8plate/bkp/knob-red.png
+DGFX/reverbnw8plate/bkp/knob-blue.png
+DGFX/reverbnw8plate/bkp scaled/bgmcp.png
+DGFX/reverbnw8plate/bkp scaled/bg.png
+DGFX/slax_gfx/bgmcp.png
+DGFX/slax_gfx/needles.png
+DGFX/slax_gfx/bigpot.png
+DGFX/slax_gfx/bg.png
+DGFX/slax_gfx/prepot.png
+DGFX/slax_gfx/optbut.png
+DGFX/slax_gfx/opt.png
 DGFX/thanx/bgmcp.png
 DGFX/thanx/button.png
 DGFX/thanx/knob-black.png
@@ -23,3 +175,67 @@ DGFX/thanx/knob-red.png
 DGFX/thanx/knob-blue.png
 DGFX/thanx/switch.png
 DGFX/thanx/led.png
+DGFX/delayfloaty/bgmcp.png
+DGFX/delayfloaty/button.png
+DGFX/delayfloaty/knob-black.png
+DGFX/delayfloaty/knob-white.png
+DGFX/delayfloaty/bg.png
+DGFX/delayfloaty/knob-blue.png
+DGFX/tubeharmonics/button-tubes.png
+DGFX/tubeharmonics/bgmcp.png
+DGFX/tubeharmonics/knob-small.png
+DGFX/tubeharmonics/button-switch.png
+DGFX/tubeharmonics/bg.png
+DGFX/tubeharmonics/bgmcp.png~
+DGFX/tubeharmonics/knob.png
+DGFX/1979/bgmcp.png
+DGFX/1979/button-phase.png
+DGFX/1979/knob-trim.png
+DGFX/1979/button-bypass.png
+DGFX/1979/knob-gainlow.png
+DGFX/1979/knob-eqmid.png
+DGFX/1979/bg.png
+DGFX/1979/knob-eqhpf.png
+DGFX/1979/knob-eqlow.png
+DGFX/1979/knob-gainmid.png
+DGFX/1979/knob-drive.png
+DGFX/1979/knob-gainhigh.png
+DGFX/1175/bgmcp.png
+DGFX/1175/knob-s.png
+DGFX/1175/button-sc.png
+DGFX/1175/button-scb.png
+DGFX/1175/button-allb.png
+DGFX/1175/knob-b.png
+DGFX/1175/button-blb.png
+DGFX/1175/meter.png
+DGFX/1175/button-8.png
+DGFX/1175/button-12b.png
+DGFX/1175/button-4b.png
+DGFX/1175/button-12.png
+DGFX/1175/bg.png
+DGFX/1175/button-20b.png
+DGFX/1175/button-by.png
+DGFX/1175/button-bl.png
+DGFX/1175/button-20.png
+DGFX/1175/button-8b.png
+DGFX/1175/button-4.png
+DGFX/1175/knob-screw.png
+DGFX/1175/button-all.png
+DGFX/la2kan/bgmcp.png
+DGFX/la2kan/button-led.png
+DGFX/la2kan/meter.png
+DGFX/la2kan/knob-big.png
+DGFX/la2kan/bg.png
+DGFX/la2kan/button-toggle.png
+DGFX/stereoenhancer/bgmcp.png
+DGFX/stereoenhancer/knob-small.png
+DGFX/stereoenhancer/button-v.png
+DGFX/stereoenhancer/button-h.png
+DGFX/stereoenhancer/knob-big.png
+DGFX/stereoenhancer/bg.png
+DGFX/delayquick/bgmcp.png
+DGFX/delayquick/button.png
+DGFX/delayquick/knob-black.png
+DGFX/delayquick/knob-white.png
+DGFX/delayquick/bg.png
+DGFX/delayquick/knob-blue.png
