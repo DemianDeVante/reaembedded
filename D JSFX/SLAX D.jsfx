@@ -28,173 +28,180 @@ filename:4,DGFX/slax_gfx/opt.png
 filename:5,DGFX/slax_gfx/optbut.png
 filename:6,DGFX/slax_gfx/bgmcp.png
 
+import DGFX/tk_lib_d.jsfx-inc 
+
 resource:0,1,2,3,4,5
 
 options: no_meter
 @init
+  gfx_ext_retina = 1;
+  !initialized_playstates?(while_playing = 1; while_recording = 1; while_stopped = 1);
 
-!"#define VAL(A) (A)" "//";
+  !"#define VAL(A) (A)" "//";
 
-buildStr = "Build 170206";
+  buildStr = "Build 170206";
 
-t005 = exp(-1/(srate*0.0005));
-t01 = exp(-1/(srate*0.001));
-t05 = exp(-1/(srate*0.005));
-t10 = exp(-1/(srate*0.01));
-t20 = exp(-1/(srate*0.02));
-t50 = exp(-1/(srate*0.05));
-t60 = exp(-1/(srate*0.06));
-t100 = exp(-1/(srate*0.1));
-t200 = exp(-1/(srate*0.2));
-t500 = exp(-1/(srate*0.5));
-t1000 = exp(-1/(srate*1));
-t2000 = exp(-1/(srate*2));
+  t005 = exp(-1/(srate*0.0005));
+  t01 = exp(-1/(srate*0.001));
+  t05 = exp(-1/(srate*0.005));
+  t10 = exp(-1/(srate*0.01));
+  t20 = exp(-1/(srate*0.02));
+  t50 = exp(-1/(srate*0.05));
+  t60 = exp(-1/(srate*0.06));
+  t100 = exp(-1/(srate*0.1));
+  t200 = exp(-1/(srate*0.2));
+  t500 = exp(-1/(srate*0.5));
+  t1000 = exp(-1/(srate*1));
+  t2000 = exp(-1/(srate*2));
 
-function HFLF_init(freq)
-instance(n0,weight)
-(
-  n0 = 0;
-  weight = 1-exp(-2*$pi*freq/srate);
-);
-
-function HFcut(input)
-instance(out,n0,weight)
-(
-  out = (n0+=((input-n0+0.000000001)*weight));
-);
-
-function LFcut(input)
-instance(out,n0,weight)
-(
-  out = input - (n0+=((input-n0+0.000000001)*weight));
-);
-
-function Interpolate(A, B, X) (
-  A + ((B-A)*X);
-);
-
-function rms_init(weight_ms)
-instance (weight)(
-  weight = 1-exp(-1/(weight_ms / 1000 * srate));
-);
-
-function rms(input)
-instance (s,rms,weight)(
-  rms = sqrt(s +=  weight * ( input^2 - s ));
-);
-
-function FollowerInit(attack,release,smoothing) (
-  this.a = exp(-1/(srate*attack/1000));
-  this.r = exp(-1/(srate*release/1000));
-  this.s = exp(-1/(srate*smoothing/1000));
-  this.a2 = 1-this.a;
-  this.r2 = 1-this.r;
-);
-
-function Follower(in) (
-  this.tmp = max(in + this.s * (this.tmp-in),in);
-  this.e <  this.tmp ? (
-    this.e = this.tmp;
-  ) : (
-    this.e = this.r * this.e + this.r2 * this.tmp;
+  function HFLF_init(freq)
+  instance(n0,weight)
+  (
+    n0 = 0;
+    weight = 1-exp(-2*$pi*freq/srate);
   );
-);
 
-function Curve(input) (
-  abs(input) < 1 ? input - (2*input^3)*0.3333 + input^6*0.16666 : 0.501;
-);
-
-function FillEnvLut(start,end,step) (
-  this.len = end-start;
-  this.maxVal = this.len * step;
-  this.start = start;
-  this.end = end;
-  this.invStep = 1/step;
-  lutMem = start;
-  this.i = 0;
-  loop(this.len,
-    this.v = this.i * step;
-    lutMem[this.i] = this.v/Curve(this.v);
-    this.i += 1;
+  function HFcut(input)
+  instance(out,n0,weight)
+  (
+    out = (n0+=((input-n0+0.000000001)*weight));
   );
-);
 
-lut0.FillEnvLut(1000,11001,0.01);
+  function LFcut(input)
+  instance(out,n0,weight)
+  (
+    out = input - (n0+=((input-n0+0.000000001)*weight));
+  );
 
-function GetLutVal(in) (
-  this.index = max(min(in * this.invStep,this.end),1);
-  this.floorIndex = floor(this.index);
-  lutMem = this.start;
-  this.lo = lutMem[this.floorIndex];
-  this.hi = lutMem[this.floorIndex+1];
-  this.frac = this.index - this.floorIndex;
-  Interpolate(this.lo, this.hi, this.frac);
-);
+  function Interpolate(A, B, X) (
+    A + ((B-A)*X);
+  );
 
-SplSniffer.timeOut =  srate/4;
+  function rms_init(weight_ms)
+  instance (weight)(
+    weight = 1-exp(-1/(weight_ms / 1000 * srate));
+  );
 
-function SampleSniffer(input) (
-  this.splCount += 1;
-  this.in.max = max(abs(input),this.in.max);
-  
-  (this.splCount > this.maxscount) ? (
-    this.in.max > 0.00000001 ? (
-      this.out = 1;
-      this.maxscount = SplSniffer.timeOut;
+  function rms(input)
+  instance (s,rms,weight)(
+    rms = sqrt(s +=  weight * ( input^2 - s ));
+  );
+
+  function FollowerInit(attack,release,smoothing) (
+    this.a = exp(-1/(srate*attack/1000));
+    this.r = exp(-1/(srate*release/1000));
+    this.s = exp(-1/(srate*smoothing/1000));
+    this.a2 = 1-this.a;
+    this.r2 = 1-this.r;
+  );
+
+  function Follower(in) (
+    this.tmp = max(in + this.s * (this.tmp-in),in);
+    this.e <  this.tmp ? (
+      this.e = this.tmp;
     ) : (
-      this.out = 0;
-      this.maxscount = 2;
+      this.e = this.r * this.e + this.r2 * this.tmp;
     );
-    this.in.max = 0;
-    this.splCount = 0;
   );
-  this.out;
-);
 
-function ProcessSliders() (
-  peak = 10^(Interpolate(0,50,(slider1/10)^0.66)/20);
-  gain = 10^(Interpolate(0,40,(slider2/10)^2)/20);
-  cl = Interpolate(1,10,(slider3/10));
-  emphasis = Interpolate(0,10,(slider4/10));
-  
-  w2 = 1-exp(-1/(Interpolate(15,5,(slider3/10)) / 1000 * srate));
-  
-  mode = slider5;
-  mode == 0 ? (cb1.checked = 1; cb2.checked = 0; cb3.checked = 0;);
-  mode == 1 ? (cb1.checked = 0; cb2.checked = 1; cb3.checked = 0;);
-  mode == 2 ? (cb1.checked = 0; cb2.checked = 0; cb3.checked = 1;);
-);
+  function Curve(input) (
+    abs(input) < 1 ? input - (2*input^3)*0.3333 + input^6*0.16666 : 0.501;
+  );
 
-fr.rms_init(10);
-sr.rms_init(1000);
+  function FillEnvLut(start,end,step) (
+    this.len = end-start;
+    this.maxVal = this.len * step;
+    this.start = start;
+    this.end = end;
+    this.invStep = 1/step;
+    lutMem = start;
+    this.i = 0;
+    loop(this.len,
+      this.v = this.i * step;
+      lutMem[this.i] = this.v/Curve(this.v);
+      this.i += 1;
+    );
+  );
 
-f0.HFLF_init(60);
-f1.HFLF_init(16000);
-f2.HFLF_init(16000);
+  lut0.FillEnvLut(1000,11001,0.01);
 
-f3.HFLF_init(200);
-f4.HFLF_init(400);
+  function GetLutVal(in) (
+    this.index = max(min(in * this.invStep,this.end),1);
+    this.floorIndex = floor(this.index);
+    lutMem = this.start;
+    this.lo = lutMem[this.floorIndex];
+    this.hi = lutMem[this.floorIndex+1];
+    this.frac = this.index - this.floorIndex;
+    Interpolate(this.lo, this.hi, this.frac);
+  );
 
-w1 = 1-exp(-1/(20 / 1000 * srate));
-w2 = 1-exp(-1/(10 / 1000 * srate));
-w3 = 1-exp(-1/(22.6643 / 1000 * srate));;
+  SplSniffer.timeOut =  srate/4;
 
-mtr.rms_init(0.066);
-peaktmp = 1;
-e.FollowerInit(0,20,20);
-sn.maxscount = 2000;
-sn.out = 1;
+  function SampleSniffer(input) (
+    this.splCount += 1;
+    this.in.max = max(abs(input),this.in.max);
+    
+    (this.splCount > this.maxscount) ? (
+      this.in.max > 0.00000001 ? (
+        this.out = 1;
+        this.maxscount = SplSniffer.timeOut;
+      ) : (
+        this.out = 0;
+        this.maxscount = 2;
+      );
+      this.in.max = 0;
+      this.splCount = 0;
+    );
+    this.out;
+  );
 
-hbx = 300; hby = 150;
+  function ProcessSliders() (
+    peak = 10^(Interpolate(0,50,(slider1/10)^0.66)/20);
+    gain = 10^(Interpolate(0,40,(slider2/10)^2)/20);
+    cl = Interpolate(1,10,(slider3/10));
+    emphasis = Interpolate(0,10,(slider4/10));
+    
+    w2 = 1-exp(-1/(Interpolate(15,5,(slider3/10)) / 1000 * srate));
+    
+    mode = slider5;
+    mode == 0 ? (cb1.checked = 1; cb2.checked = 0; cb3.checked = 0;);
+    mode == 1 ? (cb1.checked = 0; cb2.checked = 1; cb3.checked = 0;);
+    mode == 2 ? (cb1.checked = 0; cb2.checked = 0; cb3.checked = 1;);
+  );
+
+  fr.rms_init(10);
+  sr.rms_init(1000);
+
+  f0.HFLF_init(60);
+  f1.HFLF_init(16000);
+  f2.HFLF_init(16000);
+
+  f3.HFLF_init(200);
+  f4.HFLF_init(400);
+
+  w1 = 1-exp(-1/(20 / 1000 * srate));
+  w2 = 1-exp(-1/(10 / 1000 * srate));
+  w3 = 1-exp(-1/(22.6643 / 1000 * srate));;
+
+  mtr.rms_init(0.066);
+  peaktmp = 1;
+  e.FollowerInit(0,20,20);
+  sn.maxscount = 2000;
+  sn.out = 1;
+
+  hbx = 300; hby = 150;
 
 @slider
+  s1.value = slider1;
+  s2.value = slider2;
+  s3.value = slider3;
+  s4.value = slider4;
+  ProcessSliders();
 
-s1.value = slider1;
-s2.value = slider2;
-s3.value = slider3;
-s4.value = slider4;
-
-ProcessSliders();
+@serialize // add this block for tk extra features
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped); file_var(0, zoom_off);
 
 @block
 
@@ -206,66 +213,76 @@ ProcessSliders();
 );
 
 @sample
+  S2_sample_on = 1;
+  initialized_playstates=1;
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
 
-sn.SampleSniffer(abs(spl0)+abs(spl1)) || env < 0.999 ? (
-  
-  in = abs(outL) < abs(outR) ? outR : outL;
-  in += (f1.LFcut(in) * emphasis);
-  in = abs(f0.LFcut(in)) * peak;// + 0.000001;
-  
-  wEnv = e.Follower(in)^2 * 0.2;
-  
-  fr.weight = Interpolate(w2,w1,(1/(wEnv+1)));
-  iEnv = fr.rms(in);
-  
-  fEnv = lut0.GetLutVal(iEnv);
-  fEnv = (driver.s += w3 * (fEnv - driver.s));
-  
-  sEnv = sr.rms(in)^cl + 1;
-  env = max((sEnv * fEnv),sEnv);
-  
-  env = 1/(env);
-  
-  /* Tone Shaping */
-  
-  M = (spl0 + spl1) * 0.5;
-  S = (spl0 - spl1) * 0.5;
-  invEnv = 1-env;
-  mode == 1 ? (
-    boost = f3.HFcut(M);
-    M += boost * invEnv * 0.5;
-    S *= invEnv * 0.5 + 1;
+  process == 1 ? (
+    sn.SampleSniffer(abs(spl0)+abs(spl1)) || env < 0.999 ? (
+      
+      in = abs(outL) < abs(outR) ? outR : outL;
+      in += (f1.LFcut(in) * emphasis);
+      in = abs(f0.LFcut(in)) * peak;// + 0.000001;
+      
+      wEnv = e.Follower(in)^2 * 0.2;
+      
+      fr.weight = Interpolate(w2,w1,(1/(wEnv+1)));
+      iEnv = fr.rms(in);
+      
+      fEnv = lut0.GetLutVal(iEnv);
+      fEnv = (driver.s += w3 * (fEnv - driver.s));
+      
+      sEnv = sr.rms(in)^cl + 1;
+      env = max((sEnv * fEnv),sEnv);
+      
+      env = 1/(env);
+      
+      /* Tone Shaping */
+      
+      M = (spl0 + spl1) * 0.5;
+      S = (spl0 - spl1) * 0.5;
+      invEnv = 1-env;
+      mode == 1 ? (
+        boost = f3.HFcut(M);
+        M += boost * invEnv * 0.5;
+        S *= invEnv * 0.5 + 1;
+      );
+      mode == 2 ? (
+        boost = f3.HFcut(M);
+        cut = f4.HFcut(M);
+        M += boost * invEnv;
+        M -= cut * invEnv * 0.708;
+        S *= invEnv * 0.5 + 1;
+      );  
+      spl0 = (M+S);
+      spl1 = (M-S);
+      
+      outL = (spl0 * env * 0.9) + (spl0 * 0.1);
+      outR = (spl1 * env * 0.9) + (spl1 * 0.1);
+      
+      spl0 = outL * gain;
+      spl1 = outR * gain;
+      
+      /* Overflow protection */
+      
+      of = max(abs(spl0),abs(spl1));
+      of = max(of,0.989) - 0.989 + 1;
+      ofe = max(of,ofe*t2000);
+      spl0 /= ofe;
+      spl1 /= ofe;
+
+    ) : (
+      spl0 *= gain;
+      spl1 *= gain;
+    );
+
+    mtrEnv = env;
   );
-  mode == 2 ? (
-    boost = f3.HFcut(M);
-    cut = f4.HFcut(M);
-    M += boost * invEnv;
-    M -= cut * invEnv * 0.708;
-    S *= invEnv * 0.5 + 1;
-  );  
-  spl0 = (M+S);
-  spl1 = (M-S);
-  
-  outL = (spl0 * env * 0.9) + (spl0 * 0.1);
-  outR = (spl1 * env * 0.9) + (spl1 * 0.1);
-  
-  spl0 = outL * gain;
-  spl1 = outR * gain;
-  
-  /* Overflow protection */
-  
-  of = max(abs(spl0),abs(spl1));
-  of = max(of,0.989) - 0.989 + 1;
-  ofe = max(of,ofe*t2000);
-  spl0 /= ofe;
-  spl1 /= ofe;
-
-) : (
-  spl0 *= gain;
-  spl1 *= gain;
-);
-
-mtrEnv = env;
 
 <? // @gfx setup
   w_bg=598;
@@ -273,20 +290,6 @@ mtrEnv = env;
   mcp_ratio="tall";
   include("ddconfig.jsfx-inc");
 ?>
-  function get_zoom(dfile) local(dzoom s2_zoom_X s2_zoom_y d_bg_w d_bg_h) (
-    gfx_getimgdim(dfile, d_bg_w, d_bg_h);
-    s2_zoom_X = gfx_w / d_bg_w*2;
-    s2_zoom_y = gfx_h / d_bg_h*2;
-    bg_ratio=d_bg_w/d_bg_h;
-    gfx_ratio=gfx_w/gfx_h;
-    //if full ui, resize freely; if mcp ui, resize scaling only to width
-    gfx_ext_flags == 1 && gfx_ratio>bg_ratio?(dzoom=s2_zoom_x):(dzoom = min(s2_zoom_x, s2_zoom_y));// * gfx_ext_retina;
-    zoom_off == 1 ? dzoom = gfx_ext_retina;
-    dzoom;
-  );
-
-
-
 function draw_chkbox(x,y,s,v)
 (
   x=x*zoom/2;
@@ -389,6 +392,8 @@ function AnimateNeedle(in,x,y,fw,fh,fn,id)
 );
 
 gfx_ext_flags == 0 ? (  // full ui
+  tk_gfx_setup();
+  unscaled_factor=1.2;
   zoom= get_zoom(0);
   /* Background */
 
@@ -474,6 +479,8 @@ gfx_ext_flags == 0 ? (  // full ui
   gfx_r = gfx_g = gfx_b = 1; gfx_a = 0.2;
   gfx_setfont(1,"Arial",12*zoom/2);
   gfx_drawstr(buildStr);
+  setup_dmenu_nogrouping("Sonic Anomaly S.LA.X", "1", "Sonic Anomaly", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+
 ):gfx_ext_flags == 1 ? (
 gfx_r=0.176;gfx_g=0.2;gfx_b=0.22;
 gfx_rect(0,0,gfx_w,gfx_h);

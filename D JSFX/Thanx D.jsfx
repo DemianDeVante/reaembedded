@@ -412,7 +412,7 @@ options:gmem=ThanxD
 @serialize // add this block for tk extra features
   file_var(0, while_playing);
   file_var(0, while_recording);
-  file_var(0, while_stopped);
+  file_var(0, while_stopped); file_var(0, zoom_off);
   //file_var(0, LA2Kan_VERSION);
   file_var(0, link_group);
   seriloop = 0;
@@ -474,6 +474,7 @@ options:gmem=ThanxD
 ?>
   tk_gfx_setup();
   gfx_ext_flags == 0 ? (  // full ui
+    unscaled_factor=1.35;
     set_background(0);
                                     //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
     //Knobs                   (slider    default     min      max  step         x          y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   

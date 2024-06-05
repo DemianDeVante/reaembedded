@@ -40,7 +40,7 @@ function round(dnumber)(
 		gfx_ratio=gfx_w/gfx_h;
 		//if full ui, resize freely; if mcp ui, resize scaling only to width
 		gfx_ext_flags == 1 && gfx_ratio>bg_ratio?(dzoom=s2_zoom_x):(dzoom = min(s2_zoom_x, s2_zoom_y));// * gfx_ext_retina;
-		zoom_off == 1 && gfx_ext_flags == 0 ? dzoom = gfx_ext_retina;
+		zoom_off == 1 && gfx_ext_flags == 0 ? (dzoom = gfx_ext_retina*2; unscaled_factor?dzoom*=unscaled_factor);
 		dzoom;
 	);
 
@@ -1095,7 +1095,6 @@ function attached_label(d_string d_yoffset d_font d_fontsize d_fontflags) local(
 
 function set_background(d_file)( // only one argument, unfilled background is dark grey
 	gfx_r=gfx_g=gfx_b=0.1;
-
     zoom = get_zoom(d_file); // set zoom scaling based on (file)s image dimentions
     gfx_rect(0,0,gfx_w,gfx_h); //background
     gfx_x = 0; gfx_y = 0; gfx_a = 1;
@@ -1309,9 +1308,9 @@ function setup_dmenu_nogrouping(setup_menu_name, setup_menu_version, setup_menu_
     );
   );
   
-  last_clicked_item == 1 ? (while_playing == 0 ? (while_playing = 1):(while_playing = 0);caller=1;processing_update());
-  last_clicked_item == 2 ? (while_recording == 0 ? (while_recording = 1):(while_recording = 0);caller=1;processing_update());
-  last_clicked_item == 3 ? (while_stopped == 0 ? (while_stopped = 1):(while_stopped = 0);caller=1;processing_update());
+  last_clicked_item == 1 ? (while_playing == 0 ? (while_playing = 1):(while_playing = 0);caller=1);
+  last_clicked_item == 2 ? (while_recording == 0 ? (while_recording = 1):(while_recording = 0);caller=1);
+  last_clicked_item == 3 ? (while_stopped == 0 ? (while_stopped = 1):(while_stopped = 0);caller=1);
 
   last_clicked_item == 4 ? zoom_off = 0;
   last_clicked_item == 5 ? zoom_off = 1;

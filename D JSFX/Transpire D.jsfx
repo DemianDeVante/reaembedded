@@ -30,296 +30,315 @@ filename:7,DGFX/transpire_gfx/bgmcp.png
 
 resource:0,1,2,3,4,5,6
 
+import DGFX/tk_lib_d.jsfx-inc 
+
 options: no_meter
 @init
+  gfx_ext_retina = 1;
+  !initialized_playstates?(while_playing = 1; while_recording = 1; while_stopped = 1);
 
-!"#define VAL(A) (A)" "//";
+  !"#define VAL(A) (A)" "//";
 
-buildStr = "Build 170506";
+  buildStr = "Build 170506";
 
-function RGBA(R,G,B,A) (
-  this.r = R; this.g = G; this.b = B; this.a = A;
-);
-
-function Interpolate(A, B, X) (
-  A + ((B-A)*X);
-);
-
-function Curve(input,expVal) (
-    input = 1/(input+1);
-    input = 1-(input^expVal);
-);
-
-function FillEnvLut(start,end,step) (
-  this.len = end-start;
-  this.maxVal = this.len * step;
-  this.start = start;
-  this.end = end;
-  this.invStep = 1/step;
-  this.i = 0;
-  loop(this.len,
-    this.v = this.i * step;
-    lutMem = start;
-    lutMem[this.i] = Curve(this.v,this.expVal);
-    this.i += 1;
+  function RGBA(R,G,B,A) (
+    this.r = R; this.g = G; this.b = B; this.a = A;
   );
-);
 
-function GetLutVal(in) (
-  this.index = max(min(in * this.invStep,this.end),0);
-  this.floorIndex = floor(this.index);
-  lutMem = this.start;
-  this.lo = lutMem[this.floorIndex];
-  this.hi = lutMem[this.floorIndex+1];
-  this.frac = this.index - this.floorIndex;
-  Interpolate(this.lo, this.hi, this.frac);
-);
-
-function RMSInit(weight_ms)
-instance (weight)(
-  weight = 1-exp(-1/(weight_ms / 1000 * srate));
-);
-
-function RMS(input)
-instance (s,rms,weight)(
-  rms = sqrt(s +=  weight * ( input^2 - s ));
-);
-
-function DelayInit(start,end)
-(
-  this.sloop = this.splay = start;
-  this.length = end-start;
-);
-
-function Delay(input)
-(
-  this.sloop[this.sindex] = input;
-  this.sindex += 1;
-  this.sindex > this.length ? this.sindex = 0;
-  this.splay[this.sindex];
-);
-
-function FollowerInit(attack,release,smoothing) (
-  this.a = exp(-1/(srate*attack/1000));
-  this.r = exp(-1/(srate*release/1000));
-  this.s = exp(-1/(srate*smoothing/1000));
-  this.a2 = 1-this.a;
-  this.r2 = 1-this.r;
-);
-
-function Follower(in) (
-  this.tmp = max(in + this.s * (this.tmp-in),in);
-  this.e <  this.tmp ? (
-    this.e = this.a * this.e + this.a2 * this.tmp;
-  ) : (
-    this.e = this.r * this.e + this.r2 * this.tmp;
+  function Interpolate(A, B, X) (
+    A + ((B-A)*X);
   );
-);
 
-function FollowerZeroAtt(in) (
-  this.tmp = max(in + this.s * (this.tmp-in),in);
-  this.e <  this.tmp ? (
-    this.e = this.tmp;
-  ) : (
-    this.e = this.r * this.e + this.r2 * this.tmp;
+  function Curve(input,expVal) (
+      input = 1/(input+1);
+      input = 1-(input^expVal);
   );
-);
 
-function FollowerZeroRel(in) (
-  this.tmp = max(in + this.s * (this.tmp-in),in);
-  this.e <  this.tmp ? (
-    this.e = this.a * this.e + this.a2 * this.tmp;
-  ) : (
-    this.e = this.tmp;
+  function FillEnvLut(start,end,step) (
+    this.len = end-start;
+    this.maxVal = this.len * step;
+    this.start = start;
+    this.end = end;
+    this.invStep = 1/step;
+    this.i = 0;
+    loop(this.len,
+      this.v = this.i * step;
+      lutMem = start;
+      lutMem[this.i] = Curve(this.v,this.expVal);
+      this.i += 1;
+    );
   );
-);
 
-function HFLFInit(freq)
-instance(n0,weight)
-(
-  n0 = 0;
-  weight = 1-exp(-2*$pi*freq/srate);
-);
+  function GetLutVal(in) (
+    this.index = max(min(in * this.invStep,this.end),0);
+    this.floorIndex = floor(this.index);
+    lutMem = this.start;
+    this.lo = lutMem[this.floorIndex];
+    this.hi = lutMem[this.floorIndex+1];
+    this.frac = this.index - this.floorIndex;
+    Interpolate(this.lo, this.hi, this.frac);
+  );
 
-function HFcut(input)
-instance(out,n0,weight)
-(  
-  out = (n0+=((input-n0)*weight));
-);
+  function RMSInit(weight_ms)
+  instance (weight)(
+    weight = 1-exp(-1/(weight_ms / 1000 * srate));
+  );
 
-function LFcut(input)
-instance(out,n0,weight)
-(
-  out = input - (n0+=((input-n0)*weight));
-);
+  function RMS(input)
+  instance (s,rms,weight)(
+    rms = sqrt(s +=  weight * ( input^2 - s ));
+  );
 
-function TransuInit()
-instance(e0,e1,e2,e3,e4,d0,d1)
-(
-  e0.FollowerInit(0,50,100);
-  e1.FollowerInit(5,0,0);
-  e2.FollowerInit(1,0,5);
-  e3.FollowerInit(0,50,200);
-  e4.FollowerInit(100,0,0);
-  
-  preDelay = (srate/44100) * 88;
-  
-  d0.DelayInit(1000,1000+preDelay);
-  d1.DelayInit(2000,2000+preDelay);   
-);
+  function DelayInit(start,end)
+  (
+    this.sloop = this.splay = start;
+    this.length = end-start;
+  );
 
-function TransuSetSustain(val_ms)
-instance(e4)
-(
-  e4.FollowerInit(val_ms,0,0.5);
-);
+  function Delay(input)
+  (
+    this.sloop[this.sindex] = input;
+    this.sindex += 1;
+    this.sindex > this.length ? this.sindex = 0;
+    this.splay[this.sindex];
+  );
 
-function TransuSetSmooth(val_ms)
-instance(e0)
-(
-  e0.FollowerInit(0,50,val_ms);
-);
+  function FollowerInit(attack,release,smoothing) (
+    this.a = exp(-1/(srate*attack/1000));
+    this.r = exp(-1/(srate*release/1000));
+    this.s = exp(-1/(srate*smoothing/1000));
+    this.a2 = 1-this.a;
+    this.r2 = 1-this.r;
+  );
 
-function Transu(inL,inR)
-instance(e0,e1,e2,e3,e4,sgn,d0,d1,outL,outR,dryL,dryR)
-(  
-  
-  sgn.in = max(abs(inL),abs(inR)) + norm;
-  sgn.in = sgn.in^0.5 * 2;
-  sgn.c = e0.FollowerZeroAtt(sgn.in);
-  
-  inL = dryL = d0.Delay(inL);
-  inR = dryR = d1.Delay(inR);
+  function Follower(in) (
+    this.tmp = max(in + this.s * (this.tmp-in),in);
+    this.e <  this.tmp ? (
+      this.e = this.a * this.e + this.a2 * this.tmp;
+    ) : (
+      this.e = this.r * this.e + this.r2 * this.tmp;
+    );
+  );
+
+  function FollowerZeroAtt(in) (
+    this.tmp = max(in + this.s * (this.tmp-in),in);
+    this.e <  this.tmp ? (
+      this.e = this.tmp;
+    ) : (
+      this.e = this.r * this.e + this.r2 * this.tmp;
+    );
+  );
+
+  function FollowerZeroRel(in) (
+    this.tmp = max(in + this.s * (this.tmp-in),in);
+    this.e <  this.tmp ? (
+      this.e = this.a * this.e + this.a2 * this.tmp;
+    ) : (
+      this.e = this.tmp;
+    );
+  );
+
+  function HFLFInit(freq)
+  instance(n0,weight)
+  (
+    n0 = 0;
+    weight = 1-exp(-2*$pi*freq/srate);
+  );
+
+  function HFcut(input)
+  instance(out,n0,weight)
+  (  
+    out = (n0+=((input-n0)*weight));
+  );
+
+  function LFcut(input)
+  instance(out,n0,weight)
+  (
+    out = input - (n0+=((input-n0)*weight));
+  );
+
+  function TransuInit()
+  instance(e0,e1,e2,e3,e4,d0,d1)
+  (
+    e0.FollowerInit(0,50,100);
+    e1.FollowerInit(5,0,0);
+    e2.FollowerInit(1,0,5);
+    e3.FollowerInit(0,50,200);
+    e4.FollowerInit(100,0,0);
     
-  attack.exp ? (
+    preDelay = (srate/44100) * 88;
+    
+    d0.DelayInit(1000,1000+preDelay);
+    d1.DelayInit(2000,2000+preDelay);   
+  );
+
+  function TransuSetSustain(val_ms)
+  instance(e4)
+  (
+    e4.FollowerInit(val_ms,0,0.5);
+  );
+
+  function TransuSetSmooth(val_ms)
+  instance(e0)
+  (
+    e0.FollowerInit(0,50,val_ms);
+  );
+
+  function Transu(inL,inR)
+  instance(e0,e1,e2,e3,e4,sgn,d0,d1,outL,outR,dryL,dryR)
+  (  
+    
+    sgn.in = max(abs(inL),abs(inR)) + norm;
+    sgn.in = sgn.in^0.5 * 2;
+    sgn.c = e0.FollowerZeroAtt(sgn.in);
+    
+    inL = dryL = d0.Delay(inL);
+    inR = dryR = d1.Delay(inR);
       
-    sgn.at = ( sgn.c - e1.FollowerZeroRel(sgn.c) );
-    sgn.at = e2.FollowerZeroRel(sgn.at);
-    //sgn.at = 1/(sgn.at+1);
-    //sgn.at = 1-(sgn.at^attack.exp);
-    sgn.at = l0.GetLutVal(sgn.at);
-            
-    adir > 0 ? (
-      sgn.at *= 1.2;
-      inL = (inL * sgn.at) + inL;
-      inR = (inR * sgn.at) + inR;
-    );
-    adir < 0 ? (
-      inL -= (inL * sgn.at);
-      inR -= (inR * sgn.at);
-    );    
-    
-  );
-    
-  sustain.exp ? (
+    attack.exp ? (
         
-    sgn.su = ( e3.FollowerZeroAtt(sgn.c) - sgn.c );
-    sgn.su = e4.FollowerZeroRel(sgn.su);
-    //sgn.su = 1/(sgn.su+1);
-    //sgn.su = 1-(sgn.su^sustain.exp);
-    sgn.su = l1.GetLutVal(sgn.su);
-        
-    sdir > 0 ? (    
-      sgn.su *= 3.98;
-      inL += (inL * (sgn.su));
-      inR += (inR * (sgn.su));
-    );
-    sdir < 0 ? (
-      inL -= (inL * (sgn.su));
-      inR -= (inR * (sgn.su));
-    );
-  );
-    
-  outL = inL;
-  outR = inR;  
-);
-
-function ProcessSliders() (
-  attack.exp = abs(slider1/10);
-  adir = sign(slider1);
-  attack.exp = adir > 0 ? attack.exp^2 * 20 : attack.exp^2 * 5;
-  
-  l0.expVal = attack.exp;
-  l0.FillEnvLut(100000,110000,0.01);
-  
-  sustain.exp = abs(slider2/10);
-  sustain.exp = sustain.exp^2 * 5;
-  sdir = sign(slider2);
-  l1.expVal = sustain.exp;
-  l1.FillEnvLut(200000,210000,0.01);  
-  
-  output = 10^(slider10/20);
+      sgn.at = ( sgn.c - e1.FollowerZeroRel(sgn.c) );
+      sgn.at = e2.FollowerZeroRel(sgn.at);
+      //sgn.at = 1/(sgn.at+1);
+      //sgn.at = 1-(sgn.at^attack.exp);
+      sgn.at = l0.GetLutVal(sgn.at);
+              
+      adir > 0 ? (
+        sgn.at *= 1.2;
+        inL = (inL * sgn.at) + inL;
+        inR = (inR * sgn.at) + inR;
+      );
+      adir < 0 ? (
+        inL -= (inL * sgn.at);
+        inR -= (inR * sgn.at);
+      );    
       
-  prm.sens = 1-slider7;
-  t.TransuSetSmooth(Interpolate(10,1000,prm.sens^3.431));
+    );
+      
+    sustain.exp ? (
           
-  sdir > 0 ? (
-    t.TransuSetSustain(750);
-  ) : (
-    t.TransuSetSustain(100);  
+      sgn.su = ( e3.FollowerZeroAtt(sgn.c) - sgn.c );
+      sgn.su = e4.FollowerZeroRel(sgn.su);
+      //sgn.su = 1/(sgn.su+1);
+      //sgn.su = 1-(sgn.su^sustain.exp);
+      sgn.su = l1.GetLutVal(sgn.su);
+          
+      sdir > 0 ? (    
+        sgn.su *= 3.98;
+        inL += (inL * (sgn.su));
+        inR += (inR * (sgn.su));
+      );
+      sdir < 0 ? (
+        inL -= (inL * (sgn.su));
+        inR -= (inR * (sgn.su));
+      );
+    );
+      
+    outL = inL;
+    outR = inR;  
   );
-  
-);
 
-/* COLORS RGBA */
-m0.RGBA(1,1,1,0.6); // Meter1
-m1.RGBA(1,1,1,0.6); // Meter2
-s1.RGBA(1,1,1,0.3); // Knob1
-s2.RGBA(1,1,1,0.3); // Knob2
-s7.RGBA(1,1,1,0.3); // Knob3
-s10.RGBA(1,1,1,0.3); // Knob4
-/* COLORS END */
+  function ProcessSliders() (
+    attack.exp = abs(slider1/10);
+    adir = sign(slider1);
+    attack.exp = adir > 0 ? attack.exp^2 * 20 : attack.exp^2 * 5;
+    
+    l0.expVal = attack.exp;
+    l0.FillEnvLut(100000,110000,0.01);
+    
+    sustain.exp = abs(slider2/10);
+    sustain.exp = sustain.exp^2 * 5;
+    sdir = sign(slider2);
+    l1.expVal = sustain.exp;
+    l1.FillEnvLut(200000,210000,0.01);  
+    
+    output = 10^(slider10/20);
+        
+    prm.sens = 1-slider7;
+    t.TransuSetSmooth(Interpolate(10,1000,prm.sens^3.431));
+            
+    sdir > 0 ? (
+      t.TransuSetSustain(750);
+    ) : (
+      t.TransuSetSustain(100);  
+    );
+    
+  );
 
-t.TransuInit();
-_playBackInit = 0;
+  /* COLORS RGBA */
+  m0.RGBA(1,1,1,0.6); // Meter1
+  m1.RGBA(1,1,1,0.6); // Meter2
+  s1.RGBA(1,1,1,0.3); // Knob1
+  s2.RGBA(1,1,1,0.3); // Knob2
+  s7.RGBA(1,1,1,0.3); // Knob3
+  s10.RGBA(1,1,1,0.3); // Knob4
+  /* COLORS END */
 
-mtr.att = 1;
-mtr.sus = 1;
+  t.TransuInit();
+  _playBackInit = 0;
+
+  mtr.att = 1;
+  mtr.sus = 1;
 
 @slider
 
-s1.value = slider1;
-s2.value = slider2;
-s7.value = slider7;
-s10.value = slider10;
+  s1.value = slider1;
+  s2.value = slider2;
+  s7.value = slider7;
+  s10.value = slider10;
 
-ProcessSliders();
+  ProcessSliders();
+
+@serialize // add this block for tk extra features
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped); file_var(0, zoom_off);
 
 @block
 
-!_playBackInit ? (
-  preDelay = (srate/44100) * 88;
-  pdc_delay = preDelay;
-  pdc_bot_ch = 0; pdc_top_ch = 2;
-  _playBackInit = 1;
-);
+  !_playBackInit ? (
+    preDelay = (srate/44100) * 88;
+    pdc_delay = preDelay;
+    pdc_bot_ch = 0; pdc_top_ch = 2;
+    _playBackInit = 1;
+  );
 
-attack.exp ? amax = max(amax,t.sgn.at);
-sustain.exp ? smax = max(smax,t.sgn.su);
+  attack.exp ? amax = max(amax,t.sgn.at);
+  sustain.exp ? smax = max(smax,t.sgn.su);
 
-mtr.att = adir > 0 ? 1+amax : 1-amax;
-mtr.sus = sdir > 0 ? 1+smax : 1-smax;
+  mtr.att = adir > 0 ? 1+amax : 1-amax;
+  mtr.sus = sdir > 0 ? 1+smax : 1-smax;
 
-norm = (rand(1) * 0.000000000000001);
+  norm = (rand(1) * 0.000000000000001);
 
 @sample
+  S2_sample_on = 1;
+  initialized_playstates=1;
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
 
-inL = spl0;
-inR = spl1;
+  process == 1 ? (
+    inL = spl0;
+    inR = spl1;
 
-t.Transu(inL,inR);
+    t.Transu(inL,inR);
 
-spl0 = t.outL;
-spl1 = t.outR;
+    spl0 = t.outL;
+    spl1 = t.outR;
 
-spl0 *= output;
-spl1 *= output;
+    spl0 *= output;
+    spl1 *= output;
 
-(abs(spl0) > 0.989 || abs(spl1) > 0.989) ? (
-  spl0 = min(max(spl0,-0.989),0.989);
-  spl1 = min(max(spl1,-0.989),0.989);
-  mtr.over = 1;
-);
+    (abs(spl0) > 0.989 || abs(spl1) > 0.989) ? (
+      spl0 = min(max(spl0,-0.989),0.989);
+      spl1 = min(max(spl1,-0.989),0.989);
+      mtr.over = 1;
+    );
+  );
 
 <? // @gfx setup
   w_bg=680;
@@ -327,17 +346,6 @@ spl1 *= output;
   mcp_ratio="wide";
   include("ddconfig.jsfx-inc");
 ?>
-  function get_zoom(dfile) local(dzoom s2_zoom_X s2_zoom_y d_bg_w d_bg_h) (
-    gfx_getimgdim(dfile, d_bg_w, d_bg_h);
-    s2_zoom_X = gfx_w / d_bg_w*2;
-    s2_zoom_y = gfx_h / d_bg_h*2;
-    bg_ratio=d_bg_w/d_bg_h;
-    gfx_ratio=gfx_w/gfx_h;
-    //if full ui, resize freely; if mcp ui, resize scaling only to width
-    gfx_ext_flags == 1 && gfx_ratio>bg_ratio?(dzoom=s2_zoom_x):(dzoom = min(s2_zoom_x, s2_zoom_y));// * gfx_ext_retina;
-    zoom_off == 1 ? dzoom = gfx_ext_retina;
-    dzoom;
-  );
 
 function draw_pot(x,y,fw,fh,fn,f,t,s,d,id,uStr)
 (
@@ -434,6 +442,8 @@ function AnimateLed(in,x,y,fw,fh,fn,id)
 );
 
 gfx_ext_flags == 0 ? (
+  tk_gfx_setup();
+  unscaled_factor=1;
   zoom= get_zoom(0);
   gfx_x = gfx_y = 0;
   gfx_blit(0,1*zoom/2,0);
@@ -487,6 +497,9 @@ gfx_ext_flags == 0 ? (
     
     !credits.toggle && mouse_cap ? credits.show = 0;
   );
+
+  setup_dmenu_nogrouping("Sonic Anomaly Transpire", "1", "Sonic Anomaly", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+
 ):gfx_ext_flags == 1 ? (
 gfx_r=0.118;gfx_g=0.114;gfx_b=0.137;
 gfx_rect(0,0,gfx_w,gfx_h);
