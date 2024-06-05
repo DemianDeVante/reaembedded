@@ -54,5 +54,5 @@ The main purpose of this collection is to provide an embedded version. If you ow
 
 ![screenshot](https://i.imgur.com/vmOBwpk.png)
 
-Linux users install the (Linux) version with the same repository.
+LINUX USERS: The package is the same, just run the script "embeDDed_settings.lua" from your action list and click Yes. This is a one time setup, you don't have to do it each update.
 If you want to modify the designs, you can find the krita files in [this dropbox](https://www.dropbox.com/scl/fo/quy19ss8fme8w9v7jho92/AJGYaDq7Eq4x67pMeS0BjZk?rlkey=ljbzmmjnsjtbibbbph8ar3clt&st=h5np7bkt&dl=0)
