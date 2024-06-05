@@ -1,4 +1,13 @@
--- Import the required functions
+-- @description embeDDed settings
+-- @author Demian D
+-- @license GPL v3
+-- @version 1.0
+-- @changelog
+--  new
+-- @provides
+--   JSFX/*.jsfx
+--   [effect] JSFX/*.jsfx
+
 reaper.ClearConsole()
 
 -- Function to show a message box and get user input
