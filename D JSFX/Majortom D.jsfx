@@ -425,7 +425,7 @@ filename:6,DGFX/majortom/bgmcp.png
   w_bg=1210;
   h_bg=744;
   mcp_ratio="tall";
-  include("ddconfig.jsfx-inc");
+  include("DGFX/ddconfig.jsfx-inc");
 ?>
   tk_gfx_setup();
   gfx_ext_flags == 0 ? (  // full ui

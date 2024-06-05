@@ -188,7 +188,7 @@ options:gmem=mgalimiterd
   w_bg=1260;
   h_bg=420;
   mcp_ratio="wide";
-  include("ddconfig.jsfx-inc");
+  include("DGFX/ddconfig.jsfx-inc");
 ?>
   tk_gfx_setup();
   gfx_ext_flags == 0 ? (  // full ui

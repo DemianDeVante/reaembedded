@@ -3,13 +3,12 @@
 LA-2KAN D.jsfx
 DelayFloaty D.jsfx
 EQT-2Kan D.jsfx
+embeDDed settings.lua
 Smooth Limiter D.jsfx
 Saturation D.jsfx
-ddconfig.jsfx-inc
 TubeharmonicsAmp D.jsfx
 MGALimiter D.jsfx
 Stereo Enhancer D.jsfx
-ddconfiglinux.jsfx-inc
 RBJ HighpassLowPass D.jsfx
 Majortom D.jsfx
 Transpire D.jsfx
@@ -29,6 +28,7 @@ rbj1073 D.jsfx
 DGFX/ui-lib_d.jsfx-inc
 DGFX/qd.delay.jsfx-inc
 DGFX/demian-effects.jsfx-inc
+DGFX/ddconfig.jsfx-inc
 DGFX/st-oversampler.jsfx-inc
 DGFX/warble-pitch-detection.jsfx-inc
 DGFX/nw8platefunctions.jsfx-inc

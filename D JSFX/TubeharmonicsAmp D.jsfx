@@ -247,7 +247,7 @@ options:gmem=tubeharmonicsD
   w_bg=619;
   h_bg=200;
   mcp_ratio="tall";
-  include("ddconfig.jsfx-inc");
+  include("DGFX/ddconfig.jsfx-inc");
 ?>
   tk_gfx_setup();
   gfx_ext_flags == 0 ? (  // full ui

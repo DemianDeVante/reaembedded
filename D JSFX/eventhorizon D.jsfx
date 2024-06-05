@@ -204,7 +204,7 @@ options:gmem=EventHorizonClipperD
   w_bg=1310;
   h_bg=455;
   mcp_ratio="wide";
-  include("ddconfig.jsfx-inc");
+  include("DGFX/ddconfig.jsfx-inc");
 ?>
   tk_gfx_setup();
   gfx_ext_flags == 0 ? (  // full ui

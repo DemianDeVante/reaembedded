@@ -1,8 +1,0 @@
-<? 
-    gfx_min_width=619; // for Windows = 489, for Linux = 619
-    mcp_ratio == "tall" ? mcp_ratio = 4/5;
-    mcp_ratio == "wide" ? mcp_ratio = 5/4;
-    h_gfx = ceil(h_bg*gfx_min_width/w_bg);
-    w_gfx = ceil(h_gfx*mcp_ratio);
-    printf("@gfx %d %d", w_gfx, h_gfx);
-?>

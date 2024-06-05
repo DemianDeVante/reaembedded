@@ -344,7 +344,7 @@ options: no_meter
   w_bg=680;
   h_bg=340;
   mcp_ratio="wide";
-  include("ddconfig.jsfx-inc");
+  include("DGFX/ddconfig.jsfx-inc");
 ?>
 
 function draw_pot(x,y,fw,fh,fn,f,t,s,d,id,uStr)

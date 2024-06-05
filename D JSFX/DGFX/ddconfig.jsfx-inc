@@ -1,5 +1,6 @@
 <? 
-    gfx_min_width=489; // for Windows = 489, for Linux = 619
+    include("DGFX/ddconfig_os.jsfx-inc");
+    ddconfig_os?gfx_min_width=619:gfx_min_width=489; // for Windows = 489, for Linux = 619
     mcp_ratio == "tall" ? mcp_ratio = 4/5;
     mcp_ratio == "wide" ? mcp_ratio = 5/4;
     h_gfx = ceil(h_bg*gfx_min_width/w_bg);

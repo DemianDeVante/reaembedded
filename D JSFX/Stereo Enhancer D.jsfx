@@ -288,7 +288,7 @@ options:gmem=JonStereoEnhancer
   w_bg=800;
   h_bg=293;
   mcp_ratio="wide";
-  include("ddconfig.jsfx-inc");
+  include("DGFX/ddconfig.jsfx-inc");
 ?>
 
   tk_gfx_setup();

@@ -288,7 +288,7 @@ options: no_meter
   w_bg=598;
   h_bg=226;
   mcp_ratio="tall";
-  include("ddconfig.jsfx-inc");
+  include("DGFX/ddconfig.jsfx-inc");
 ?>
 function draw_chkbox(x,y,s,v)
 (
