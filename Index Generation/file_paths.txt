@@ -9,6 +9,7 @@ ddconfig.jsfx-inc
 TubeharmonicsAmp D.jsfx
 MGALimiter D.jsfx
 Stereo Enhancer D.jsfx
+ddconfiglinux.jsfx-inc
 RBJ HighpassLowPass D.jsfx
 Majortom D.jsfx
 Transpire D.jsfx
@@ -57,8 +58,6 @@ DGFX/rbjhilopass/knob-black.png
 DGFX/rbjhilopass/knob-bold.png
 DGFX/rbjhilopass/screw.png
 DGFX/rbjhilopass/bg.png
-DGFX/rbjhilopass/bg.png~
-DGFX/rbjhilopass/bgmcp.png~
 DGFX/rbjhilopass/knob.png
 DGFX/nw8plate/bgmcp.png
 DGFX/nw8plate/button.png
@@ -137,29 +136,6 @@ DGFX/majortom/button-ext.png
 DGFX/majortom/bg.png
 DGFX/majortom/button-detect.png
 DGFX/majortom/knob.png
-DGFX/reverbnw8plate/bgmcp.png
-DGFX/reverbnw8plate/bgmcpold.png
-DGFX/reverbnw8plate/button.png
-DGFX/reverbnw8plate/knob-black.png
-DGFX/reverbnw8plate/bgmcp-floaty.png
-DGFX/reverbnw8plate/bg quick.png
-DGFX/reverbnw8plate/bg.kra
-DGFX/reverbnw8plate/knob-white.png
-DGFX/reverbnw8plate/bgmcp-quick.png
-DGFX/reverbnw8plate/bgmcp.kra
-DGFX/reverbnw8plate/bg.png
-DGFX/reverbnw8plate/knob-delay.kra
-DGFX/reverbnw8plate/knob-red.png
-DGFX/reverbnw8plate/knob-blue.png
-DGFX/reverbnw8plate/bkp/bgmcp.png
-DGFX/reverbnw8plate/bkp/knob-black.png
-DGFX/reverbnw8plate/bkp/knob-white.png
-DGFX/reverbnw8plate/bkp/bg.png
-DGFX/reverbnw8plate/bkp/knob-delay.kra
-DGFX/reverbnw8plate/bkp/knob-red.png
-DGFX/reverbnw8plate/bkp/knob-blue.png
-DGFX/reverbnw8plate/bkp scaled/bgmcp.png
-DGFX/reverbnw8plate/bkp scaled/bg.png
 DGFX/slax_gfx/bgmcp.png
 DGFX/slax_gfx/needles.png
 DGFX/slax_gfx/bigpot.png
@@ -186,7 +162,6 @@ DGFX/tubeharmonics/bgmcp.png
 DGFX/tubeharmonics/knob-small.png
 DGFX/tubeharmonics/button-switch.png
 DGFX/tubeharmonics/bg.png
-DGFX/tubeharmonics/bgmcp.png~
 DGFX/tubeharmonics/knob.png
 DGFX/1979/bgmcp.png
 DGFX/1979/button-phase.png
