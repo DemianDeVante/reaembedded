@@ -6,7 +6,7 @@
   <category name="DDD"></category>
   <category name="..">
     <reapack name="D JSFX" type="effect" desc="embeDDed collection (Linux)">
-      <version name="1.0.7" author="Demian D">
+      <version name="1.0.9" author="Demian D">
         <source file="ddconfig.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/ddconfiglinux.jsfx-inc</source>
         <source file="1175 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1175%20D.jsfx</source>
         <source file="1979 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1979%20D.jsfx</source>
@@ -225,7 +225,7 @@
       </version>
     </reapack>  
     <reapack name="D JSFX" type="effect" desc="embeDDed collection">
-      <version name="1.0.8" author="Demian D">
+      <version name="1.0.9" author="Demian D">
         <source file="ddconfig.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/ddconfig.jsfx-inc</source>
         <source file="1175 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1175%20D.jsfx</source>
         <source file="1979 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1979%20D.jsfx</source>
