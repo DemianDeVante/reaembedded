@@ -12,7 +12,7 @@ Now available on ReaPack with this repository:
 [https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/index.xml](https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/index.xml)
 
 
-![jsfxmcpdesigns](https://stash.reaper.fm/48710/jsfxmcpdesigns.png)
+![jsfxmcpdesigns](https://stash.reaper.fm/48720/jsfxmcpdesigns.png)
 
 As my library is based on Tukan's, it supports parameter group linking, UI scaling, shift/ctrl modifiers, etc. However, some effects don't provide parameter linking such as Smooth Limiter by GeraintLuff and Sonic Anomaly js.
 
@@ -52,7 +52,7 @@ The main purpose of this collection is to provide an embedded version. If you ow
 - NW8Plate Reverb by chmaha based on Airwindows kPlate
 - Hall Reverb by Witti
 
-![screenshot](https://i.imgur.com/VICiyJ7.png)
+![screenshot](https://i.imgur.com/vmOBwpk.png)
 
 Linux users install the (Linux) version with the same repository.
 If you want to modify the designs, you can find the krita files in [this dropbox](https://www.dropbox.com/scl/fo/quy19ss8fme8w9v7jho92/AJGYaDq7Eq4x67pMeS0BjZk?rlkey=ljbzmmjnsjtbibbbph8ar3clt&st=h5np7bkt&dl=0)
