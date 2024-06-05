@@ -5,224 +5,225 @@
   </metadata>
   <category name="DDD"></category>
   <category name="..">
-    <reapack name="D JSFX" type="effect" desc="embeDDed collection">
+    <reapack name="D JSFX" desc="embeDDed collection">
       <version name="1.1.0" author="Demian D">
         <source type="script" main="main">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/embeDDed%20settings.lua</source>
-        <source file="1175 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1175%20D.jsfx</source>
-        <source file="1979 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1979%20D.jsfx</source>
-        <source file="LA-2KAN D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/LA-2KAN%20D.jsfx</source>
-        <source file="DelayFloaty D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DelayFloaty%20D.jsfx</source>
-        <source file="EQT-2Kan D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/EQT-2Kan%20D.jsfx</source>
-        <source file="Smooth Limiter D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Smooth%20Limiter%20D.jsfx</source>
-        <source file="Saturation D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Saturation%20D.jsfx</source>
-        <source file="TubeharmonicsAmp D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/TubeharmonicsAmp%20D.jsfx</source>
-        <source file="MGALimiter D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/MGALimiter%20D.jsfx</source>
-        <source file="Stereo Enhancer D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Stereo%20Enhancer%20D.jsfx</source>
-        <source file="RBJ HighpassLowPass D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/RBJ%20HighpassLowPass%20D.jsfx</source>
-        <source file="Majortom D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Majortom%20D.jsfx</source>
-        <source file="Transpire D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Transpire%20D.jsfx</source>
-        <source file="Reverb Bricastic2 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Reverb%20Bricastic2%20D.jsfx</source>
-        <source file="eventhorizon D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/eventhorizon%20D.jsfx</source>
-        <source file="SaturationFancy D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/SaturationFancy%20D.jsfx</source>
-        <source file="AnalogSumming D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/AnalogSumming%20D.jsfx</source>
-        <source file="UglyPitch D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/UglyPitch%20D.jsfx</source>
-        <source file="SLAX D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/SLAX%20D.jsfx</source>
-        <source file="QuickDelay D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/QuickDelay%20D.jsfx</source>
-        <source file="Fairlychildish D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Fairlychildish%20D.jsfx</source>
-        <source file="Reverb NW8D Plate D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Reverb%20NW8D%20Plate%20D.jsfx</source>
-        <source file="masterLimiter D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/masterLimiter%20D.jsfx</source>
-        <source file="Reverb Hall D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Reverb%20Hall%20D.jsfx</source>
-        <source file="Thanx D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Thanx%20D.jsfx</source>
-        <source file="rbj1073 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/rbj1073%20D.jsfx</source>
-        <source file="DGFX/ui-lib_d.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/ui-lib_d.jsfx-inc</source>
-        <source file="DGFX/qd.delay.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/qd.delay.jsfx-inc</source>
-        <source file="DGFX/demian-effects.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/demian-effects.jsfx-inc</source>
-        <source file="DGFX/ddconfig.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/ddconfig.jsfx-inc</source>
-        <source file="DGFX/st-oversampler.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/st-oversampler.jsfx-inc</source>
-        <source file="DGFX/warble-pitch-detection.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/warble-pitch-detection.jsfx-inc</source>
-        <source file="DGFX/nw8platefunctions.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8platefunctions.jsfx-inc</source>
-        <source file="DGFX/spectrum.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/spectrum.jsfx-inc</source>
-        <source file="DGFX/qd.rbj_filter.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/qd.rbj_filter.jsfx-inc</source>
-        <source file="DGFX/VT_Filters.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/VT_Filters.jsfx-inc</source>
-        <source file="DGFX/delay-utils.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delay-utils.jsfx-inc</source>
-        <source file="DGFX/rbj_filter.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj_filter.jsfx-inc</source>
-        <source file="DGFX/tk_lib_d.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tk_lib_d.jsfx-inc</source>
-        <source file="DGFX/warble-delay-utils.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/warble-delay-utils.jsfx-inc</source>
-        <source file="DGFX/cookdsp.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/cookdsp.jsfx-inc</source>
-        <source file="DGFX/zdf_filter.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/zdf_filter.jsfx-inc</source>
-        <source file="DGFX/qd.saike_pitchlib.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/qd.saike_pitchlib.jsfx-inc</source>
-        <source file="DGFX/firhalfband.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/firhalfband.jsfx-inc</source>
-        <source file="DGFX/svf_filter.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/svf_filter.jsfx-inc</source>
-        <source file="DGFX/tk-vu_lib_d.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tk-vu_lib_d.jsfx-inc</source>
-        <source file="DGFX/uglypitch/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/uglypitch/bgmcp.png</source>
-        <source file="DGFX/uglypitch/screw.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/uglypitch/screw.png</source>
-        <source file="DGFX/uglypitch/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/uglypitch/bg.png</source>
-        <source file="DGFX/uglypitch/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/uglypitch/knob.png</source>
-        <source file="DGFX/eventhorizonclipper/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eventhorizonclipper/bgmcp.png</source>
-        <source file="DGFX/eventhorizonclipper/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eventhorizonclipper/meter.png</source>
-        <source file="DGFX/eventhorizonclipper/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eventhorizonclipper/bg.png</source>
-        <source file="DGFX/eventhorizonclipper/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eventhorizonclipper/knob.png</source>
-        <source file="DGFX/rbjhilopass/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/bgmcp.png</source>
-        <source file="DGFX/rbjhilopass/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/knob-black.png</source>
-        <source file="DGFX/rbjhilopass/knob-bold.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/knob-bold.png</source>
-        <source file="DGFX/rbjhilopass/screw.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/screw.png</source>
-        <source file="DGFX/rbjhilopass/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/bg.png</source>
-        <source file="DGFX/rbjhilopass/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/knob.png</source>
-        <source file="DGFX/nw8plate/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/bgmcp.png</source>
-        <source file="DGFX/nw8plate/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/button.png</source>
-        <source file="DGFX/nw8plate/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/knob-black.png</source>
-        <source file="DGFX/nw8plate/knob-white.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/knob-white.png</source>
-        <source file="DGFX/nw8plate/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/bg.png</source>
-        <source file="DGFX/nw8plate/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/knob-blue.png</source>
-        <source file="DGFX/saturationfancy/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturationfancy/bgmcp.png</source>
-        <source file="DGFX/saturationfancy/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturationfancy/bg.png</source>
-        <source file="DGFX/saturationfancy/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturationfancy/knob.png</source>
-        <source file="DGFX/bricastic2/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/bgmcp.png</source>
-        <source file="DGFX/bricastic2/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/button.png</source>
-        <source file="DGFX/bricastic2/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/knob-black.png</source>
-        <source file="DGFX/bricastic2/knob-white.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/knob-white.png</source>
-        <source file="DGFX/bricastic2/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/bg.png</source>
-        <source file="DGFX/bricastic2/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/knob-blue.png</source>
-        <source file="DGFX/GeraintUI/theme-stock.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/GeraintUI/theme-stock.png</source>
-        <source file="DGFX/eqt2kan/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/bgmcp.png</source>
-        <source file="DGFX/eqt2kan/knob-lf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/knob-lf.png</source>
-        <source file="DGFX/eqt2kan/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/bg.png</source>
-        <source file="DGFX/eqt2kan/knob-hf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/knob-hf.png</source>
-        <source file="DGFX/eqt2kan/knob-sel.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/knob-sel.png</source>
-        <source file="DGFX/eqt2kan/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/knob.png</source>
-        <source file="DGFX/rbj1073/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/bgmcp.png</source>
-        <source file="DGFX/rbj1073/knob-gain.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/knob-gain.png</source>
-        <source file="DGFX/rbj1073/knob-hpf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/knob-hpf.png</source>
-        <source file="DGFX/rbj1073/knob-boost.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/knob-boost.png</source>
-        <source file="DGFX/rbj1073/knob-lf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/knob-lf.png</source>
-        <source file="DGFX/rbj1073/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/bg.png</source>
-        <source file="DGFX/rbj1073/knob-mf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/knob-mf.png</source>
-        <source file="DGFX/saturation/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/bgmcp.png</source>
-        <source file="DGFX/saturation/pill.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/pill.png</source>
-        <source file="DGFX/saturation/spotlight.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/spotlight.png</source>
-        <source file="DGFX/saturation/title.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/title.png</source>
-        <source file="DGFX/saturation/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/bg.png</source>
-        <source file="DGFX/saturation/glow.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/glow.png</source>
-        <source file="DGFX/saturation/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/knob.png</source>
-        <source file="DGFX/transpire_gfx/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/bgmcp.png</source>
-        <source file="DGFX/transpire_gfx/knob_2.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/knob_2.png</source>
-        <source file="DGFX/transpire_gfx/clip.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/clip.png</source>
-        <source file="DGFX/transpire_gfx/knob_4.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/knob_4.png</source>
-        <source file="DGFX/transpire_gfx/credits.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/credits.png</source>
-        <source file="DGFX/transpire_gfx/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/bg.png</source>
-        <source file="DGFX/transpire_gfx/knob_3.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/knob_3.png</source>
-        <source file="DGFX/transpire_gfx/knob_1.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/knob_1.png</source>
-        <source file="DGFX/mgalimiter/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/mgalimiter/bgmcp.png</source>
-        <source file="DGFX/mgalimiter/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/mgalimiter/meter.png</source>
-        <source file="DGFX/mgalimiter/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/mgalimiter/bg.png</source>
-        <source file="DGFX/mgalimiter/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/mgalimiter/knob.png</source>
-        <source file="DGFX/masterlimiter/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/masterlimiter/bgmcp.png</source>
-        <source file="DGFX/masterlimiter/screw.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/masterlimiter/screw.png</source>
-        <source file="DGFX/masterlimiter/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/masterlimiter/meter.png</source>
-        <source file="DGFX/masterlimiter/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/masterlimiter/bg.png</source>
-        <source file="DGFX/masterlimiter/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/masterlimiter/knob.png</source>
-        <source file="DGFX/fairlychildish/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/bgmcp.png</source>
-        <source file="DGFX/fairlychildish/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/button.png</source>
-        <source file="DGFX/fairlychildish/bg-lr.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/bg-lr.png</source>
-        <source file="DGFX/fairlychildish/bg-latvert.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/bg-latvert.png</source>
-        <source file="DGFX/fairlychildish/button-agc.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/button-agc.png</source>
-        <source file="DGFX/fairlychildish/button-lr.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/button-lr.png</source>
-        <source file="DGFX/fairlychildish/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/meter.png</source>
-        <source file="DGFX/fairlychildish/knob-time.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/knob-time.png</source>
-        <source file="DGFX/fairlychildish/button-latvert.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/button-latvert.png</source>
-        <source file="DGFX/fairlychildish/knob-screw.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/knob-screw.png</source>
-        <source file="DGFX/fairlychildish/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/knob.png</source>
-        <source file="DGFX/wittihall/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/bgmcp.png</source>
-        <source file="DGFX/wittihall/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/button.png</source>
-        <source file="DGFX/wittihall/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/knob-black.png</source>
-        <source file="DGFX/wittihall/knob-white.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/knob-white.png</source>
-        <source file="DGFX/wittihall/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/bg.png</source>
-        <source file="DGFX/wittihall/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/knob-blue.png</source>
-        <source file="DGFX/majortom/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/bgmcp.png</source>
-        <source file="DGFX/majortom/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/button.png</source>
-        <source file="DGFX/majortom/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/meter.png</source>
-        <source file="DGFX/majortom/button-ext.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/button-ext.png</source>
-        <source file="DGFX/majortom/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/bg.png</source>
-        <source file="DGFX/majortom/button-detect.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/button-detect.png</source>
-        <source file="DGFX/majortom/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/knob.png</source>
-        <source file="DGFX/slax_gfx/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/bgmcp.png</source>
-        <source file="DGFX/slax_gfx/needles.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/needles.png</source>
-        <source file="DGFX/slax_gfx/bigpot.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/bigpot.png</source>
-        <source file="DGFX/slax_gfx/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/bg.png</source>
-        <source file="DGFX/slax_gfx/prepot.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/prepot.png</source>
-        <source file="DGFX/slax_gfx/optbut.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/optbut.png</source>
-        <source file="DGFX/slax_gfx/opt.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/opt.png</source>
-        <source file="DGFX/thanx/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/bgmcp.png</source>
-        <source file="DGFX/thanx/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/button.png</source>
-        <source file="DGFX/thanx/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/knob-black.png</source>
-        <source file="DGFX/thanx/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/bg.png</source>
-        <source file="DGFX/thanx/knob-red.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/knob-red.png</source>
-        <source file="DGFX/thanx/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/knob-blue.png</source>
-        <source file="DGFX/thanx/switch.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/switch.png</source>
-        <source file="DGFX/thanx/led.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/led.png</source>
-        <source file="DGFX/delayfloaty/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/bgmcp.png</source>
-        <source file="DGFX/delayfloaty/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/button.png</source>
-        <source file="DGFX/delayfloaty/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/knob-black.png</source>
-        <source file="DGFX/delayfloaty/knob-white.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/knob-white.png</source>
-        <source file="DGFX/delayfloaty/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/bg.png</source>
-        <source file="DGFX/delayfloaty/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/knob-blue.png</source>
-        <source file="DGFX/tubeharmonics/button-tubes.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/button-tubes.png</source>
-        <source file="DGFX/tubeharmonics/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/bgmcp.png</source>
-        <source file="DGFX/tubeharmonics/knob-small.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/knob-small.png</source>
-        <source file="DGFX/tubeharmonics/button-switch.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/button-switch.png</source>
-        <source file="DGFX/tubeharmonics/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/bg.png</source>
-        <source file="DGFX/tubeharmonics/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/knob.png</source>
-        <source file="DGFX/1979/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/bgmcp.png</source>
-        <source file="DGFX/1979/button-phase.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/button-phase.png</source>
-        <source file="DGFX/1979/knob-trim.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-trim.png</source>
-        <source file="DGFX/1979/button-bypass.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/button-bypass.png</source>
-        <source file="DGFX/1979/knob-gainlow.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-gainlow.png</source>
-        <source file="DGFX/1979/knob-eqmid.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-eqmid.png</source>
-        <source file="DGFX/1979/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/bg.png</source>
-        <source file="DGFX/1979/knob-eqhpf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-eqhpf.png</source>
-        <source file="DGFX/1979/knob-eqlow.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-eqlow.png</source>
-        <source file="DGFX/1979/knob-gainmid.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-gainmid.png</source>
-        <source file="DGFX/1979/knob-drive.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-drive.png</source>
-        <source file="DGFX/1979/knob-gainhigh.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-gainhigh.png</source>
-        <source file="DGFX/1175/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/bgmcp.png</source>
-        <source file="DGFX/1175/knob-s.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/knob-s.png</source>
-        <source file="DGFX/1175/button-sc.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-sc.png</source>
-        <source file="DGFX/1175/button-scb.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-scb.png</source>
-        <source file="DGFX/1175/button-allb.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-allb.png</source>
-        <source file="DGFX/1175/knob-b.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/knob-b.png</source>
-        <source file="DGFX/1175/button-blb.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-blb.png</source>
-        <source file="DGFX/1175/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/meter.png</source>
-        <source file="DGFX/1175/button-8.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-8.png</source>
-        <source file="DGFX/1175/button-12b.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-12b.png</source>
-        <source file="DGFX/1175/button-4b.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-4b.png</source>
-        <source file="DGFX/1175/button-12.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-12.png</source>
-        <source file="DGFX/1175/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/bg.png</source>
-        <source file="DGFX/1175/button-20b.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-20b.png</source>
-        <source file="DGFX/1175/button-by.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-by.png</source>
-        <source file="DGFX/1175/button-bl.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-bl.png</source>
-        <source file="DGFX/1175/button-20.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-20.png</source>
-        <source file="DGFX/1175/button-8b.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-8b.png</source>
-        <source file="DGFX/1175/button-4.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-4.png</source>
-        <source file="DGFX/1175/knob-screw.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/knob-screw.png</source>
-        <source file="DGFX/1175/button-all.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-all.png</source>
-        <source file="DGFX/la2kan/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/bgmcp.png</source>
-        <source file="DGFX/la2kan/button-led.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/button-led.png</source>
-        <source file="DGFX/la2kan/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/meter.png</source>
-        <source file="DGFX/la2kan/knob-big.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/knob-big.png</source>
-        <source file="DGFX/la2kan/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/bg.png</source>
-        <source file="DGFX/la2kan/button-toggle.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/button-toggle.png</source>
-        <source file="DGFX/stereoenhancer/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/bgmcp.png</source>
-        <source file="DGFX/stereoenhancer/knob-small.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/knob-small.png</source>
-        <source file="DGFX/stereoenhancer/button-v.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/button-v.png</source>
-        <source file="DGFX/stereoenhancer/button-h.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/button-h.png</source>
-        <source file="DGFX/stereoenhancer/knob-big.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/knob-big.png</source>
-        <source file="DGFX/stereoenhancer/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/bg.png</source>
-        <source file="DGFX/delayquick/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/bgmcp.png</source>
-        <source file="DGFX/delayquick/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/button.png</source>
-        <source file="DGFX/delayquick/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/knob-black.png</source>
-        <source file="DGFX/delayquick/knob-white.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/knob-white.png</source>
-        <source file="DGFX/delayquick/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/bg.png</source>
-        <source file="DGFX/delayquick/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/knob-blue.png</source>
+        <source type="effect" file="1175 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1175%20D.jsfx</source>
+        <source type="effect" file="1979 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1979%20D.jsfx</source>
+        <source type="effect" file="LA-2KAN D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/LA-2KAN%20D.jsfx</source>
+        <source type="effect" file="DelayFloaty D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DelayFloaty%20D.jsfx</source>
+        <source type="effect" file="EQT-2Kan D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/EQT-2Kan%20D.jsfx</source>
+        <source type="effect" file="Smooth Limiter D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Smooth%20Limiter%20D.jsfx</source>
+        <source type="effect" file="Saturation D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Saturation%20D.jsfx</source>
+        <source type="effect" file="TubeharmonicsAmp D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/TubeharmonicsAmp%20D.jsfx</source>
+        <source type="effect" file="MGALimiter D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/MGALimiter%20D.jsfx</source>
+        <source type="effect" file="Stereo Enhancer D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Stereo%20Enhancer%20D.jsfx</source>
+        <source type="effect" file="RBJ HighpassLowPass D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/RBJ%20HighpassLowPass%20D.jsfx</source>
+        <source type="effect" file="Majortom D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Majortom%20D.jsfx</source>
+        <source type="effect" file="Transpire D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Transpire%20D.jsfx</source>
+        <source type="effect" file="Reverb Bricastic2 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Reverb%20Bricastic2%20D.jsfx</source>
+        <source type="effect" file="eventhorizon D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/eventhorizon%20D.jsfx</source>
+        <source type="effect" file="SaturationFancy D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/SaturationFancy%20D.jsfx</source>
+        <source type="effect" file="AnalogSumming D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/AnalogSumming%20D.jsfx</source>
+        <source type="effect" file="UglyPitch D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/UglyPitch%20D.jsfx</source>
+        <source type="effect" file="SLAX D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/SLAX%20D.jsfx</source>
+        <source type="effect" file="QuickDelay D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/QuickDelay%20D.jsfx</source>
+        <source type="effect" file="Fairlychildish D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Fairlychildish%20D.jsfx</source>
+        <source type="effect" file="Reverb NW8D Plate D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Reverb%20NW8D%20Plate%20D.jsfx</source>
+        <source type="effect" file="masterLimiter D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/masterLimiter%20D.jsfx</source>
+        <source type="effect" file="Reverb Hall D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Reverb%20Hall%20D.jsfx</source>
+        <source type="effect" file="Thanx D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Thanx%20D.jsfx</source>
+        <source type="effect" file="rbj1073 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/rbj1073%20D.jsfx</source>
+        <source type="effect" file="DGFX/ui-lib_d.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/ui-lib_d.jsfx-inc</source>
+        <source type="effect" file="DGFX/qd.delay.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/qd.delay.jsfx-inc</source>
+        <source type="effect" file="DGFX/demian-effects.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/demian-effects.jsfx-inc</source>
+        <source type="effect" file="DGFX/ddconfig.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/ddconfig.jsfx-inc</source>
+        <source type="effect" file="DGFX/st-oversampler.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/st-oversampler.jsfx-inc</source>
+        <source type="effect" file="DGFX/warble-pitch-detection.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/warble-pitch-detection.jsfx-inc</source>
+        <source type="effect" file="DGFX/nw8platefunctions.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8platefunctions.jsfx-inc</source>
+        <source type="effect" file="DGFX/spectrum.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/spectrum.jsfx-inc</source>
+        <source type="effect" file="DGFX/qd.rbj_filter.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/qd.rbj_filter.jsfx-inc</source>
+        <source type="effect" file="DGFX/VT_Filters.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/VT_Filters.jsfx-inc</source>
+        <source type="effect" file="DGFX/delay-utils.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delay-utils.jsfx-inc</source>
+        <source type="effect" file="DGFX/rbj_filter.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj_filter.jsfx-inc</source>
+        <source type="effect" file="DGFX/tk_lib_d.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tk_lib_d.jsfx-inc</source>
+        <source type="effect" file="DGFX/warble-delay-utils.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/warble-delay-utils.jsfx-inc</source>
+        <source type="effect" file="DGFX/cookdsp.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/cookdsp.jsfx-inc</source>
+        <source type="effect" file="DGFX/zdf_filter.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/zdf_filter.jsfx-inc</source>
+        <source type="effect" file="DGFX/qd.saike_pitchlib.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/qd.saike_pitchlib.jsfx-inc</source>
+        <source type="effect" file="DGFX/firhalfband.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/firhalfband.jsfx-inc</source>
+        <source type="effect" file="DGFX/svf_filter.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/svf_filter.jsfx-inc</source>
+        <source type="effect" file="DGFX/tk-vu_lib_d.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tk-vu_lib_d.jsfx-inc</source>
+        <source type="effect" file="DGFX/uglypitch/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/uglypitch/bgmcp.png</source>
+        <source type="effect" file="DGFX/uglypitch/screw.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/uglypitch/screw.png</source>
+        <source type="effect" file="DGFX/uglypitch/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/uglypitch/bg.png</source>
+        <source type="effect" file="DGFX/uglypitch/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/uglypitch/knob.png</source>
+        <source type="effect" file="DGFX/eventhorizonclipper/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eventhorizonclipper/bgmcp.png</source>
+        <source type="effect" file="DGFX/eventhorizonclipper/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eventhorizonclipper/meter.png</source>
+        <source type="effect" file="DGFX/eventhorizonclipper/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eventhorizonclipper/bg.png</source>
+        <source type="effect" file="DGFX/eventhorizonclipper/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eventhorizonclipper/knob.png</source>
+        <source type="effect" file="DGFX/rbjhilopass/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/bgmcp.png</source>
+        <source type="effect" file="DGFX/rbjhilopass/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/knob-black.png</source>
+        <source type="effect" file="DGFX/rbjhilopass/knob-bold.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/knob-bold.png</source>
+        <source type="effect" file="DGFX/rbjhilopass/screw.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/screw.png</source>
+        <source type="effect" file="DGFX/rbjhilopass/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/bg.png</source>
+        <source type="effect" file="DGFX/rbjhilopass/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbjhilopass/knob.png</source>
+        <source type="effect" file="DGFX/nw8plate/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/bgmcp.png</source>
+        <source type="effect" file="DGFX/nw8plate/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/button.png</source>
+        <source type="effect" file="DGFX/nw8plate/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/knob-black.png</source>
+        <source type="effect" file="DGFX/nw8plate/knob-white.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/knob-white.png</source>
+        <source type="effect" file="DGFX/nw8plate/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/bg.png</source>
+        <source type="effect" file="DGFX/nw8plate/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/nw8plate/knob-blue.png</source>
+        <source type="effect" file="DGFX/saturationfancy/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturationfancy/bgmcp.png</source>
+        <source type="effect" file="DGFX/saturationfancy/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturationfancy/bg.png</source>
+        <source type="effect" file="DGFX/saturationfancy/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturationfancy/knob.png</source>
+        <source type="effect" file="DGFX/bricastic2/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/bgmcp.png</source>
+        <source type="effect" file="DGFX/bricastic2/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/button.png</source>
+        <source type="effect" file="DGFX/bricastic2/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/knob-black.png</source>
+        <source type="effect" file="DGFX/bricastic2/knob-white.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/knob-white.png</source>
+        <source type="effect" file="DGFX/bricastic2/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/bg.png</source>
+        <source type="effect" file="DGFX/bricastic2/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/bricastic2/knob-blue.png</source>
+        <source type="effect" file="DGFX/GeraintUI/theme-stock.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/GeraintUI/theme-stock.png</source>
+        <source type="effect" file="DGFX/eqt2kan/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/bgmcp.png</source>
+        <source type="effect" file="DGFX/eqt2kan/knob-lf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/knob-lf.png</source>
+        <source type="effect" file="DGFX/eqt2kan/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/bg.png</source>
+        <source type="effect" file="DGFX/eqt2kan/knob-hf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/knob-hf.png</source>
+        <source type="effect" file="DGFX/eqt2kan/knob-sel.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/knob-sel.png</source>
+        <source type="effect" file="DGFX/eqt2kan/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/eqt2kan/knob.png</source>
+        <source type="effect" file="DGFX/rbj1073/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/bgmcp.png</source>
+        <source type="effect" file="DGFX/rbj1073/knob-gain.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/knob-gain.png</source>
+        <source type="effect" file="DGFX/rbj1073/knob-hpf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/knob-hpf.png</source>
+        <source type="effect" file="DGFX/rbj1073/knob-boost.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/knob-boost.png</source>
+        <source type="effect" file="DGFX/rbj1073/knob-lf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/knob-lf.png</source>
+        <source type="effect" file="DGFX/rbj1073/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/bg.png</source>
+        <source type="effect" file="DGFX/rbj1073/knob-mf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/rbj1073/knob-mf.png</source>
+        <source type="effect" file="DGFX/saturation/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/bgmcp.png</source>
+        <source type="effect" file="DGFX/saturation/pill.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/pill.png</source>
+        <source type="effect" file="DGFX/saturation/spotlight.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/spotlight.png</source>
+        <source type="effect" file="DGFX/saturation/title.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/title.png</source>
+        <source type="effect" file="DGFX/saturation/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/bg.png</source>
+        <source type="effect" file="DGFX/saturation/glow.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/glow.png</source>
+        <source type="effect" file="DGFX/saturation/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/saturation/knob.png</source>
+        <source type="effect" file="DGFX/transpire_gfx/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/bgmcp.png</source>
+        <source type="effect" file="DGFX/transpire_gfx/knob_2.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/knob_2.png</source>
+        <source type="effect" file="DGFX/transpire_gfx/clip.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/clip.png</source>
+        <source type="effect" file="DGFX/transpire_gfx/knob_4.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/knob_4.png</source>
+        <source type="effect" file="DGFX/transpire_gfx/credits.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/credits.png</source>
+        <source type="effect" file="DGFX/transpire_gfx/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/bg.png</source>
+        <source type="effect" file="DGFX/transpire_gfx/knob_3.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/knob_3.png</source>
+        <source type="effect" file="DGFX/transpire_gfx/knob_1.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/transpire_gfx/knob_1.png</source>
+        <source type="effect" file="DGFX/mgalimiter/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/mgalimiter/bgmcp.png</source>
+        <source type="effect" file="DGFX/mgalimiter/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/mgalimiter/meter.png</source>
+        <source type="effect" file="DGFX/mgalimiter/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/mgalimiter/bg.png</source>
+        <source type="effect" file="DGFX/mgalimiter/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/mgalimiter/knob.png</source>
+        <source type="effect" file="DGFX/masterlimiter/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/masterlimiter/bgmcp.png</source>
+        <source type="effect" file="DGFX/masterlimiter/screw.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/masterlimiter/screw.png</source>
+        <source type="effect" file="DGFX/masterlimiter/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/masterlimiter/meter.png</source>
+        <source type="effect" file="DGFX/masterlimiter/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/masterlimiter/bg.png</source>
+        <source type="effect" file="DGFX/masterlimiter/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/masterlimiter/knob.png</source>
+        <source type="effect" file="DGFX/fairlychildish/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/bgmcp.png</source>
+        <source type="effect" file="DGFX/fairlychildish/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/button.png</source>
+        <source type="effect" file="DGFX/fairlychildish/bg-lr.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/bg-lr.png</source>
+        <source type="effect" file="DGFX/fairlychildish/bg-latvert.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/bg-latvert.png</source>
+        <source type="effect" file="DGFX/fairlychildish/button-agc.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/button-agc.png</source>
+        <source type="effect" file="DGFX/fairlychildish/button-lr.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/button-lr.png</source>
+        <source type="effect" file="DGFX/fairlychildish/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/meter.png</source>
+        <source type="effect" file="DGFX/fairlychildish/knob-time.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/knob-time.png</source>
+        <source type="effect" file="DGFX/fairlychildish/button-latvert.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/button-latvert.png</source>
+        <source type="effect" file="DGFX/fairlychildish/knob-screw.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/knob-screw.png</source>
+        <source type="effect" file="DGFX/fairlychildish/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/fairlychildish/knob.png</source>
+        <source type="effect" file="DGFX/wittihall/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/bgmcp.png</source>
+        <source type="effect" file="DGFX/wittihall/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/button.png</source>
+        <source type="effect" file="DGFX/wittihall/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/knob-black.png</source>
+        <source type="effect" file="DGFX/wittihall/knob-white.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/knob-white.png</source>
+        <source type="effect" file="DGFX/wittihall/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/bg.png</source>
+        <source type="effect" file="DGFX/wittihall/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/wittihall/knob-blue.png</source>
+        <source type="effect" file="DGFX/majortom/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/bgmcp.png</source>
+        <source type="effect" file="DGFX/majortom/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/button.png</source>
+        <source type="effect" file="DGFX/majortom/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/meter.png</source>
+        <source type="effect" file="DGFX/majortom/button-ext.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/button-ext.png</source>
+        <source type="effect" file="DGFX/majortom/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/bg.png</source>
+        <source type="effect" file="DGFX/majortom/button-detect.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/button-detect.png</source>
+        <source type="effect" file="DGFX/majortom/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/majortom/knob.png</source>
+        <source type="effect" file="DGFX/slax_gfx/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/bgmcp.png</source>
+        <source type="effect" file="DGFX/slax_gfx/needles.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/needles.png</source>
+        <source type="effect" file="DGFX/slax_gfx/bigpot.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/bigpot.png</source>
+        <source type="effect" file="DGFX/slax_gfx/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/bg.png</source>
+        <source type="effect" file="DGFX/slax_gfx/prepot.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/prepot.png</source>
+        <source type="effect" file="DGFX/slax_gfx/optbut.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/optbut.png</source>
+        <source type="effect" file="DGFX/slax_gfx/opt.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/slax_gfx/opt.png</source>
+        <source type="effect" file="DGFX/thanx/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/bgmcp.png</source>
+        <source type="effect" file="DGFX/thanx/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/button.png</source>
+        <source type="effect" file="DGFX/thanx/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/knob-black.png</source>
+        <source type="effect" file="DGFX/thanx/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/bg.png</source>
+        <source type="effect" file="DGFX/thanx/knob-red.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/knob-red.png</source>
+        <source type="effect" file="DGFX/thanx/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/knob-blue.png</source>
+        <source type="effect" file="DGFX/thanx/switch.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/switch.png</source>
+        <source type="effect" file="DGFX/thanx/led.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/thanx/led.png</source>
+        <source type="effect" file="DGFX/delayfloaty/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/bgmcp.png</source>
+        <source type="effect" file="DGFX/delayfloaty/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/button.png</source>
+        <source type="effect" file="DGFX/delayfloaty/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/knob-black.png</source>
+        <source type="effect" file="DGFX/delayfloaty/knob-white.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/knob-white.png</source>
+        <source type="effect" file="DGFX/delayfloaty/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/bg.png</source>
+        <source type="effect" file="DGFX/delayfloaty/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayfloaty/knob-blue.png</source>
+        <source type="effect" file="DGFX/tubeharmonics/button-tubes.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/button-tubes.png</source>
+        <source type="effect" file="DGFX/tubeharmonics/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/bgmcp.png</source>
+        <source type="effect" file="DGFX/tubeharmonics/knob-small.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/knob-small.png</source>
+        <source type="effect" file="DGFX/tubeharmonics/button-switch.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/button-switch.png</source>
+        <source type="effect" file="DGFX/tubeharmonics/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/bg.png</source>
+        <source type="effect" file="DGFX/tubeharmonics/knob.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/tubeharmonics/knob.png</source>
+        <source type="effect" file="DGFX/1979/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/bgmcp.png</source>
+        <source type="effect" file="DGFX/1979/button-phase.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/button-phase.png</source>
+        <source type="effect" file="DGFX/1979/knob-trim.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-trim.png</source>
+        <source type="effect" file="DGFX/1979/button-bypass.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/button-bypass.png</source>
+        <source type="effect" file="DGFX/1979/knob-gainlow.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-gainlow.png</source>
+        <source type="effect" file="DGFX/1979/knob-eqmid.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-eqmid.png</source>
+        <source type="effect" file="DGFX/1979/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/bg.png</source>
+        <source type="effect" file="DGFX/1979/knob-eqhpf.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-eqhpf.png</source>
+        <source type="effect" file="DGFX/1979/knob-eqlow.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-eqlow.png</source>
+        <source type="effect" file="DGFX/1979/knob-gainmid.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-gainmid.png</source>
+        <source type="effect" file="DGFX/1979/knob-drive.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-drive.png</source>
+        <source type="effect" file="DGFX/1979/knob-gainhigh.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1979/knob-gainhigh.png</source>
+        <source type="effect" file="DGFX/1175/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/bgmcp.png</source>
+        <source type="effect" file="DGFX/1175/knob-s.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/knob-s.png</source>
+        <source type="effect" file="DGFX/1175/button-sc.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-sc.png</source>
+        <source type="effect" file="DGFX/1175/button-scb.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-scb.png</source>
+        <source type="effect" file="DGFX/1175/button-allb.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-allb.png</source>
+        <source type="effect" file="DGFX/1175/knob-b.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/knob-b.png</source>
+        <source type="effect" file="DGFX/1175/button-blb.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-blb.png</source>
+        <source type="effect" file="DGFX/1175/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/meter.png</source>
+        <source type="effect" file="DGFX/1175/button-8.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-8.png</source>
+        <source type="effect" file="DGFX/1175/button-12b.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-12b.png</source>
+        <source type="effect" file="DGFX/1175/button-4b.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-4b.png</source>
+        <source type="effect" file="DGFX/1175/button-12.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-12.png</source>
+        <source type="effect" file="DGFX/1175/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/bg.png</source>
+        <source type="effect" file="DGFX/1175/button-20b.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-20b.png</source>
+        <source type="effect" file="DGFX/1175/button-by.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-by.png</source>
+        <source type="effect" file="DGFX/1175/button-bl.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-bl.png</source>
+        <source type="effect" file="DGFX/1175/button-20.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-20.png</source>
+        <source type="effect" file="DGFX/1175/button-8b.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-8b.png</source>
+        <source type="effect" file="DGFX/1175/button-4.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-4.png</source>
+        <source type="effect" file="DGFX/1175/knob-screw.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/knob-screw.png</source>
+        <source type="effect" file="DGFX/1175/button-all.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/1175/button-all.png</source>
+        <source type="effect" file="DGFX/la2kan/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/bgmcp.png</source>
+        <source type="effect" file="DGFX/la2kan/button-led.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/button-led.png</source>
+        <source type="effect" file="DGFX/la2kan/meter.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/meter.png</source>
+        <source type="effect" file="DGFX/la2kan/knob-big.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/knob-big.png</source>
+        <source type="effect" file="DGFX/la2kan/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/bg.png</source>
+        <source type="effect" file="DGFX/la2kan/button-toggle.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/la2kan/button-toggle.png</source>
+        <source type="effect" file="DGFX/stereoenhancer/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/bgmcp.png</source>
+        <source type="effect" file="DGFX/stereoenhancer/knob-small.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/knob-small.png</source>
+        <source type="effect" file="DGFX/stereoenhancer/button-v.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/button-v.png</source>
+        <source type="effect" file="DGFX/stereoenhancer/button-h.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/button-h.png</source>
+        <source type="effect" file="DGFX/stereoenhancer/knob-big.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/knob-big.png</source>
+        <source type="effect" file="DGFX/stereoenhancer/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/stereoenhancer/bg.png</source>
+        <source type="effect" file="DGFX/delayquick/bgmcp.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/bgmcp.png</source>
+        <source type="effect" file="DGFX/delayquick/button.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/button.png</source>
+        <source type="effect" file="DGFX/delayquick/knob-black.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/knob-black.png</source>
+        <source type="effect" file="DGFX/delayquick/knob-white.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/knob-white.png</source>
+        <source type="effect" file="DGFX/delayquick/bg.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/bg.png</source>
+        <source type="effect" file="DGFX/delayquick/knob-blue.png">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/delayquick/knob-blue.png</source>
+
       </version>
     </reapack>   
   </category>
