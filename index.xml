@@ -5,7 +5,7 @@
   </metadata>
   <category name="DDD"></category>
   <category name="..">
-    <reapack name="D JSFX" type="script" desc="embeDDed collection.lua">
+    <reapack name="embeDDed settings.lua" type="script" desc="embeDDed collection.lua">
       <metadata>
         <description>embeddable effects</description>
       </metadata>
