@@ -6,6 +6,9 @@
   <category name="DDD"></category>
   <category name="..">
     <reapack name="D JSFX" type="script" desc="embeDDed collection">
+      <metadata>
+        <description>embeddable effects</description>
+      </metadata>
       <version name="1.1.0" author="Demian D">
         <source main="main">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/embeDDed%20settings.lua</source>
         <source type="effect" file="1175 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1175%20D.jsfx</source>
