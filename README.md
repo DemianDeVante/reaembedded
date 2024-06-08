@@ -12,7 +12,7 @@ Now available on ReaPack with this repository:
 [https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/index.xml](https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/index.xml)
 
 
-![jsfxmcpdesigns](https://stash.reaper.fm/48720/jsfxmcpdesigns.png)
+![jsfxmcpdesigns](https://stash.reaper.fm/48740/jsfxmcpdesignsembedded.png)
 
 As my library is based on Tukan's, it supports parameter group linking, UI scaling, shift/ctrl modifiers, etc. However, some effects don't provide parameter linking such as Smooth Limiter by GeraintLuff and Sonic Anomaly js.
 
@@ -51,8 +51,15 @@ The main purpose of this collection is to provide an embedded version. If you ow
 - Bricastic2 by chmaha based on Airwindows Verbity
 - NW8Plate Reverb by chmaha based on Airwindows kPlate
 - Hall Reverb by Witti
+- Thunderkick
+- Booty Bass Enhancer
+- AutoDeEsser by Stephen Boyes
+- Gate by Witti
+- Volume/Pan Smoother v5
+- RC Inflator Ultimate by Chmaha
+- Louderizer
 
-![screenshot](https://i.imgur.com/vmOBwpk.png)
+![screenshot](https://i.imgur.com/DsZ5Kgs.png)
 
 LINUX USERS: The package is the same, just run the script "embeDDed_settings.lua" from your action list and click Yes. This is a one time setup, you don't have to do it each update.
 If you want to modify the designs, you can find the krita files in [this dropbox](https://www.dropbox.com/scl/fo/quy19ss8fme8w9v7jho92/AJGYaDq7Eq4x67pMeS0BjZk?rlkey=ljbzmmjnsjtbibbbph8ar3clt&st=h5np7bkt&dl=0)
