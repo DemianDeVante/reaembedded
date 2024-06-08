@@ -8,13 +8,13 @@
     <reapack name="embeDDed_settings.lua" type="script" desc="embeDDed collection">
       <version name="1.1.2" author="Demian D">
         <source main="main">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/embeDDed%20settings.lua</source>
+        <source type="effect" file="DGFX/ddconfig.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/ddconfig.jsfx-inc</source>
         <source type="effect" file="1175 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1175%20D.jsfx</source>
         <source type="effect" file="1979 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1979%20D.jsfx</source>
         <source type="effect" file="LA-2KAN D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/LA-2KAN%20D.jsfx</source>
         <source type="effect" file="DelayFloaty D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DelayFloaty%20D.jsfx</source>
         <source type="effect" file="EQT-2Kan D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/EQT-2Kan%20D.jsfx</source>
         <source type="effect" file="Auto DeEsser D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Auto%20DeEsser%20D.jsfx</source>
-        <source type="effect" file="embeDDed settings.lua">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/embeDDed%20settings.lua</source>
         <source type="effect" file="Smooth Limiter D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Smooth%20Limiter%20D.jsfx</source>
         <source type="effect" file="Saturation D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Saturation%20D.jsfx</source>
         <source type="effect" file="Louderizer D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/Louderizer%20D.jsfx</source>
