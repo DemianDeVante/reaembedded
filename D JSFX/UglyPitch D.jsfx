@@ -52,7 +52,7 @@ options:gmem=UglyPitchD
   number_input_max=0;
   number_input_invalid = 0;
   number_input_sign=1;
-  s2_numbers_of_sliders = 10; // set the number of sliders for gorup linking
+  s2_numbers_of_sliders = 3; // set the number of sliders for gorup linking
   s2_numbers_of_generics = 0;
   group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
   sliders_old = group_generics + 16*200;
@@ -419,9 +419,9 @@ options:gmem=UglyPitchD
     //gfx_r=0.616;gfx_g=0.569;gfx_b=0.141;
     gfx_r=gfx_g=gfx_b=1;
     gfx_a=0.4;
-    kPitch.attached_label("PITCH",-2, "Helvetica",12,'');
-    //kTonality.attached_label("TONE",0, "Helvetica",7,'b');
-    kFormant.attached_label("FORMANTS",-2, "Helvetica",12,'');
+    kPitch.attached_label("PITCH",-2, "Arial",12,'');
+    //kTonality.attached_label("TONE",0, "Arial",7,'b');
+    kFormant.attached_label("FORMANTS",-2, "Arial",12,'');
 
     setup_dmenu("UglyPitch fom Warble by Geraint Luff", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.2); // setup menu, arguments: jsfx name, version, graphics, zoom
 
@@ -432,10 +432,10 @@ options:gmem=UglyPitchD
     kFormant.parameter_config    ( 3,             0,    -12,      12,     0.1,       145/2,        63/2,     0,       1.2,     2,    1,       0);   
     kTonality.parameter_config   ( 2,           0.2,      0,       1,    0.01,      132/2,       105/2,     0,       1.2,     3,    1,       0);    
     gfx_r=gfx_g=gfx_b=1;
-    gfx_a=0.4;
-    kPitch.attached_label("PITCH",-4, "Helvetica",16,'b');
-    //kTonality.attached_label("TONE",0, "Helvetica",7,'b');
-    kFormant.attached_label("FORMS",-4, "Helvetica",16,'b');
+    gfx_a=0.5;
+    kPitch.attached_label("PITCH",-3, "Arial",18,'b');
+    //kTonality.attached_label("TONE",0, "Arial",7,'b');
+    kFormant.attached_label("FORMS",-3, "Arial",18,'b');
     mouse_wheel=0;
   );
   

@@ -3,32 +3,38 @@
 LA-2KAN D.jsfx
 DelayFloaty D.jsfx
 EQT-2Kan D.jsfx
+Auto DeEsser D.jsfx
 embeDDed settings.lua
 Smooth Limiter D.jsfx
 Saturation D.jsfx
+Louderizer D.jsfx
 TubeharmonicsAmp D.jsfx
 MGALimiter D.jsfx
 Stereo Enhancer D.jsfx
 RBJ HighpassLowPass D.jsfx
+HugeBootyBass D.jsfx
 Majortom D.jsfx
 Transpire D.jsfx
 Reverb Bricastic2 D.jsfx
 eventhorizon D.jsfx
 SaturationFancy D.jsfx
 AnalogSumming D.jsfx
+Thunderkick D.jsfx
+RC Inflator D.jsfx
 UglyPitch D.jsfx
+WittiGate D.jsfx
 SLAX D.jsfx
 QuickDelay D.jsfx
 Fairlychildish D.jsfx
 Reverb NW8D Plate D.jsfx
 masterLimiter D.jsfx
 Reverb Hall D.jsfx
+Volume Pan Smoother D.jsfx
 Thanx D.jsfx
 rbj1073 D.jsfx
 DGFX/ui-lib_d.jsfx-inc
 DGFX/qd.delay.jsfx-inc
 DGFX/demian-effects.jsfx-inc
-DGFX/ddconfig.jsfx-inc
 DGFX/st-oversampler.jsfx-inc
 DGFX/warble-pitch-detection.jsfx-inc
 DGFX/nw8platefunctions.jsfx-inc
@@ -53,12 +59,22 @@ DGFX/eventhorizonclipper/bgmcp.png
 DGFX/eventhorizonclipper/meter.png
 DGFX/eventhorizonclipper/bg.png
 DGFX/eventhorizonclipper/knob.png
+DGFX/volumepansmoother/bgmcp.png
+DGFX/volumepansmoother/screw.png
+DGFX/volumepansmoother/bg.png
+DGFX/volumepansmoother/knob.png
 DGFX/rbjhilopass/bgmcp.png
 DGFX/rbjhilopass/knob-black.png
 DGFX/rbjhilopass/knob-bold.png
 DGFX/rbjhilopass/screw.png
 DGFX/rbjhilopass/bg.png
 DGFX/rbjhilopass/knob.png
+DGFX/hugebootybass/bgmcp.png
+DGFX/hugebootybass/knob-black.png
+DGFX/hugebootybass/knob-bold.png
+DGFX/hugebootybass/screw.png
+DGFX/hugebootybass/bg.png
+DGFX/hugebootybass/knob.png
 DGFX/nw8plate/bgmcp.png
 DGFX/nw8plate/button.png
 DGFX/nw8plate/knob-black.png
@@ -68,6 +84,11 @@ DGFX/nw8plate/knob-blue.png
 DGFX/saturationfancy/bgmcp.png
 DGFX/saturationfancy/bg.png
 DGFX/saturationfancy/knob.png
+DGFX/rcinflator/bgmcp.png
+DGFX/rcinflator/button.png
+DGFX/rcinflator/knob-white.png
+DGFX/rcinflator/bg.png
+DGFX/rcinflator/knob-red.png
 DGFX/bricastic2/bgmcp.png
 DGFX/bricastic2/button.png
 DGFX/bricastic2/knob-black.png
@@ -75,6 +96,14 @@ DGFX/bricastic2/knob-white.png
 DGFX/bricastic2/bg.png
 DGFX/bricastic2/knob-blue.png
 DGFX/GeraintUI/theme-stock.png
+DGFX/wittigate/bgmcp.png
+DGFX/wittigate/knob-s.png
+DGFX/wittigate/button-delta.png
+DGFX/wittigate/knob-b.png
+DGFX/wittigate/meter.png
+DGFX/wittigate/button-ext.png
+DGFX/wittigate/bg.png
+DGFX/wittigate/knob-screw.png
 DGFX/eqt2kan/bgmcp.png
 DGFX/eqt2kan/knob-lf.png
 DGFX/eqt2kan/bg.png
@@ -107,11 +136,23 @@ DGFX/mgalimiter/bgmcp.png
 DGFX/mgalimiter/meter.png
 DGFX/mgalimiter/bg.png
 DGFX/mgalimiter/knob.png
+DGFX/thunderkick/bgmcp.png
+DGFX/thunderkick/knob-black.png
+DGFX/thunderkick/knob-bold.png
+DGFX/thunderkick/screw.png
+DGFX/thunderkick/bg.png
+DGFX/thunderkick/knob.png
 DGFX/masterlimiter/bgmcp.png
 DGFX/masterlimiter/screw.png
 DGFX/masterlimiter/meter.png
 DGFX/masterlimiter/bg.png
 DGFX/masterlimiter/knob.png
+DGFX/autodeesser/bgmcp.png
+DGFX/autodeesser/button-led.png
+DGFX/autodeesser/meter.png
+DGFX/autodeesser/knob-big.png
+DGFX/autodeesser/bg.png
+DGFX/autodeesser/button-toggle.png
 DGFX/fairlychildish/bgmcp.png
 DGFX/fairlychildish/button.png
 DGFX/fairlychildish/bg-lr.png
@@ -196,6 +237,10 @@ DGFX/1175/button-8b.png
 DGFX/1175/button-4.png
 DGFX/1175/knob-screw.png
 DGFX/1175/button-all.png
+DGFX/louderizer/bgmcp.png
+DGFX/louderizer/screw.png
+DGFX/louderizer/bg.png
+DGFX/louderizer/knob.png
 DGFX/la2kan/bgmcp.png
 DGFX/la2kan/button-led.png
 DGFX/la2kan/meter.png

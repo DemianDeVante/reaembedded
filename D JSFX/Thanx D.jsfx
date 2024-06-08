@@ -492,15 +492,15 @@ options:gmem=ThanxD
 
     //.parameter_config      (  ,              ,       ,        ,     ,          ,          ,     0,       1,      ,    1,       0); 
     gfx_r=gfx_b=gfx_g=gfx_a=0.7;   
-    kDrive.attached_label("DRIVE",-1, "Helvetica",10,'b');
-    kBias.attached_label("BIAS",-1, "Helvetica",10,'b');
-    kOutput.attached_label("OUT",-1, "Helvetica",10,'b');
-    kLow.attached_label("LOW",-1, "Helvetica",7,'b');
-    kMid.attached_label("MID",-1, "Helvetica",7,'b');
-    kHigh.attached_label("HIGH",-1, "Helvetica",7,'b');
-    kEmphasis.attached_label("EMPH",-4, "Helvetica",10,'b');
-    kEQ.attached_label("EQ",-4, "Helvetica",10,'b');
-    kBypass.attached_label("DRIVE",-4, "Helvetica",10,'b');
+    kDrive.attached_label("DRIVE",-1, "Arial",10,'b');
+    kBias.attached_label("BIAS",-1, "Arial",10,'b');
+    kOutput.attached_label("OUT",-1, "Arial",10,'b');
+    kLow.attached_label("LOW",-1, "Arial",7,'b');
+    kMid.attached_label("MID",-1, "Arial",7,'b');
+    kHigh.attached_label("HIGH",-1, "Arial",7,'b');
+    kEmphasis.attached_label("EMPH",-4, "Arial",10,'b');
+    kEQ.attached_label("EQ",-4, "Arial",10,'b');
+    kBypass.attached_label("DRIVE",-4, "Arial",10,'b');
       //gfx_drawstr('yoko');
     //Buttons              (slider     orient  off_val   on_val     x        y           scaling   png  mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
     //.button_config         (  ,              ,       ,        ,       ,        ,              1,      ,    1);
@@ -524,17 +524,17 @@ options:gmem=ThanxD
     
     gfx_r=gfx_b=gfx_g=gfx_a=0.8;   
     
-    kDrive.attached_label("DRIVE",-1, "Helvetica",17,'b');
-    kBias.attached_label("BIAS",-1, "Helvetica",17,'b');
-    kOutput.attached_label("OUT",-1, "Helvetica",17,'b');
+    kDrive.attached_label("DRIVE",-1, "Arial",17,'b');
+    kBias.attached_label("BIAS",-1, "Arial",17,'b');
+    kOutput.attached_label("OUT",-1, "Arial",17,'b');
 
-    kLow.attached_label("LOW",-1, "Helvetica",14,'b');
-    kMid.attached_label("MID",-1, "Helvetica",14,'b');
-    kHigh.attached_label("HIGH",-1, "Helvetica",14,'b');
+    kLow.attached_label("LOW",-1, "Arial",14,'b');
+    kMid.attached_label("MID",-1, "Arial",14,'b');
+    kHigh.attached_label("HIGH",-1, "Arial",14,'b');
 
-    kEmphasis.attached_label("EMPH",-4, "Helvetica",9,'b');
-    kEQ.attached_label("EQ",-4, "Helvetica",9,'b');
-    kBypass.attached_label("DRIVE",-4, "Helvetica",9,'b');
+    kEmphasis.attached_label("EMPH",-4, "Arial",9,'b');
+    kEQ.attached_label("EQ",-4, "Arial",9,'b');
+    kBypass.attached_label("DRIVE",-4, "Arial",9,'b');
     mouse_wheel=0;
   );
   

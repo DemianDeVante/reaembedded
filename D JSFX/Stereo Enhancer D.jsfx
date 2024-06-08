@@ -5,7 +5,7 @@ desc: Stereo Enhancer (DD)
 
 //simplified version
 slider1:0<-60,12,.1>-Dry (incl Mid/Side)
-slider2:0<-60,12,.1>-Wet (enhancer)
+slider2:-60<-60,12,.1>-Wet (enhancer)
 slider3:20<20,1500,1>-HP Frequency
 slider4:10000<20,10000,1>-LP Frequency
 slider5:0<-1,1,0.01>-Balance
@@ -270,7 +270,7 @@ options:gmem=JonStereoEnhancer
 
 
     //output
-
+    slider2==-60?wet=0;
     spl0 = spl0 * dry + del_r * wet;
     spl1 = spl1 * dry + del_l * wet;
 
@@ -298,7 +298,7 @@ options:gmem=JonStereoEnhancer
                                     //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
     //Knobs                    (slider    default     min      max  step         x          y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
     kDry.parameter_config      ( 1,             0,    -60,      12,  0.1,     138/2,     112/2,     0,       1,     1,    1,       0);    
-    kWet.parameter_config      ( 2,             0,    -60,      12,  0.1,     553/2,     112/2,     0,       1,     1,    1,       0);    
+    kWet.parameter_config      ( 2,           -60,    -60,      12,  0.1,     553/2,     112/2,     0,       1,     1,    1,       0);    
     kHPF.parameter_config      ( 3,            20,     20,    1500,    1,      47/2,     138/2,     0,       1,     2,    1,       0);    
     kLPF.parameter_config      ( 4,         10000,     20,   10000,    1,     277/2,     138/2,     0,       1,     2,    1,       0);    
     kBal.parameter_config      ( 5,             0,     -1,       1, 0.01,     462/2,     138/2,     0,       1,     2,    1,       0);    
@@ -314,16 +314,20 @@ options:gmem=JonStereoEnhancer
     set_background(5,0.086,0.086,0.086);
                                     //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
     //Knobs                    (slider    default     min      max  step         x          y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
-    kDry.parameter_config      ( 1,             0,    -60,      12,  0.1,     143/2,      45/2,     0,       1,     1,    1,       0);    
-    kWet.parameter_config      ( 2,             0,    -60,      12,  0.1,     143/2,     210/2,     0,       1,     1,    1,       0);    
-    kHPF.parameter_config      ( 3,            20,     20,    1500,    1,      40/2,      66/2,     0,     1.4,     2,    1,       0);    
-    kLPF.parameter_config      ( 4,         10000,     20,   10000,    1,     270/2,      66/2,     0,     1.4,     2,    1,       0);    
-    kBal.parameter_config      ( 5,             0,     -1,       1, 0.01,      40/2,     231/2,     0,     1.4,     2,    1,       0);    
-    kPan.parameter_config      ( 6,             0,     -1,       1, 0.01,     270/2,     231/2,     0,     1.4,     2,    1,       0);    
+    kDry.parameter_config      ( 1,             0,    -60,      12,  0.1,     135/2,      15/2,     0,       1.3,     1,    1,       0);    
+    kWet.parameter_config      ( 2,           -60,    -60,      12,  0.1,     135/2,     180/2,     0,       1.3,     1,    1,       0);    
+    kHPF.parameter_config      ( 3,            20,     20,    1500,    1,      20/2,      38/2,     0,     2,     2,    1,       0);    
+    kLPF.parameter_config      ( 4,         10000,     20,   10000,    1,     275/2,      38/2,     0,     2,     2,    1,       0);    
+    kBal.parameter_config      ( 5,             0,     -1,       1, 0.01,      20/2,     198/2,     0,     2,     2,    1,       0);    
+    kPan.parameter_config      ( 6,             0,     -1,       1, 0.01,     275/2,     198/2,     0,     2,     2,    1,       0);    
 
     //Buttons                  (slider     orient  off_val   on_val     x        y           scaling   png  mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
-    kMon.button_config         ( 7,             0,      0,       1, 166/2,   140/2,              1,     4,    1);
-
+    kMon.button_config         ( 7,             0,      0,       1, 166/2,   132/2,              1.3,     4,    1);
+    gfx_a=gfx_r=gfx_g=gfx_b=0.9;
+    kHPF.attached_label("HPF",-36, "Arial",16,'b');
+    kLPF.attached_label("LPF",-36, "Arial",16,'b');
+    kPan.attached_label("PAN",-36, "Arial",16,'b');
+    kBal.attached_label("BAL",-36, "Arial",16,'b');
     mouse_wheel=0;
   );
   

@@ -21,24 +21,30 @@
 //PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
 //STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF 
 //THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-desc:RBJ Highpass Lowpass (DD)
-//tags: filter
+
+desc:Louderizer (DD)
+//tags: processing saturation
 //author: Stillwell
 
-slider1:0<0,1000,10>-HPF
-slider2:22000<1000,22000,100>-LPF
-slider3:0<-20,20,0.1>-Gain
+slider1:0<0,100,0.1>-Mix (%)
+slider2:0<0,100,0.1>-Drive (%)
 
-filename:0,DGFX/rbjhilopass/bg.png
-filename:1,DGFX/rbjhilopass/bgmcp.png
-filename:2,DGFX/rbjhilopass/knob.png
-filename:3,DGFX/rbjhilopass/screw.png
+
+in_pin:left input
+in_pin:right input
+out_pin:left output
+out_pin:right output
 
 import DGFX/tk_lib_d.jsfx-inc 
 
+filename:0,DGFX/louderizer/bg.png
+filename:1,DGFX/louderizer/bgmcp.png
+filename:2,DGFX/louderizer/knob.png
+filename:3,DGFX/louderizer/screw.png
+
 options:no_meter
 // write a cool name to store jsfx memory below
-options:gmem=rbjhilopassD 
+options:gmem=louderizerD  
 
 @init
   gfx_ext_retina = 1;
@@ -75,106 +81,15 @@ options:gmem=rbjhilopassD
   generics_old = sliders_old + 16*64;
 
   mouse_sensivity();
-
-  ext_tail_size = -1;
-  hpf = 0;
-  gain1 = 0;
-  freq1 = slider1;
-  a1 = 1;
-  s1 = 1;
-  q1 = 1 / (sqrt((a1 + 1/a1)*(1/s1 - 1) + 2));
-  w01 = 2 * $pi * freq1/srate;
-  cosw01 = cos(w01);
-  sinw01 = sin(w01);
-  alpha1 = sinw01 / (2 * q1);
-
-  b01 = (1 + cosw01)/2;
-  b11 = -(1 + cosw01);
-  b21 = (1 + cosw01)/2;
-  a01 = 1 + alpha1;
-  a11 = -2 * cosw01;
-  a21 = 1 - alpha1;
-  b01 /= a01;
-  b11 /= a01;
-  b21 /= a01;
-  a11 /= a01;
-  a21 /= a01;
-
-  lpf = 0;
-  gain3 = 0;
-  freq3 = 22000;
-  a3 = 10^(gain3/40);
-  s3 = 2;
-  q3 = 1 / (sqrt((a3 + 1/a3)*(1/s3 - 1) + 2));
-  w03 = 2 * $pi * freq3/srate;
-  cosw03 = cos(w03);
-  sinw03 = sin(w03);
-  alpha3 = sinw03 / (2 * q3);
-
-  b03 = (1 - cosw03)/2;
-  b13 = (1 - cosw03);
-  b23 = (1 - cosw03)/2;
-  a03 = 1 + alpha3;
-  a13 = -2 * cosw03;
-  a23 = 1 - alpha3;
-  b03 /= a03;
-  b13 /= a03;
-  b23 /= a03;
-  a13 /= a03;
-  a23 /= a03;
-
-  gain = 1;
-
+  ext_tail_size = -2;
   function parameters_update() (
     parameters_update_on = 1;
     group_parameters(); // tk extra features
-    // Paste all contents of @slider here
-    freq1 = slider1;
-    freq3 = slider2;
-    gain = 10^(slider3/20);
-
-    slider1 == 0 ? hpf = 0 : hpf = 1;
-    slider2 == 22000 ? lpf = 0 : lpf = 1;
-
-    a1 = 1;
-    s1 = 1;
-    q1 = 1 / (sqrt((a1 + 1/a1)*(1/s1 - 1) + 2));
-    w01 = 2 * $pi * freq1/srate;
-    cosw01 = cos(w01);
-    sinw01 = sin(w01);
-    alpha1 = sinw01 / (2 * q1);
-
-    b01 = (1 + cosw01)/2;
-    b11 = -(1 + cosw01);
-    b21 = (1 + cosw01)/2;
-    a01 = 1 + alpha1;
-    a11 = -2 * cosw01;
-    a21 = 1 - alpha1;
-    b01 /= a01;
-    b11 /= a01;
-    b21 /= a01;
-    a11 /= a01;
-    a21 /= a01;
-
-    a3 = 1;
-    s3 = 1;
-    q3 = 1 / (sqrt((a3 + 1/a3)*(1/s3 - 1) + 2));
-    w03 = 2 * $pi * freq3/srate;
-    cosw03 = cos(w03);
-    sinw03 = sin(w03);
-    alpha3 = sinw03 / (2 * q3);
-
-    b03 = (1 - cosw03)/2;
-    b13 = (1 - cosw03);
-    b23 = (1 - cosw03)/2;
-    a03 = 1 + alpha3;
-    a13 = -2 * cosw03;
-    a23 = 1 - alpha3;
-    b03 /= a03;
-    b13 /= a03;
-    b23 /= a03;
-    a13 /= a03;
-    a23 /= a03;
+    mix=slider1 / 100;
+    drive=slider2 / 100;
+    mix1 = 1 - mix;
+    drive1 = 1 / (1 - (drive / 2));
+    drive2 = drive / 2;
     parameters_update_on = 0;
     caller = 0;
   );
@@ -200,7 +115,6 @@ options:gmem=rbjhilopassD
   );
 
 @sample
-
   S2_sample_on = 1;
 
   // extra tk features
@@ -219,42 +133,16 @@ options:gmem=rbjhilopassD
   while_playing ? is_playing ? process = 1;
   while_recording ? is_recording ? process = 1;
   while_stopped ? is_stopped ? process = 1;
-
   process==1?(
-    hpf != 0 ? (
-    ospl0 = spl0;
-    spl0 = b01 * spl0 + b11 * xl11 + b21 * xl21 - a11 * yl11 - a21 * yl21;
-    xl21 = xl11;
-    xl11 = ospl0;
-    yl21 = yl11;
-    yl11 = spl0;
+    dry0 = spl0;
+    dry1 = spl1;
 
-    ospl1 = spl1;
-    spl1 = b01 * spl1 + b11 * xr11 + b21 * xr21 - a11 * yr11 - a21 * yr21;
-    xr21 = xr11;
-    xr11 = ospl1;
-    yr21 = yr11;
-    yr11 = spl1;
-    );
+    wet0 = drive1 * dry0 * (1 - abs(dry0 * drive2));
+    wet1 = drive1 * dry1 * (1 - abs(dry1 * drive2)); 
 
-    lpf != 0 ? (
-    ospl0 = spl0;
-    spl0 = b03 * spl0 + b13 * xl13 + b23 * xl23 - a13 * yl13 - a23 * yl23;
-    xl23 = xl13;
-    xl13 = ospl0;
-    yl23 = yl13;
-    yl13 = spl0;
+    spl0 = mix1 * dry0 + (mix) * wet0;
+    spl1 = mix1 * dry1 + (mix) * wet1;
 
-    ospl1 = spl1;
-    spl1 = b03 * spl1 + b13 * xr13 + b23 * xr23 - a13 * yr13 - a23 * yr23;
-    xr23 = xr13;
-    xr13 = ospl1;
-    yr23 = yr13;
-    yr13 = spl1;
-    );
-
-    spl0 *= gain;
-    spl1 *= gain;
   );
 
 
@@ -270,28 +158,27 @@ options:gmem=rbjhilopassD
     set_background(0);
                                     //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
     //Knobs                      (slider    default     min      max     step           x            y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
-    kHighpass.parameter_config   ( 1,             0,      0,    1000,      10,       125/2,        61/2,     0,     1.2,     2,    1,       0);    
-    kGain.parameter_config       ( 3,             0,    -20,      20,     0.1,       251/2,       105/2,     0,     1.5,     3,    1,       0);    
-    kLowPass.parameter_config    ( 2,         22000,   1000,   22000,     100,       305/2,        61/2,     0,     1.2,     2,    1,       0);    
+    kMix.parameter_config       ( 1,             0,      0,     100,     0.1,       130/2,        72/2,     0,       1,     2,    1,       0);    
+    kDrive.parameter_config     ( 2,             0,      0,     100,     0.1,       310/2,        72/2,     0,       1,     2,    1,       0);    
     //gfx_r=0.616;gfx_g=0.569;gfx_b=0.141;
     gfx_r=gfx_g=gfx_b=1;
     gfx_a=0.4;
-    kGain.attached_label("GAIN",2, "Arial",7,'b');
-    kHighpass.attached_label("HIGH PASS",-2, "Arial",12,'');
-    kLowpass.attached_label("LOW PASS",-2, "Arial",12,'');
+    kMix.attached_label("MIX",-2, "Arial",12,'');
+    //kPanLaw.attached_label("TONE",0, "Arial",7,'b');
+    kDrive.attached_label("DRIVE",-2, "Arial",12,'');
 
-    setup_dmenu("UglyPitch fom Warble by Geraint Luff", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.2); // setup menu, arguments: jsfx name, version, graphics, zoom
+    setup_dmenu("Louderizer by Stillwell", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.2); // setup menu, arguments: jsfx name, version, graphics, zoom
 
     mouse_wheel=0;
   ):gfx_ext_flags == 1 ? ( // embedded mcp ui
-    set_background(1,0.078,0.055,0.047);
-    kHighpass.parameter_config   ( 1,             0,      0,    1000,      10,       20/2,        63/2,     0,       1.2,     2,    1,       0);    
-    kLowpass.parameter_config    ( 2,         22000,   1000,   22000,     100,      165/2,        63/2,     0,       1.2,     2,    1,       0);   
-    kGain.parameter_config       ( 3,             0,    -20,      20,     0.1,      124/2,       105/2,     0,       2.8,     3,    1,       0);    
+    set_background(1,0.043,0.043,0.043);
+    kMix.parameter_config       ( 1,             0,      0,     100,     0.1,       40/2,        63/2,     0,       1.2,     2,    1,       0);    
+    kDrive.parameter_config     ( 2,             0,      0,     100,     0.1,       145/2,        63/2,     0,       1.2,     2,    1,       0);   
     gfx_r=gfx_g=gfx_b=1;
-    gfx_a=0.6;
-    kHighpass.attached_label("  HPF",-2, "Arial",18,'b');
-    kLowPass.attached_label("  LPF",-2, "Arial",18,'b');
+    gfx_a=0.5;
+    kMix.attached_label("MIX",-3, "Arial",18,'b');
+    //kPanLaw.attached_label("TONE",0, "Arial",7,'b');
+    kDrive.attached_label("DRIVE",-3, "Arial",18,'b');
     mouse_wheel=0;
   );
   

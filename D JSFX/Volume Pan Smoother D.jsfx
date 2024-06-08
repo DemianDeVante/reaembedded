@@ -1,0 +1,234 @@
+desc:Volume/Pan Smoother (DD)
+//tags: utility gain stereo
+//author: Cockos
+
+slider1:0<-48,12,0.1>-Volume (dB)
+slider2:0<-100,100,0.1>-Pan
+slider3:0<-6,6,0.5>-Pan Law (dB)
+
+in_pin:left input
+in_pin:right input
+out_pin:left output
+out_pin:right output
+
+import DGFX/tk_lib_d.jsfx-inc 
+
+filename:0,DGFX/volumepansmoother/bg.png
+filename:1,DGFX/volumepansmoother/bgmcp.png
+filename:2,DGFX/volumepansmoother/knob.png
+filename:3,DGFX/volumepansmoother/screw.png
+
+options:no_meter
+// write a cool name to store jsfx memory below
+options:gmem=volumepansmootherD  
+
+@init
+  gfx_ext_retina = 1;
+  gfx_clear=0;
+  lastCap=1;
+  mouse_wheel=1;
+  Number_input = 0;
+  number_input_invalid = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  ext_noinit=1;
+
+  // tk extra features
+  lastCap=1;
+  mouse_wheel=1;
+  is_recording = 0; is_playing = 0; is_stopped = 1;
+  while_playing = 1; while_recording = 1; while_stopped = 1;
+  Number_input = 0;
+  number_input_raw = 0;
+  number_input_use = 0;
+  komma = 0;
+  in_key = 0;
+  number_input_x = 0;
+  number_input_y=0;
+  number_input_slider = 0;
+  number_input_min=0;
+  number_input_max=0;
+  number_input_invalid = 0;
+  number_input_sign=1;
+  s2_numbers_of_sliders = 3; // set the number of sliders for gorup linking
+  s2_numbers_of_generics = 0;
+  group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
+  sliders_old = group_generics + 16*200;
+  generics_old = sliders_old + 16*64;
+
+  mouse_sensivity();
+  ext_tail_size = -2;
+  AMP_dB_i=1/8.68588963806504;
+
+  db=slider1; // initialize here but not in @slider for playback start
+  pan=0.01*slider2;
+  function parameters_update() (
+    parameters_update_on = 1;
+    group_parameters(); // tk extra features
+    // Paste all contents of @slider here
+    panlaw=exp(slider3*AMP_DB_i);
+    pancomp=(panlaw > 1.0 ? 1.0/panlaw : panlaw);
+    ddb=0.0;
+    dpan=0.0;
+    parameters_update_on = 0;
+    caller = 0;
+  );
+
+@slider
+  caller=1;
+
+@serialize // add this block for tk extra features
+  file_var(0, while_playing);
+  file_var(0, while_recording);
+  file_var(0, while_stopped); file_var(0, zoom_off);
+  //file_var(0, LA2Kan_VERSION);
+  file_var(0, link_group);
+  seriloop = 0;
+  loop(64*16 + 27 + 16,
+  file_var(0, gmem[seriloop]);
+  seriloop += 1;
+  );
+  seriloop = 0;
+  loop(200*16,
+  file_var(0, group_generics[seriloop]);
+  seriloop += 1;
+  );
+
+@block
+
+cnt=0;
+ddb=0.0;
+dpan=0.0;
+
+db_chg_splpos=slider_next_chg(1, tgtdb);
+db_chg_splpos > 0 ? 
+(
+  db=slider1;
+) : (
+  tgtdb = slider1;
+  db_chg_splpos = samplesblock;
+);
+
+ddb=(tgtdb-db)/db_chg_splpos;
+
+pan_chg_splpos=slider_next_chg(2, tgtpan);
+pan_chg_splpos > 0 ? 
+(
+  pan=0.01*slider2;
+) : (
+  tgtpan = slider2;
+  pan_chg_splpos = samplesblock;
+);
+dpan=(tgtpan*0.01-pan)/pan_chg_splpos;
+
+@sample
+  S2_sample_on = 1;
+
+  // extra tk features
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0;
+  group_check_smpl();
+
+  caller == 1 ? (
+    parameters_update_on == 0 ? (
+      parameters_update();
+    );
+  );
+
+  // extra tk features
+  playstates();
+  process = 0;
+  while_playing ? is_playing ? process = 1;
+  while_recording ? is_recording ? process = 1;
+  while_stopped ? is_stopped ? process = 1;
+  process==1?(
+    cnt == db_chg_splpos ? 
+    (
+      ddb=0.0;
+      db_chg_splpos=slider_next_chg(1, tgtdb);
+      db_chg_splpos > cnt ? 
+      (
+        ddb=(tgtdb-db)/(db_chg_splpos-cnt);
+      );
+    );
+
+    cnt == pan_chg_splpos ? 
+    (
+      dpan=0.0;
+      pan_chg_splpos=slider_next_chg(2, tgtpan);
+      pan_chg_splpos > cnt ? 
+      (
+        dpan=(tgtpan*0.01-pan)/(pan_chg_splpos-cnt);
+      );
+    );
+
+    adj=exp(db*AMP_DB_i);
+    panlaw != 1.0 ? 
+    (
+      panlaw > 1.0 ? adj *= panlaw;
+      panatt = abs(pan);
+      adj *= pancomp+(1.0-pancomp)*(2.0/(2.0-panatt)-1.0);
+    );
+
+    adj0=adj1=adj;
+    pan < 0.0 ? adj1 *= 1.0+pan;
+    pan > 0.0 ? adj0 *= 1.0-pan;
+
+    spl0 *= adj0;
+    spl1 *= adj1;
+
+    db += ddb;
+    pan += dpan;
+    cnt += 1;
+  );
+
+
+<? // @gfx setup
+  w_bg=512;
+  h_bg=216;
+  mcp_ratio="wide";
+  include("DGFX/ddconfig.jsfx-inc");
+?>
+  tk_gfx_setup();
+  gfx_ext_flags == 0 ? (  // full ui
+    unscaled_factor=1.35;
+    set_background(0);
+                                    //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
+    //Knobs                      (slider    default     min      max     step           x            y   frames  scaling   png  mode  reverse) (frames = 0 = auto calculate)   (step=0=default floating numbers as step)   
+    kVolume.parameter_config      ( 1,             0,    -48,      12,     0.1,       130/2,        72/2,     0,       1,     2,    1,       0);    
+    kPanLaw.parameter_config      ( 3,             0,     -6,       6,     0.5,       251/2,       105/2,     0,       1,     3,    1,       0);    
+    kPanning.parameter_config     ( 2,             0,   -100,     100,     0.1,       310/2,        72/2,     0,       1,     2,    1,       0);    
+    //gfx_r=0.616;gfx_g=0.569;gfx_b=0.141;
+    gfx_r=gfx_g=gfx_b=1;
+    gfx_a=0.4;
+    kVolume.attached_label("VOLUME",-2, "Arial",12,'');
+    //kPanLaw.attached_label("TONE",0, "Arial",7,'b');
+    kPanning.attached_label("PANNING",-2, "Arial",12,'');
+
+    setup_dmenu("Volume/Pan Smoother by Cockos", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.2); // setup menu, arguments: jsfx name, version, graphics, zoom
+
+    mouse_wheel=0;
+  ):gfx_ext_flags == 1 ? ( // embedded mcp ui
+    set_background(1,0.043,0.043,0.043);
+    kVolume.parameter_config      ( 1,             0,    -48,      12,     0.1,       38/2,        63/2,     0,       1.2,     2,    1,       0);    
+    kPanning.parameter_config     ( 2,             0,   -100,     100,     0.1,       145/2,        63/2,     0,       1.2,     2,    1,       0);   
+    kPanLaw.parameter_config      ( 3,             0,     -6,       6,     0.5,      132/2,       105/2,     0,       1.2,     3,    1,       0);    
+    gfx_r=gfx_g=gfx_b=1;
+    gfx_a=0.5;
+    kVolume.attached_label("VOL",-3, "Arial",18,'b');
+    //kPanLaw.attached_label("TONE",0, "Arial",7,'b');
+    kPanning.attached_label("PAN",-3, "Arial",18,'b');
+    mouse_wheel=0;
+  );
+  
+  // update parameters
+  S2_sample_on == 0 ? (
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
+  group_check_gfx(); // tk extra features
+    caller == 1 ? (
+        parameters_update_on == 0 ? (
+          parameters_update();
+        );
+    );
+  );
+  S2_sample_on = 0;
+
