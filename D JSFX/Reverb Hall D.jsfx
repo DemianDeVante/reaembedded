@@ -11,6 +11,7 @@ slider7:20<1,25,1>-xth Prime
 slider8:37<0,100,1>-(if stereo) L/R offset (%)
 slider9:duckthres=0<-60,0,0.1>-Threshold (dB)
 slider10:duckratio=4<1,10,0.5>-Ratio
+slider11:ext_duck=0<0,1,1>-Sidechain Duck
 
 import DGFX/demian-effects.jsfx-inc
 import DGFX/tk_lib_d.jsfx-inc 
@@ -29,7 +30,8 @@ in_pin:L in
 in_pin:R in
 out_pin:L out
 out_pin:R out
-
+in_pin:sidechain left input
+in_pin:sidechain right input
 @init
   gfx_ext_retina = 1;
   gfx_clear=0;
@@ -58,7 +60,7 @@ out_pin:R out
   number_input_max=0;
   number_input_invalid = 0;
   number_input_sign=1;
-  s2_numbers_of_sliders = 10; // set the number of sliders for gorup linking
+  s2_numbers_of_sliders = 11; // set the number of sliders for gorup linking
   s2_numbers_of_generics = 0;
   group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
   sliders_old = group_generics + 16*200;
@@ -247,7 +249,9 @@ out_pin:R out
 
     Rout = Rout5 + Rout7 + Rout9 + Rout11;
 
-    compress.channel_ducking_stereo(out,Rout,input,Rinput,duckthres,duckratio);
+    duck_spl_L= ext_duck?spl2:spl0;
+    duck_spl_R= ext_duck?spl3:spl1;
+    compress.channel_ducking_stereo(out,Rout,duck_spl_L,duck_spl_R,duckthres,duckratio);
     out=compress.spl_l;
     Rout=compress.spl_r;
 
@@ -289,7 +293,7 @@ out_pin:R out
     ksustain.attached_label("LENGTH",0, "Verdana",13,'b');
     kdry.attached_label("DRY",0, "Verdana",13,'b');
     kwet.attached_label("WET",0, "Verdana",13,'b');
-    setup_dmenu_nogrouping("Witti Hall 3", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+    setup_dmenu_delayreverb("Witti Hall 3", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
     mouse_wheel=0;
   ):gfx_ext_flags == 1 ? ( // embedded mcp ui
     //       33  10 141  10

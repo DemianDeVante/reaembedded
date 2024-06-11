@@ -40,6 +40,7 @@ slider13:filter_q=0.707<0.707,4,0.01:log>-Punch
 slider14:thresh=0<-60,0,0.1>-Threshold (dB)
 slider15:ratio=4<1,10,0.5>-Ratio
 slider16:page=1<0,1,1>-Toggle Page
+slider17:ext_duck=0<0,1,1>-Sidechain Duck
 
 import DGFX/tk_lib_d.jsfx-inc 
 import DGFX/qd.delay.jsfx-inc
@@ -61,7 +62,8 @@ in_pin:left input
 in_pin:right input
 out_pin:left output
 out_pin:right output
-
+in_pin:sidechain left input
+in_pin:sidechain right input
 @init
   gfx_ext_retina = 1;
   gfx_clear=0;
@@ -90,7 +92,7 @@ out_pin:right output
   number_input_max=0;
   number_input_invalid = 0;
   number_input_sign=1;
-  s2_numbers_of_sliders = 16; // set the number of sliders for gorup linking
+  s2_numbers_of_sliders = 17; // set the number of sliders for gorup linking
   s2_numbers_of_generics = 0;
   group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
   sliders_old = group_generics + 16*200;
@@ -261,7 +263,9 @@ out_pin:right output
     d0.delay_write(left);
     d1.delay_write(right);
 
-    compress.channel_ducking_stereo(val0,val1,spl0,spl1,thresh,ratio);
+    duck_spl_L= ext_duck?spl2:spl0;
+    duck_spl_R= ext_duck?spl3:spl1;
+    compress.channel_ducking_stereo(val0,val1,duck_spl_L,duck_spl_R,thresh,ratio);
     val0=compress.spl_l;
     val1=compress.spl_r;
 
@@ -401,7 +405,7 @@ out_pin:right output
     btempo_sync_1.attached_label("NOTE",-3, "Verdana",13,'b');
     btempo_sync_2.attached_label("TRIP",-3, "Verdana",13,'b');
     btempo_sync_3.attached_label("DOTT",-3, "Verdana",13,'b');
-    setup_dmenu_nogrouping("TILR QuickDelay", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+    setup_dmenu_delayreverb("TILR QuickDelay", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
     mouse_wheel=0;
   ):gfx_ext_flags == 1 ? ( // embedded mcp ui
     set_background(1,0.525,0.525,0.525);

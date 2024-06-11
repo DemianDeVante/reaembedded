@@ -17,6 +17,7 @@ slider6:duckthres=0<-60,0,0.1>-Threshold (dB)
 slider7:duckratio=4<1,10,0.5>-Ratio
 slider8:_wet=-6<-48,6,0.1>-Wet (dB)
 slider9:_dry=0<-48,6,0.1>-Dry (dB)
+slider10:ext_duck=0<0,1,1>-Sidechain Duck
 
 import DGFX/demian-effects.jsfx-inc
 import DGFX/tk_lib_d.jsfx-inc 
@@ -35,7 +36,8 @@ in_pin:left input
 in_pin:right input
 out_pin:left output
 out_pin:right output
-
+in_pin:sidechain left input
+in_pin:sidechain right input
 @init
   gfx_ext_retina = 1;
   gfx_clear=0;
@@ -506,7 +508,9 @@ out_pin:right output
     inputSampleL=lpf.spl_l;
     inputSampleR=lpf.spl_r;
 
-    compress.channel_ducking_stereo(inputSampleL,inputSampleR,spl0,spl1,duckthres,duckratio);
+    duck_spl_L= ext_duck?spl2:spl0;
+    duck_spl_R= ext_duck?spl3:spl1;
+    compress.channel_ducking_stereo(inputSampleL,inputSampleR,duck_spl_L,duck_spl_R,duckthres,duckratio);
     inputSampleL=compress.spl_l;
     inputSampleR=compress.spl_r;
     //wet=_wet/100;
@@ -555,7 +559,7 @@ out_pin:right output
     ksustain.attached_label("SUSTAIN",0, "Verdana",13,'b');
     kdry.attached_label("DRY",0, "Verdana",13,'b');
     kwet.attached_label("WET",0, "Verdana",13,'b');
-    setup_dmenu_nogrouping("Chmaha: Bricastic 2, port of Aiwrindows: Verbity 2", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+    setup_dmenu_delayreverb("Chmaha: Bricastic 2, port of Aiwrindows: Verbity 2", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
     mouse_wheel=0;
   ):gfx_ext_flags == 1 ? ( // embedded mcp ui
     set_background(1,0.196,0.388,0.655);

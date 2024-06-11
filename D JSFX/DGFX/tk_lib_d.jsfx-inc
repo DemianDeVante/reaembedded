@@ -1345,6 +1345,89 @@ function setup_dmenu_nogrouping(setup_menu_name, setup_menu_version, setup_menu_
   );
 );
 
+function setup_dmenu_delayreverb(setup_menu_name, setup_menu_version, setup_menu_graphics, dmenu_zoom)local(setup_menu_name, setup_menu_version, setup_menu_graphics)(
+  dmenu_zoom=dmenu_zoom*zoom;
+  ////////////////////////////////////////// MENU MENU MENU ////////////////////////////////////////////////
+  last_clicked_item = -1;
+  Helpshow ? mouse_cap ? (helpshow = 0;last_clicked_item = -1);
+  menu_x = 4; menu_y =1;
+ 
+  gfx_x = menu_x * dmenu_zoom; gfx_y = menu_y * dmenu_zoom; gfx_a=0.5;
+  gfx_r=gfx_g=gfx_b=0.4;
+  gfx_roundrect(menu_x * dmenu_zoom, (menu_y + 5) * dmenu_zoom, 20*dmenu_zoom, 20*dmenu_zoom, 0, 1);
+  gfx_line((menu_x+3)*dmenu_zoom, (menu_y + 11)*dmenu_zoom, (menu_x+17)*dmenu_zoom, (menu_y + 11)*dmenu_zoom);
+  gfx_line((menu_x+3)*dmenu_zoom, (menu_y + 15)*dmenu_zoom, (menu_x+17)*dmenu_zoom, (menu_y + 15)*dmenu_zoom);
+  gfx_line((menu_x+3)*dmenu_zoom, (menu_y + 19)*dmenu_zoom, (menu_x+17)*dmenu_zoom, (menu_y + 19)*dmenu_zoom);
+ 
+  gfx_x = menu_x+22 * dmenu_zoom; gfx_y += 2*dmenu_zoom;
+  gfx_setfont(1,"Arial",22*dmenu_zoom,'b');
+ 
+  gfx_a = 1;
+  gfx_setfont(1,"Arial",12*dmenu_zoom,'b');
+ 
+  mouseClick ? (
+    g_collision(menu_x*dmenu_zoom, (menu_y+5) * dmenu_zoom, 20*dmenu_zoom, 20*dmenu_zoom) ? (
+      gfx_x = menu_x*dmenu_zoom;
+      gfx_y = (menu_y+20)*dmenu_zoom;
+     
+      #item2 =">Processing|";#allitems = #item2;
+      while_playing == 1 ? (#item2 = "!On Playback|"):(#item2 = "On Playback|");#allitems += #item2;
+      while_recording == 1 ? (#item2 = "!On Recording|"):(#item2 = "On Recording|");#allitems += #item2;
+      while_stopped == 1 ? (#item2 = "<!On Stop|"):(#item2 = "<On Stop|");#allitems += #item2;
+
+      #allitems += ">Scaling|";
+      zoom_off == 0 ? (#item2 = "!Automatic Scaling|"):(#item2 = "Automatic scaling|");#allitems += #item2;
+      zoom_off == 1 ? (#item2 = "<!No scaling|"):(#item2 = "<No scaling|");#allitems += #item2;
+
+      #allitems += ">Ducking|";
+      ext_duck == 0 ? (#item2 = "!Detect Input|"):(#item2 = "Detect Input|");#allitems += #item2;
+      ext_duck == 1 ? (#item2 = "<!Detect Sidechain|"):(#item2 = "<Detect Sidechain|");#allitems += #item2;
+
+      #allitems += "|Show Info/Help";
+      last_clicked_item = gfx_showmenu(#allitems);
+    );
+  );
+  
+  last_clicked_item == 1 ? (while_playing == 0 ? (while_playing = 1):(while_playing = 0);caller=1);
+  last_clicked_item == 2 ? (while_recording == 0 ? (while_recording = 1):(while_recording = 0);caller=1);
+  last_clicked_item == 3 ? (while_stopped == 0 ? (while_stopped = 1):(while_stopped = 0);caller=1);
+
+  last_clicked_item == 4 ? zoom_off = 0;
+  last_clicked_item == 5 ? zoom_off = 1;
+
+  last_clicked_item == 6 ? (ext_duck = 0; slider_automate(ext_duck));
+  last_clicked_item == 7 ? (ext_duck = 1; slider_automate(ext_duck));
+
+  last_clicked_item == 8 ? helpshow = 1;
+  
+  helpshow == 1 ? (
+    dmenu_zoom=dmenu_zoom*2;
+    gfx_setfont(1,"Arial",12*dmenu_zoom,'b');
+    gfx_r=0;gfx_g=0;gfx_b=0;gfx_a=0.7;
+    gfx_rect(menu_x,menu_y+0,400*dmenu_zoom,145*dmenu_zoom);
+    menu_x +=3;
+    gfx_r=0.9;gfx_g=0.9;gfx_b=0.9;gfx_a=1;
+    gfx_x = menu_x+3*dmenu_zoom; gfx_y = menu_y+3*dmenu_zoom;
+    gfx_drawstr(setup_menu_name);
+    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
+    gfx_drawstr("Version: "); gfx_drawstr(setup_menu_version);
+    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 20*dmenu_zoom;
+    gfx_drawstr("Mouse modifier options:");
+    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 15*dmenu_zoom;
+    gfx_drawstr("Fine tune knobs: [shift]");
+    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
+    gfx_drawstr("Reset knobs: [ctrl] ([cmd] on mac)");
+    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
+    gfx_drawstr("Link knobs on visible instances: [win] ([ctrl] on mac)");
+    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
+    gfx_drawstr("Activate number typing: [alt]+[shift]");
+    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 23*dmenu_zoom;
+    gfx_drawstr("Graphics by:");
+    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
+    gfx_drawstr(setup_menu_graphics);
+  );
+);
+
 function tk_extra_grouplinking()( // it seems to do nothing at all
   Link_Group == 0 ? (
     gmem[16*64 + 3] == 0 ? linkstart = 0;

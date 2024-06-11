@@ -18,6 +18,7 @@ slider8:duckratio=4<1,10,0.5>-Ratio
 //slider10:_dry=100<0,100,1>-Dry
 slider9:_wet=-6<-48,6,0.1>-Wet (dB)
 slider10:_dry=0<-48,6,0.1>-Dry (dB)
+slider11:ext_duck=0<0,1,1>-Sidechain Duck
 
 import DGFX/nw8platefunctions.jsfx-inc
 import DGFX/demian-effects.jsfx-inc
@@ -37,7 +38,8 @@ in_pin:left input
 in_pin:right input
 out_pin:left output
 out_pin:right output
-
+in_pin:sidechain left input
+in_pin:sidechain right input
 @init
   gfx_ext_retina = 1;
   gfx_clear=0;
@@ -66,7 +68,7 @@ out_pin:right output
   number_input_max=0;
   number_input_invalid = 0;
   number_input_sign=1;
-  s2_numbers_of_sliders = 10; // set the number of sliders for gorup linking
+  s2_numbers_of_sliders = 11; // set the number of sliders for gorup linking
   s2_numbers_of_generics = 0;
   group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
   sliders_old = group_generics + 16*200;
@@ -138,7 +140,9 @@ out_pin:right output
     inputSampleL=lpf.spl_l;
     inputSampleR=lpf.spl_r;
 
-    compress.channel_ducking_stereo(inputSampleL,inputSampleR,spl0,spl1,duckthres,duckratio);
+    duck_spl_L= ext_duck?spl2:spl0;
+    duck_spl_R= ext_duck?spl3:spl1;
+    compress.channel_ducking_stereo(inputSampleL,inputSampleR,duck_spl_L,duck_spl_R,duckthres,duckratio);
     inputSampleL=compress.spl_l;
     inputSampleR=compress.spl_r;
     
@@ -235,7 +239,7 @@ out_pin:right output
     ksustain.attached_label("DAMPING",0, "Verdana",13,'b');
     kdry.attached_label("DRY",0, "Verdana",13,'b');
     kwet.attached_label("WET",0, "Verdana",13,'b');
-    setup_dmenu_nogrouping("Chmaha: NW8-Plate, port of Aiwrindows: kPlate", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+    setup_dmenu_delayreverb("Chmaha: NW8-Plate, port of Aiwrindows: kPlate", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
     mouse_wheel=0;
   ):gfx_ext_flags == 1 ? ( // embedded mcp ui
     set_background(1,0.655,0.596,0.235);

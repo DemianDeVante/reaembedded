@@ -30,6 +30,7 @@ slider13:0<-60,0,0.1>-Threshold (dB)
 slider14:4<1,10,0.5>-Ratio
 slider15:0<0,1,1>-Toggle Sync
 slider16:1<0,1,1>-Toggle Page
+slider17:ext_duck=0<0,1,1>-Sidechain Duck
 
 import DGFX/tk_lib_d.jsfx-inc 
 import DGFX/demian-effects.jsfx-inc
@@ -49,6 +50,8 @@ in_pin:left input
 in_pin:right input
 out_pin:left output
 out_pin:right output
+in_pin:sidechain left input
+in_pin:sidechain right input
 
 @init
   gfx_ext_retina = 1;
@@ -78,7 +81,7 @@ out_pin:right output
   number_input_max=0;
   number_input_invalid = 0;
   number_input_sign=1;
-  s2_numbers_of_sliders = 16; // set the number of sliders for gorup linking
+  s2_numbers_of_sliders = 17; // set the number of sliders for gorup linking
   s2_numbers_of_generics = 0;
   group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
   sliders_old = group_generics + 16*200;
@@ -234,7 +237,9 @@ out_pin:right output
     // output
     //spl0 = tmpL*(slider2/100) + spl0*(1-(slider2/100));
     //spl1 = tmpR*(slider2/100) + spl1*(1-(slider2/100));
-    compress.channel_ducking_stereo(tmpL,tmpR,spl0,spl1,slider13,slider14);
+    duck_spl_L= ext_duck?spl2:spl0;
+    duck_spl_R= ext_duck?spl3:spl1;
+    compress.channel_ducking_stereo(tmpL,tmpR,duck_spl_L,duck_spl_R,slider13,slider14);
     tmpL=compress.spl_l;
     tmpR=compress.spl_r;
 
@@ -347,7 +352,7 @@ out_pin:right output
     kwet.attached_label("WET",0, "Verdana",13,'b');
     kdry.attached_label("DRY",0, "Verdana",13,'b');
 
-    setup_dmenu_nogrouping("ReaminCalm Delay Floaty", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+    setup_dmenu_delayreverb("ReaminCalm Delay Floaty", "1", "Analog Obsession, Tukan Studios, Pitufodelbosque, ReArtist", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
 
     mouse_wheel=0;
   ):gfx_ext_flags == 1 ? ( // embedded mcp ui
