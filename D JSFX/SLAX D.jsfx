@@ -33,9 +33,14 @@ import DGFX/tk_lib_d.jsfx-inc
 resource:0,1,2,3,4,5
 
 options: no_meter
+options:gmem=SLAXD
+
 @init
   gfx_ext_retina = 1;
-  !initialized_playstates?(while_playing = 1; while_recording = 1; while_stopped = 1);
+  !initialized_playstates?(while_playing = while_recording = while_stopped = 1);
+
+  // tk extra features
+  s2_numbers_of_sliders = 5; // set the number of sliders for gorup linking
 
   !"#define VAL(A) (A)" "//";
 
@@ -190,18 +195,41 @@ options: no_meter
   sn.out = 1;
 
   hbx = 300; hby = 150;
+  function parameters_update() (
+    parameters_update_on = 1;
+    group_parameters(max_local_buffer_size-64); // tk extra features
+      //@slider block
+      s1.value = slider1;
+      s2.value = slider2;
+      s3.value = slider3;
+      s4.value = slider4;
+      ProcessSliders();
+    parameters_update_on = 0;
+    caller = 0;
+  );
 
 @slider
-  s1.value = slider1;
-  s2.value = slider2;
-  s3.value = slider3;
-  s4.value = slider4;
-  ProcessSliders();
+  parameters_update();
+
+
 
 @serialize // add this block for tk extra features
   file_var(0, while_playing);
   file_var(0, while_recording);
   file_var(0, while_stopped); file_var(0, zoom_off);
+  //file_var(0, LA2Kan_VERSION);
+  file_var(0, link_group);
+  seriloop = 0;
+  loop(64*16 + 27 + 16 +16 +16,
+  file_var(0, gmem[seriloop]);
+  seriloop += 1;
+  );
+  seriloop = 0;
+  loop(200*16,
+  file_var(0, group_generics[seriloop]);
+  seriloop += 1;
+  );
+
 
 @block
 
@@ -214,13 +242,23 @@ options: no_meter
 
 @sample
   S2_sample_on = 1;
-  initialized_playstates=1;
+  // extra tk features
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0;
+  group_check_smpl();
+
+  caller == 1 ? (
+    parameters_update_on == 0 ? (
+      parameters_update();
+    );
+  );
+  
   // extra tk features
   playstates();
   process = 0;
   while_playing ? is_playing ? process = 1;
   while_recording ? is_recording ? process = 1;
   while_stopped ? is_stopped ? process = 1;
+  initialized_playstates=1;
 
   process == 1 ? (
     sn.SampleSniffer(abs(spl0)+abs(spl1)) || env < 0.999 ? (
@@ -479,7 +517,7 @@ gfx_ext_flags == 0 ? (  // full ui
   gfx_r = gfx_g = gfx_b = 1; gfx_a = 0.2;
   gfx_setfont(1,"Arial",12*zoom/2);
   gfx_drawstr(buildStr);
-  setup_dmenu_nogrouping("Sonic Anomaly S.LA.X", "1", "Sonic Anomaly", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
+  setup_dmenu("Sonic Anomaly S.LA.X", "1", "Sonic Anomaly", 0.3); // setup menu, arguments: jsfx name, version, graphics, zoom
 
 ):gfx_ext_flags == 1 ? (
 gfx_r=0.176;gfx_g=0.2;gfx_b=0.22;
@@ -538,3 +576,14 @@ gfx_r=gfx_g=gfx_b=0;
   gfx_a = sqrt(1-1/ofe);
   gfx_circle(215*zoom/2,146*zoom/2,2*zoom,1);
 );
+  // update parameters
+  S2_sample_on == 0 ? (
+  gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
+  group_check_smpl(); // tk extra features
+    caller == 1 ? (
+        parameters_update_on == 0 ? (
+          parameters_update();
+        );
+    );
+  );
+  S2_sample_on = 0;

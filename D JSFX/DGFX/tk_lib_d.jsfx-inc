@@ -5,6 +5,8 @@ desc:tukans library demian d mod
 
 @init
 
+    max_local_buffer_size = 8388608; // reaper local buffer slots go up to 8388608 according to the documentation
+	
 function round(dnumber)(
 	dnumber=dnumber+0.5;
 	dnumber=floor(dnumber);
@@ -257,90 +259,50 @@ instance (U_Val dB_Val dB_Val_Max S2_meter_fallback)
 
 
 
-	function group_parameters () (
-		link_group ? (
-			gmem[16*64 + 10 + link_group] == 1 ? (
-					While_Playing = gmem[16*64 + 27 + link_group];
-					While_Recording = gmem[16*64 + 27 + 16 + link_group];
-					While_Stopped = gmem[16*64 + 27 + 32 + link_group];
-      				slider_loop_temp = 1;
-      				loop(S2_numbers_of_sliders,
-        				sliders_old[slider_loop_temp] == slider(slider_loop_temp) ? (
-          					gmem[(Link_Group-1)*64+ slider_loop_temp-1] != slider(slider_loop_temp) ? ( 
-            						slider(slider_loop_temp) = sliders_old[slider_loop_temp] = gmem[(Link_Group-1)*64+ slider_loop_temp-1];
-          					);
-        				):(
-          					gmem[(Link_Group-1)*64+ slider_loop_temp-1] = slider(slider_loop_temp);
-          					sliders_old[slider_loop_temp] = slider(slider_loop_temp);
-        				);
-        			slider_loop_temp += 1;
-      				);
-      				slider_loop_temp = 1;
-      				loop(S2_numbers_of_generics,
-        				generics_old[slider_loop_temp] == group_generics[slider_loop_temp] ? (
-          					gmem[16*64+27+48+slider_loop_temp+(Link_Group-1)*200] != group_generics[slider_loop_temp] ? ( 
-            						group_generics[slider_loop_temp] = generics_old[slider_loop_temp] = gmem[16*64+27+48+slider_loop_temp+(Link_Group-1)*200];
-          					);
-        				):(
-          					gmem[16*64+27+48+slider_loop_temp+(Link_Group-1)*200] = group_generics[slider_loop_temp];
-          					generics_old[slider_loop_temp] = group_generics[slider_loop_temp];
-        				);
-        			slider_loop_temp += 1;
-      				);
-			):(link_group = 0;
-			);
+    function group_parameters (old_sliders_buffer) (
+        link_group ? (
+            gmem[16*64 + 10 + link_group] == 1 ? (
+                    While_Playing = gmem[16*64 + 27 + link_group];
+                    While_Recording = gmem[16*64 + 27 + 16 + link_group];
+                    While_Stopped = gmem[16*64 + 27 + 32 + link_group];
+                    slider_loop_temp = 1;
+                    loop(S2_numbers_of_sliders,
+                        old_sliders_buffer[slider_loop_temp] == slider(slider_loop_temp) ? (
+                            gmem[(Link_Group-1)*64+ slider_loop_temp-1] != slider(slider_loop_temp) ? ( 
+                                slider(slider_loop_temp) = old_sliders_buffer[slider_loop_temp] = gmem[(Link_Group-1)*64+ slider_loop_temp-1];
+                            );
+                        ):(
+                            gmem[(Link_Group-1)*64+ slider_loop_temp-1] = old_sliders_buffer[slider_loop_temp] = slider(slider_loop_temp);
+                        );
+                    slider_loop_temp += 1;
+                    );
+            ):(link_group = 0;
+            );
 
-		);
-	);
+        );
+    );
 
 
 	function group_check_smpl () (
-			S2_sample_on = 1;
 			link_group ? (
       			slider_loop_temp_smpl = 1;
       			loop(S2_numbers_of_sliders,
         				gmem[(Link_Group-1)*64+ slider_loop_temp_smpl-1] != slider(slider_loop_temp_smpl) ? caller = 1;
         				slider_loop_temp_smpl += 1;
       			);
-			slider_loop_temp_smpl = 1;
-      			loop(S2_numbers_of_generics,
-        				gmem[16*64+27+48+slider_loop_temp_smpl+(Link_Group-1)*200] != group_generics[slider_loop_temp_smpl] ? caller = 1;
-        				slider_loop_temp_smpl += 1;
-      			);
 			gmem[16*64 + 27 + link_group] != While_Playing ? Caller = 1;
 			gmem[16*64 + 27 + 16+link_group] != While_Recording ? Caller = 1;
 			gmem[16*64 + 27 + 32+link_group] != While_Stopped ? Caller = 1;
 			);
 	);
 
-
-	function group_check_gfx () (
-      			slider_loop_temp_gfx = 1;
-			link_group ? (
-      			loop(S2_numbers_of_sliders,
-        				gmem[(Link_Group-1)*64+ slider_loop_temp_gfx-1] != slider(slider_loop_temp_gfx) ? caller = 1;
-        				slider_loop_temp_gfx += 1;
-      			);
-			slider_loop_temp_gfx = 1;
-      			loop(S2_numbers_of_generics,
-        				gmem[16*64+27+48+slider_loop_temp_gfx+(Link_Group-1)*200] != group_generics[slider_loop_temp_gfx] ? caller = 1;
-        				slider_loop_temp_gfx += 1;
-      			);
-			gmem[16*64 + 27 + link_group] != While_Playing ? Caller = 1;
-			gmem[16*64 + 27 + 16+link_group] != While_Recording ? Caller = 1;
-			gmem[16*64 + 27 + 32+link_group] != While_Stopped ? Caller = 1;
-			);
-	);
-
-
-
-	function processing_update() (
-		link_group ? (
-			gmem[16*64 + 27 + link_group] = While_Playing;
-			gmem[16*64 + 27 + 16+link_group] = While_Recording;
-			gmem[16*64 + 27 + 32+link_group] = While_Stopped;
-		);
-	);
+    function processing_update() (
+        link_group ? (
+            gmem[16*64 + 27 + link_group] = While_Playing;
+            gmem[16*64 + 27 + 16+link_group] = While_Recording;
+            gmem[16*64 + 27 + 32+link_group] = While_Stopped;
+        );
+    );
 
 
 
@@ -376,7 +338,7 @@ instance (U_Val dB_Val dB_Val_Max S2_meter_fallback)
 		);
 	);
 
-	Function group_update () local(tmp)  (
+	function group_update () local(tmp)  (
 		Link_Group ? (
 		gmem[16*64 + 10 + link_group] = 1; // Group ON
 		gmem[16*64 + 27 + link_group] = While_Playing;
@@ -385,11 +347,6 @@ instance (U_Val dB_Val dB_Val_Max S2_meter_fallback)
 		tmp = 1;
 		loop(s2_numbers_of_sliders,
 		  slider(tmp) != gmem[(Link_Group-1)*64+tmp-1] ? (gmem[(Link_Group-1)*64+tmp-1] = slider(tmp));
-			tmp +=1;
-		);
-		tmp = 1;
-		loop(s2_numbers_of_generics,
-		  group_generics[tmp] != gmem[16*64+27+48+tmp+(Link_Group-1)*200] ? (gmem[16*64+27+48+tmp+(Link_Group-1)*200] = group_generics[tmp]);
 			tmp +=1;
 		);
 		);
@@ -1078,15 +1035,28 @@ instance        (default minVal maxVal slider xIn yIn size frames scaling file s
 );
 
 // d_string and d_font are strings ("string"), d_fontflags are multibyte characters ('multibyte'), not the difference between "" and ''
-function attached_label(d_string d_yoffset d_font d_fontsize d_fontflags) local(d_fontflags d_font d_x_offset d_fontwidth d_fontheight d_string d_fontsize save_gfx_x save_gfx_y d_yoffset)(
+function attached_label(d_string d_yoffset d_font d_fontsize d_fontflags) local(d_fontflags d_font d_fontwidth d_fontheight d_string d_fontsize save_gfx_x save_gfx_y d_yoffset)(
 	save_gfx_x=gfx_x; // just to prevent conflict with functions in future versions
 	save_gfx_y=gfx_y;
 	gfx_setfont(1,d_font, this.scaling*d_fontsize*zoom/2, d_fontflags);
 	gfx_measurestr(d_string,d_fontwidth,d_fontheight);
 
-	d_x_offset=((this.scaling*this.size)-d_fontwidth)/2;
-	//gfx_x=0;//this.scaling*zoom*(this.xIn*zoom)+d_x_offset);
 	gfx_x=(zoom*this.xIn)+ (((zoom*this.scaling*this.size/2)-d_fontwidth)/2) ;
+	gfx_y=zoom*( this.yIn+ ( this.scaling* (d_yoffset+ (this.kheight/2) ) ) );
+	//gfx_r=gfx_g=gfx_b=0.9;
+	gfx_drawstr(d_string);
+
+	gfx_x=save_gfx_x; // just to prevent conflict with functions in future versions
+	gfx_y=save_gfx_y;
+);
+
+function attached_label(d_string d_x_offset d_yoffset  d_font d_fontsize d_fontflags) local(d_fontflags d_font d_x_offset d_fontwidth d_fontheight d_string d_fontsize save_gfx_x save_gfx_y d_yoffset)(
+	save_gfx_x=gfx_x; // just to prevent conflict with functions in future versions
+	save_gfx_y=gfx_y;
+	gfx_setfont(1,d_font, this.scaling*d_fontsize*zoom/2, d_fontflags);
+	gfx_measurestr(d_string,d_fontwidth,d_fontheight);
+
+	gfx_x=(zoom*this.xIn)+ (((zoom*this.scaling*this.size/2)-d_fontwidth+d_x_offset)/2) ;
 	gfx_y=zoom*( this.yIn+ ( this.scaling* (d_yoffset+ (this.kheight/2) ) ) );
 	//gfx_r=gfx_g=gfx_b=0.9;
 	gfx_drawstr(d_string);
@@ -1209,29 +1179,29 @@ function setup_dmenu(setup_menu_name, setup_menu_version, setup_menu_graphics, d
  
  
   
-  last_clicked_item == 1 ? (while_playing == 0 ? (while_playing = 1):(while_playing = 0);caller=1;processing_update());
-  last_clicked_item == 2 ? (while_recording == 0 ? (while_recording = 1):(while_recording = 0);caller=1;processing_update());
-  last_clicked_item == 3 ? (while_stopped == 0 ? (while_stopped = 1):(while_stopped = 0);caller=1;processing_update());
- 
-   cgroup = last_clicked_item - 3;
-  last_clicked_item > 3 && last_clicked_item < 20 ? (
-     Link_Group != cgroup ? ( //eigene Linkgruppe NICHT angeklickt
-         gmem[16*64 + 10 + cgroup] == 0 ? ( // Gruppe noch frei
-             //gmem[16*64 + 10 + cgroup] = 1; Link_Group = cgroup; gmem[16*64 +27 + cgruop] = 1; //Gruppe Starten!
-             gmem[16*64 + 10 + cgroup] = 1;Link_Group = cgroup;group_update();
-         ):(
-             Link_Group = cgroup;// Gruppe teilnehmen
-         );
-     ):( //Eigene Gruppe angeklickt
-           Link_Group = 0;
-     );
-  
-  );
-  
-   cgroup = last_clicked_item - 3 - 16;
-  last_clicked_item == 20 ? (
-    gmem[16*64 + 10 + Link_Group] = 0;Link_Group = 0;
-  );
+        last_clicked_item == 1 ? (while_playing == 0 ? (while_playing = 1):(while_playing = 0);caller=1;processing_update());
+        last_clicked_item == 2 ? (while_recording == 0 ? (while_recording = 1):(while_recording = 0);caller=1;processing_update());
+        last_clicked_item == 3 ? (while_stopped == 0 ? (while_stopped = 1):(while_stopped = 0);caller=1;processing_update());
+        
+        cgroup = last_clicked_item - 3;
+        last_clicked_item > 3 && last_clicked_item < 20 ? (
+            Link_Group != cgroup ? ( //eigene Linkgruppe NICHT angeklickt
+                gmem[16*64 + 10 + cgroup] == 0 ? ( // Gruppe noch frei
+                    //gmem[16*64 + 10 + cgroup] = 1; Link_Group = cgroup; gmem[16*64 +27 + cgruop] = 1; //Gruppe Starten!
+                    gmem[16*64 + 10 + cgroup] = 1;Link_Group = cgroup;group_update();
+                ):(
+                    Link_Group = cgroup;// Gruppe teilnehmen
+                );
+            ):( //Eigene Gruppe angeklickt
+                Link_Group = 0;
+            );
+        
+        );
+        
+        cgroup = last_clicked_item - 3 - 16;
+        last_clicked_item == 20 ? (
+            gmem[16*64 + 10 + Link_Group] = 0;Link_Group = 0;
+        );
   
   
   
@@ -1347,88 +1317,183 @@ function setup_dmenu_nogrouping(setup_menu_name, setup_menu_version, setup_menu_
   );
 );
 
-function setup_dmenu_delayreverb(setup_menu_name, setup_menu_version, setup_menu_graphics, dmenu_zoom)local(setup_menu_name, setup_menu_version, setup_menu_graphics)(
-  dmenu_zoom=dmenu_zoom*zoom;
-  ////////////////////////////////////////// MENU MENU MENU ////////////////////////////////////////////////
-  last_clicked_item = -1;
-  Helpshow ? mouse_cap ? (helpshow = 0;last_clicked_item = -1);
-  menu_x = 4; menu_y =1;
- 
-  gfx_x = menu_x * dmenu_zoom; gfx_y = menu_y * dmenu_zoom; gfx_a=0.5;
-  gfx_r=gfx_g=gfx_b=0.4;
-  gfx_roundrect(menu_x * dmenu_zoom, (menu_y + 5) * dmenu_zoom, 20*dmenu_zoom, 20*dmenu_zoom, 0, 1);
-  gfx_line((menu_x+3)*dmenu_zoom, (menu_y + 11)*dmenu_zoom, (menu_x+17)*dmenu_zoom, (menu_y + 11)*dmenu_zoom);
-  gfx_line((menu_x+3)*dmenu_zoom, (menu_y + 15)*dmenu_zoom, (menu_x+17)*dmenu_zoom, (menu_y + 15)*dmenu_zoom);
-  gfx_line((menu_x+3)*dmenu_zoom, (menu_y + 19)*dmenu_zoom, (menu_x+17)*dmenu_zoom, (menu_y + 19)*dmenu_zoom);
- 
-  gfx_x = menu_x+22 * dmenu_zoom; gfx_y += 2*dmenu_zoom;
-  gfx_setfont(1,"Arial",22*dmenu_zoom,'b');
- 
-  gfx_a = 1;
-  gfx_setfont(1,"Arial",12*dmenu_zoom,'b');
- 
-  mouseClick ? (
-    g_collision(menu_x*dmenu_zoom, (menu_y+5) * dmenu_zoom, 20*dmenu_zoom, 20*dmenu_zoom) ? (
-      gfx_x = menu_x*dmenu_zoom;
-      gfx_y = (menu_y+20)*dmenu_zoom;
-     
-      #item2 =">Processing|";#allitems = #item2;
-      while_playing == 1 ? (#item2 = "!On Playback|"):(#item2 = "On Playback|");#allitems += #item2;
-      while_recording == 1 ? (#item2 = "!On Recording|"):(#item2 = "On Recording|");#allitems += #item2;
-      while_stopped == 1 ? (#item2 = "<!On Stop|"):(#item2 = "<On Stop|");#allitems += #item2;
+    function setup_dmenu_delayreverb(setup_menu_name, setup_menu_version, setup_menu_graphics, dmenu_zoom)local(setup_menu_name, setup_menu_version, setup_menu_graphics)(
+        dmenu_zoom=dmenu_zoom*zoom;
+        ////////////////////////////////////////// MENU MENU MENU ////////////////////////////////////////////////
+        last_clicked_item = -1;
+        Helpshow ? mouse_cap ? (helpshow = 0;last_clicked_item = -1);
+        menu_x = 4; menu_y =1;
+        
+        gfx_x = menu_x * dmenu_zoom; gfx_y = menu_y * dmenu_zoom; gfx_a=0.5;
+        //gfx_blit(menu,dmenu_zoom/2,0);
+        gfx_r=gfx_g=gfx_b=0.4; //red();
+        gfx_roundrect(menu_x * dmenu_zoom, (menu_y + 5) * dmenu_zoom, 20*dmenu_zoom, 20*dmenu_zoom, 0, 1);
+        gfx_line((menu_x+3)*dmenu_zoom, (menu_y + 11)*dmenu_zoom, (menu_x+17)*dmenu_zoom, (menu_y + 11)*dmenu_zoom);
+        gfx_line((menu_x+3)*dmenu_zoom, (menu_y + 15)*dmenu_zoom, (menu_x+17)*dmenu_zoom, (menu_y + 15)*dmenu_zoom);
+        gfx_line((menu_x+3)*dmenu_zoom, (menu_y + 19)*dmenu_zoom, (menu_x+17)*dmenu_zoom, (menu_y + 19)*dmenu_zoom);
+        
+        /*
+        gfx_setfont(1,"Arial",22*dmenu_zoom,'b');
+        gfx_r=gfx_g=gfx_b=0.6; gfx_x = menu_x * dmenu_zoom + 30*dmenu_zoom;gfx_y += 2*dmenu_zoom;
+        gfx_drawstr(setup_menu_name); 
 
-      #allitems += ">Scaling|";
-      zoom_off == 0 ? (#item2 = "!Automatic Scaling|"):(#item2 = "Automatic scaling|");#allitems += #item2;
-      zoom_off == 1 ? (#item2 = "<!No scaling|"):(#item2 = "<No scaling|");#allitems += #item2;
+        gfx_setfont(1,"Arial",22*dmenu_zoom,'b');
+        gfx_drawstr(" ");
+        */
+        gfx_x = menu_x+22 * dmenu_zoom; gfx_y += 2*dmenu_zoom;
+        gfx_setfont(1,"Arial",22*dmenu_zoom,'b');
+        
+        
+        
+        link_group ? (
+        rgb_palette(Link_group);// gfx_a = 0.7;
+        gfx_drawstr("JOINS GROUP "); gfx_drawstr(sprintf(#,"%i", link_group));
+        );
 
-      #allitems += ">Ducking|";
-      ext_duck == 0 ? (#item2 = "!Detect Input|"):(#item2 = "Detect Input|");#allitems += #item2;
-      ext_duck == 1 ? (#item2 = "<!Detect Sidechain|"):(#item2 = "<Detect Sidechain|");#allitems += #item2;
 
-      #allitems += "|Show Info/Help";
-      last_clicked_item = gfx_showmenu(#allitems);
+
+        gfx_setfont(2,"Frozen Crystal",10, 'b');  
+        gfx_x=75;gfx_y=320;gfx_a=0.8;
+        link_group ? (
+          rgb_palette(Link_group);// gfx_a = 0.7;
+          gfx_drawstr("JOINS GROUP "); gfx_drawstr(sprintf(#,"%i", link_group));
+        );
+        gfx_x=menu_x;gfx_y=menu_y;gfx_a=1;
+        gfx_setfont(2,"Frozen Crystal",14, 'b'); 
+
+
+
+        gfx_a = 1;
+        gfx_setfont(1,"Arial",12*dmenu_zoom,'b');
+        
+        mouseClick ? (
+        g_collision(menu_x*dmenu_zoom, (menu_y+5) * dmenu_zoom, 20*dmenu_zoom, 20*dmenu_zoom) ? (
+            gfx_x = menu_x*dmenu_zoom;
+            gfx_y = (menu_y+20)*dmenu_zoom;
+            
+            #item2 =">Processing|";#allitems = #item2;
+            while_playing == 1 ? (#item2 = "!On Playback|"):(#item2 = "On Playback|");#allitems += #item2;
+            while_recording == 1 ? (#item2 = "!On Recording|"):(#item2 = "On Recording|");#allitems += #item2;
+            while_stopped == 1 ? (#item2 = "<!On Stop|>Groups|"):(#item2 = "<On Stop|>Groups|");#allitems += #item2;
+        
+            mnu_grp_loop = 1;
+            loop(16,
+        
+            mnu_grp_loop == 16 ? #item2 += "<";
+            gmem[16*64 + 10 + mnu_grp_loop] == 1 ? ( //Gruppe schon an ?
+                mnu_grp_loop == Link_Group ? ( //ist selbst in der gruppe
+                        #item2 = "!Joins Group ";
+                ):(
+                    #item2 = "Add to Group ";
+                );
+            ):(
+                #item2 = "Start Group ";
+            );
+            mnu_grp_loop == 1 ? #item2 += "01";
+            mnu_grp_loop == 2 ? #item2 += "02";
+            mnu_grp_loop == 3 ? #item2 += "03";
+            mnu_grp_loop == 4 ? #item2 += "04";
+            mnu_grp_loop == 5 ? #item2 += "05";
+            mnu_grp_loop == 6 ? #item2 += "06";
+            mnu_grp_loop == 7 ? #item2 += "07";
+            mnu_grp_loop == 8 ? #item2 += "08";
+            mnu_grp_loop == 9 ? #item2 += "09";
+            mnu_grp_loop == 10 ? #item2 += "10";
+            mnu_grp_loop == 11 ? #item2 += "11";
+            mnu_grp_loop == 12 ? #item2 += "12";
+            mnu_grp_loop == 13 ? #item2 += "13";
+            mnu_grp_loop == 14 ? #item2 += "14";
+            mnu_grp_loop == 15 ? #item2 += "15";
+            mnu_grp_loop == 16 ? #item2 += "16";
+            
+            #item2 += "|";
+            #allitems += #item2; //sprintf(#temp, '%f',3); 
+            mnu_grp_loop += 1;
+            );
+            
+            link_group ? (#allitems += "|<Delete Group ";#allitems += sprintf(#, "%d", link_group);#allitems += "|"):#allitems += "|<#Delete Group|";
+        
+            //#allitems += "<#MENU|";
+            #allitems += ">Scaling|";
+            zoom_off == 0 ? (#item2 = "!Automatic Scaling|"):(#item2 = "Automatic scaling|");#allitems += #item2;
+            zoom_off == 1 ? (#item2 = "<!No scaling|"):(#item2 = "<No scaling|");#allitems += #item2;
+            
+            #allitems += ">Ducking|";
+            ext_duck == 0 ? (#item2 = "!Detect Input|"):(#item2 = "Detect Input|");#allitems += #item2;
+            ext_duck == 1 ? (#item2 = "<!Detect Sidechain|"):(#item2 = "<Detect Sidechain|");#allitems += #item2;
+
+            
+            #allitems += "|Show Info/Help";
+            last_clicked_item = gfx_showmenu(#allitems);
+        );
+        );
+        
+        
+        
+        
+        
+        last_clicked_item == 1 ? (while_playing == 0 ? (while_playing = 1):(while_playing = 0);caller=1;processing_update());
+        last_clicked_item == 2 ? (while_recording == 0 ? (while_recording = 1):(while_recording = 0);caller=1;processing_update());
+        last_clicked_item == 3 ? (while_stopped == 0 ? (while_stopped = 1):(while_stopped = 0);caller=1;processing_update());
+        
+        cgroup = last_clicked_item - 3;
+        last_clicked_item > 3 && last_clicked_item < 20 ? (
+            Link_Group != cgroup ? ( //eigene Linkgruppe NICHT angeklickt
+                gmem[16*64 + 10 + cgroup] == 0 ? ( // Gruppe noch frei
+                    //gmem[16*64 + 10 + cgroup] = 1; Link_Group = cgroup; gmem[16*64 +27 + cgruop] = 1; //Gruppe Starten!
+                    gmem[16*64 + 10 + cgroup] = 1;Link_Group = cgroup;group_update();
+                ):(
+                    Link_Group = cgroup;// Gruppe teilnehmen
+                );
+            ):( //Eigene Gruppe angeklickt
+                Link_Group = 0;
+            );
+        
+        );
+        
+        cgroup = last_clicked_item - 3 - 16;
+        last_clicked_item == 20 ? (
+            gmem[16*64 + 10 + Link_Group] = 0;Link_Group = 0;
+        );
+        
+        
+        
+        
+        last_clicked_item == 21 ? zoom_off = 0;
+        last_clicked_item == 22 ? zoom_off = 1;
+        
+        last_clicked_item == 23 ? (ext_duck = 0; slider_automate(ext_duck));
+        last_clicked_item == 24 ? (ext_duck = 1; slider_automate(ext_duck));
+        
+        last_clicked_item == 25 ? helpshow = 1;
+        
+        helpshow == 1 ? (
+        dmenu_zoom=dmenu_zoom*2;
+        gfx_setfont(1,"Arial",12*dmenu_zoom,'b');
+        gfx_r=0;gfx_g=0;gfx_b=0;gfx_a=0.7;
+        gfx_rect(menu_x,menu_y+0,400*dmenu_zoom,145*dmenu_zoom);
+        menu_x +=3;
+        gfx_r=0.9;gfx_g=0.9;gfx_b=0.9;gfx_a=1;
+        gfx_x = menu_x+3*dmenu_zoom; gfx_y = menu_y+3*dmenu_zoom;
+        gfx_drawstr(setup_menu_name);
+        gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
+        gfx_drawstr("Version: "); gfx_drawstr(setup_menu_version);
+        gfx_x = menu_x+3*dmenu_zoom; gfx_y += 20*dmenu_zoom;
+        gfx_drawstr("Mouse modifier options:");
+        gfx_x = menu_x+3*dmenu_zoom; gfx_y += 15*dmenu_zoom;
+        gfx_drawstr("Fine tune knobs: [shift]");
+        gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
+        gfx_drawstr("Reset knobs: [ctrl] ([cmd] on mac)");
+        gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
+        gfx_drawstr("Link knobs on visible instances: [win] ([ctrl] on mac)");
+        gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
+        gfx_drawstr("Activate number typing: [alt]+[shift]");
+        gfx_x = menu_x+3*dmenu_zoom; gfx_y += 23*dmenu_zoom;
+        gfx_drawstr("Graphics by:");
+        gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
+        gfx_drawstr(setup_menu_graphics);
+        );
     );
-  );
-  
-  last_clicked_item == 1 ? (while_playing == 0 ? (while_playing = 1):(while_playing = 0);caller=1);
-  last_clicked_item == 2 ? (while_recording == 0 ? (while_recording = 1):(while_recording = 0);caller=1);
-  last_clicked_item == 3 ? (while_stopped == 0 ? (while_stopped = 1):(while_stopped = 0);caller=1);
-
-  last_clicked_item == 4 ? zoom_off = 0;
-  last_clicked_item == 5 ? zoom_off = 1;
-
-  last_clicked_item == 6 ? (ext_duck = 0; slider_automate(ext_duck));
-  last_clicked_item == 7 ? (ext_duck = 1; slider_automate(ext_duck));
-
-  last_clicked_item == 8 ? helpshow = 1;
-  
-  helpshow == 1 ? (
-    dmenu_zoom=dmenu_zoom*2;
-    gfx_setfont(1,"Arial",12*dmenu_zoom,'b');
-    gfx_r=0;gfx_g=0;gfx_b=0;gfx_a=0.7;
-    gfx_rect(menu_x,menu_y+0,400*dmenu_zoom,145*dmenu_zoom);
-    menu_x +=3;
-    gfx_r=0.9;gfx_g=0.9;gfx_b=0.9;gfx_a=1;
-    gfx_x = menu_x+3*dmenu_zoom; gfx_y = menu_y+3*dmenu_zoom;
-    gfx_drawstr(setup_menu_name);
-    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
-    gfx_drawstr("Version: "); gfx_drawstr(setup_menu_version);
-    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 20*dmenu_zoom;
-    gfx_drawstr("Mouse modifier options:");
-    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 15*dmenu_zoom;
-    gfx_drawstr("Fine tune knobs: [shift]");
-    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
-    gfx_drawstr("Reset knobs: [ctrl] ([cmd] on mac)");
-    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
-    gfx_drawstr("Link knobs on visible instances: [win] ([ctrl] on mac)");
-    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
-    gfx_drawstr("Activate number typing: [alt]+[shift]");
-    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 23*dmenu_zoom;
-    gfx_drawstr("Graphics by:");
-    gfx_x = menu_x+3*dmenu_zoom; gfx_y += 13*dmenu_zoom;
-    gfx_drawstr(setup_menu_graphics);
-  );
-);
 
 function tk_extra_grouplinking()( // it seems to do nothing at all
   Link_Group == 0 ? (

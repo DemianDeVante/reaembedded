@@ -57,7 +57,7 @@ options:gmem=mgalimiterd
   lastCap=1;
   mouse_wheel=1;
   is_recording = 0; is_playing = 0; is_stopped = 1;
-  while_playing = 1; while_recording = 1; while_stopped = 1;
+  !initialized_playstates?(while_playing = while_recording = while_stopped = 1);
   Number_input = 0;
   number_input_raw = 0;
   number_input_use = 0;
@@ -71,16 +71,13 @@ options:gmem=mgalimiterd
   number_input_invalid = 0;
   number_input_sign=1;
   s2_numbers_of_sliders = 3; // set the number of sliders for gorup linking
-  s2_numbers_of_generics = 0;
-  group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
-  sliders_old = group_generics + 16*200;
-  generics_old = sliders_old + 16*64;
+
 
   mouse_sensivity();
 
   function parameters_update() (
     parameters_update_on = 1;
-    group_parameters(); // tk extra features
+    group_parameters(max_local_buffer_size-64); // tk extra features
 
     // Paste all contents of @slider here
     thresh = 10^(slider1/20);
@@ -119,7 +116,7 @@ options:gmem=mgalimiterd
   file_var(0, LA2Kan_VERSION);
   file_var(0, link_group);
   seriloop = 0;
-  loop(64*16 + 27 + 16,
+  loop(64*16 + 27 + 16 +16 +16,
   file_var(0, gmem[seriloop]);
   seriloop += 1;
   );
@@ -148,6 +145,7 @@ options:gmem=mgalimiterd
   while_playing ? is_playing ? process = 1;
   while_recording ? is_recording ? process = 1;
   while_stopped ? is_stopped ? process = 1;
+  initialized_playstates=1;
 
   process == 1 ? ( 
 
@@ -226,7 +224,7 @@ options:gmem=mgalimiterd
   // update parameters
   S2_sample_on == 0 ? (
   gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
-  group_check_gfx(); // tk extra features
+  group_check_smpl(); // tk extra features
     caller == 1 ? (
         parameters_update_on == 0 ? (
           parameters_update();

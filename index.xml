@@ -6,7 +6,7 @@
   <category name="DDD"></category>
   <category name="..">
     <reapack name="embeDDed_settings.lua" type="script" desc="embeDDed collection">
-      <version name="1.1.3" author="Demian D">
+      <version name="1.1.4" author="Demian D">
         <source main="main">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/embeDDed%20settings.lua</source>
         <source type="effect" file="DGFX/ddconfig.jsfx-inc">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/DGFX/ddconfig.jsfx-inc</source>
         <source type="effect" file="1175 D.jsfx">https://raw.githubusercontent.com/DemianDeVante/reaembedded/main/D%20JSFX/1175%20D.jsfx</source>

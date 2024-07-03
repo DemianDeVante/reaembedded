@@ -2,7 +2,7 @@
     function clear_all_buffers() (
         // Loop through each buffer
         bufferIndex = 0;
-        while (bufferIndex < 10000000) (
+        while (bufferIndex < (8388608-64)) (
             // Set each buffer to zero
             buffer[bufferIndex] = 0;
             bufferIndex += 1;

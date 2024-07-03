@@ -92,27 +92,8 @@ out_pin:right output
 
 
   // tk extra features
-  lastCap=1;
-  mouse_wheel=1;
-  is_recording = 0; is_playing = 0; is_stopped = 1;
-  while_playing = 1; while_recording = 1; while_stopped = 1;
-  Number_input = 0;
-  number_input_raw = 0;
-  number_input_use = 0;
-  komma = 0;
-  in_key = 0;
-  number_input_x = 0;
-  number_input_y=0;
-  number_input_slider = 0;
-  number_input_min=0;
-  number_input_max=0;
-  number_input_invalid = 0;
-  number_input_sign=1;
-  s2_numbers_of_sliders = 10;
-  s2_numbers_of_generics = 0;
-  group_generics = 0; // fuer group_generics[bis zu 200] <-- ?
-  sliders_old = group_generics + 16*200;
-  generics_old = sliders_old + 16*64;
+  !initialized_playstates?(while_playing = while_recording = while_stopped = 1);
+  s2_numbers_of_sliders = 10; // set the number of sliders for gorup linking
 
   mouse_sensivity();
   last_gain=10^(gain_db/20);
@@ -121,7 +102,7 @@ out_pin:right output
 
   function parameters_update() (
     parameters_update_on = 1;
-    group_parameters(); // tk extra features
+    group_parameters(max_local_buffer_size-64); // tk extra features
     //Rest of @slider section
       next_gain=10^(gain_db/20);
 
@@ -179,7 +160,7 @@ out_pin:right output
   file_var(0, LA2Kan_VERSION);
   file_var(0, link_group);
   seriloop = 0;
-  loop(64*16 + 27 + 16,
+  loop(64*16 + 27 + 16 +16 +16,
   file_var(0, gmem[seriloop]);
   seriloop += 1;
   );
@@ -215,6 +196,7 @@ out_pin:right output
   while_playing ? is_playing ? process = 1;
   while_recording ? is_recording ? process = 1;
   while_stopped ? is_stopped ? process = 1;
+  initialized_playstates=1;
 
 
   slider9==0?process=0;
@@ -337,11 +319,11 @@ out_pin:right output
                                       //mode=0 you manually write your code for handling mouse input; mode=1 automatic handling
     //Knobs                      (slider  default     min      max  step    x        y   frames  scaling  file  mode  reverse) (frames = 0 = auto calculate)      
 //    kIn.parameter_config         (10,           0,    -40,      40,     43,     231,     0,       0.767,     1,    1,       0);    
-    kAttack.parameter_config     (4,          20,     20,    2000,  0,  35-2,     133,     0,       1.3,     2,    1,       1);    
-    kRelease.parameter_config    (5,         250,     20,    1000,  0,  170+2,     133,     0,       1.3,     2,    1,       1);    
-    kMix.parameter_config        (6,         100,      0,     100,  0,   123,      153,     0,       1,    12,    1,       0);    
-    kThres.parameter_config    (1,           0,    -60,       0,    0, 43,     231,     0,       0.767,     1,    1,       0);    
-    kOutput.parameter_config     (3,           0,    -40,      40,  0,  168,     231,     0,       0.767,     1,    1,       0);    
+    kAttack.parameter_config     (4,          20,     20,    2000,  0,  45,     133,     0,       1,     2,    1,       1);    
+    kRelease.parameter_config    (5,         250,     20,    1000,  0,  175,     133,     0,       1,     2,    1,       1);    
+    kMix.parameter_config        (6,         100,      0,     100,  0,   125,      157,     0,       1,    12,    1,       0);    
+    kThres.parameter_config    (1,           0,    -60,       0,    0, 43,     210,     0,       0.767,     1,    1,       0);    
+    kOutput.parameter_config     (3,           0,    -40,      40,  0,  168,     210,     0,       0.767,     1,    1,       0);    
 
     //Buttons                    (slider   orient  off_val    on_val    x        y           scaling  file   mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
     
@@ -364,12 +346,17 @@ out_pin:right output
 
  
     mouse_wheel=0;
+    gfx_r=gfx_g=gfx_b=gfx_a=0.8; // LABELS
+    kAttack.attached_label("A", 27, -65, "Verdana",55,'b');
+    kRelease.attached_label("R",-25, -65, "Verdana",50,'b');
+    kThres.attached_label("THR",0, "Verdana",60,'b');
+    kOutput.attached_label("OUT",0, "Verdana",60,'b');
   );
   
   // update parameters
   S2_sample_on == 0 ? (
   gmem[16*64 + 10 + link_group] != 1 ? link_group = 0; // tk extra features
-  group_check_gfx(); // tk extra features
+  group_check_smpl(); // tk extra features
     caller == 1 ? (
         parameters_update_on == 0 ? (
           parameters_update();
