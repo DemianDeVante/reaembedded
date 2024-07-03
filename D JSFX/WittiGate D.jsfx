@@ -252,13 +252,14 @@ out_pin:right output
     //kRMS.parameter_config        (6,         100,      0,     100,    0,   123,     153,     0,         1,    12,    5,       0);    
     //kOut.parameter_config        (6,         100,      0,     100,    0,   123,     153,     0,         1,    12,    5,       0);    
     //Buttons                    (slider   orient  off_val    on_val    x        y           scaling  file   mode) (orient = 0 = horizontal image; orient = 1 = vertical image)
-    bDelta.button_config         (6,           0,      0,       1,     116,     160,             1,     7,     1);
+    bDelta.button_config         (6,           0,      0,       1,     116,     250,             1,     7,     1);
+    bSC.button_config            (8,           0,      0,       1,     116,     160,             1,     6,     1);
     gfx_a=gfx_r=gfx_g=gfx_b=0.8;
     kThres.attached_label("THRS",-8, "Verdana",50,'b');
     kHold.attached_label("HOLD",-8, "Verdana",50,'b');
     kFadeIn.attached_label("IN",-8, "Verdana",35,'b');
     kFadeOut.attached_label("OUT",-8, "Verdana",35,'b');
-    bDelta.attached_label("FADE",-80, "Verdana",45,'b');
+    bSC.attached_label("FADE",-80, "Verdana",45,'b');
 
     //kRMS.attached_label("RMS",-4, "Verdana",26,'b');
     //kOut.attached_label("OUT",-4, "Verdana",26,'b');

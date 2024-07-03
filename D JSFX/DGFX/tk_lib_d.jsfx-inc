@@ -959,6 +959,7 @@ instance      (valOld minVal maxVal step)
 					val = min(max(val, minVal), maxVal);
 			slider(this.slider) = val;
 					mouse_wheel=0;
+			slider_automate(slider(this.slider));
 );
 
 
@@ -972,6 +973,7 @@ instance      (valOld minVal maxVal step)
 					val = min(max(val, minVal), maxVal);
 			slider(this.slider) = val;
 					mouse_wheel=0;
+			slider_automate(slider(this.slider));
 );
 
 function draw_parameter()(
